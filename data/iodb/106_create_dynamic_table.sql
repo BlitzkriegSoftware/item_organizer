@@ -23,7 +23,7 @@ BEGIN
     -- 3. Close the SQL bracket
     v_sql := v_sql || ');';
 
-    RAISE NOTICE 'create_dynamic_table: %s', v_sql;
+    RAISE NOTICE 'create_dynamic_table: %', v_sql;
 
     -- 4. Execute the constructed SQL string
     EXECUTE v_sql;
