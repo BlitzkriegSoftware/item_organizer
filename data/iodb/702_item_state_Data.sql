@@ -18,7 +18,7 @@ INSERT INTO {schema}.item_state(
 
 INSERT INTO {schema}.item_state(
 	item_state_id, state_title, org_id)
-	VALUES 50, 'testable', '00000000-0000-0000-0000-000000000000' );
+	VALUES (50, 'testable', '00000000-0000-0000-0000-000000000000' );
 	
 INSERT INTO {schema}.item_state(
 	item_state_id, state_title, org_id)
