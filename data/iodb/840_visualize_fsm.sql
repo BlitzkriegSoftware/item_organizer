@@ -61,7 +61,7 @@ BEGIN
         END IF;
 
         SELECT LPAD(cast(IVAL as text), 2, '0') into TDEX;
-        v_sql := 'update {schema}.item_state_fsm_visualizer set col_' || IVAL || ' = ' || quote_literal(TYSM) || ' where row_id = ' || IRIX || ' and org_id = ' || quote_literal(target_org_id); 
+        v_sql := 'update {schema}.item_state_fsm_visualizer set col_' || IVAL || ' = ' || quote_literal(TSYM) || ' where row_id = ' || IRIX || ' and org_id = ' || quote_literal(target_org_id); 
         EXECUTE v_sql;
     END LOOP;
 
