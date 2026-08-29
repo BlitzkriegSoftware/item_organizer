@@ -428,5 +428,11 @@ FodyWeavers.xsd
 *.msm
 *.msp
 
-## Project specifics
-data/pgdata/
+## Project Specifics
+
+# pgdata folder
+**/pgdata/
+# temp folder
+**/temp/
+# pgpass
+**/.pgpass
