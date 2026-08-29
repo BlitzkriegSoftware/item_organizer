@@ -4,7 +4,7 @@ run:
 
     SELECT create_dynamic_table('my_dynamic_table', 5);
 */
-CREATE OR REPLACE FUNCTION create_dynamic_table(
+CREATE OR REPLACE FUNCTION {schema}.create_dynamic_table(
     p_table_name TEXT, 
     p_num_columns INT
 ) 
