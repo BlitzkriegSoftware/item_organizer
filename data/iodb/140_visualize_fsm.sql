@@ -24,9 +24,9 @@ BEGIN
 
     select {schema}.uuid_to_short(target_org_id) into HSH;
     select 'FSM' || HSH into TN;
-	TN := '{schema}' || '.' || TN;
     -- 0, index, 1: title, ... values
     PERFORM {schema}.create_dynamic_table(TN, CT + 2);
+	TN := 'public.' || TN;
 
     -- make the empty rows
     IVAL := CT + 1;

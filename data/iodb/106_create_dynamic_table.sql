@@ -28,5 +28,9 @@ BEGIN
 
     -- 4. Execute the constructed SQL string
     EXECUTE v_sql;
+
+    ALTER TABLE IF EXISTS p_table_name
+        OWNER to postgres;
+
 END;
 $$ LANGUAGE plpgsql;
