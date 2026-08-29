@@ -5,16 +5,14 @@ RUN apt upgrade -y
 RUN apt install curl ca-certificates cron -y
 RUN apt install postgresql-16-cron -y
 RUN apt install postgresql-16-pldebugger -y
-RUN apt-get install -y \
-    python3 \
-    python3-pip \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+RUN apt update -y
+RUN apt upgrade -y
+RUN apt-get install -y python3
+RUN apt-get install -y python-is-python3
+RUN apt install -y python3-pip python3-venv
+RUN apt-get clean 
 # UV
-ADD https://astral.sh/uv/install.sh /uv-installer.sh
-ENV UV_TOOL_BIN_DIR=/opt/uv-bin/
-RUN sh /uv-installer.sh && rm /uv-installer.sh
-ENV PATH="/root/.local/bin/:$PATH"
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 ENV UV_NO_DEV=1
 # .pgpass
 RUN mkdir -p /var/lib/postgresql/data
@@ -35,9 +33,10 @@ RUN chmod +r /var/lib/postgresql/data/postgresql.conf.cron
 ENV POSTGRES_SHARED_PRELOAD_LIBRARIES="pg_cron"
 ENV CRON_DATABASE_NAME="postgres"
 # Install Application
-COPY ./app /app
-WORKDIR /app
+WORKDIR /src
+COPY ./pyproject.toml /src
+COPY ./src /src
 ENV PATH="/app/.venv/bin:$PATH"
 RUN uv sync --locked
 # Run the application
-RUN uv run main.py
+# RUN uv run main.py
