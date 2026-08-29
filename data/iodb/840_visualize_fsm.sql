@@ -35,7 +35,7 @@ BEGIN
         v_sql := 'update {schema}.item_state_fsm_visualizer set ' || format('col_%s = %s', TDEX, row_record.item_state_id ) || ' where row_id = 0 and org_id = ' || quote_literal(target_org_id);
         EXECUTE v_sql;
 
-        v_sql = 'Insert into {schema}.item_state_fsm_visualizer (row_id, label, org_id) values (' || row_record.row_num || ', ' || format('%s: %s', TDEX, row_record.state_title) || ',' || quote_literal( target_org_id ) || ')';
+        v_sql = 'Insert into {schema}.item_state_fsm_visualizer (row_id, label, org_id) values (' || row_record.row_num || ', ' || quote_literal(format('%s: %s', TDEX, row_record.state_title)) || ',' || quote_literal( target_org_id ) || ')';
         EXECUTE v_sql;
     END LOOP;
 
