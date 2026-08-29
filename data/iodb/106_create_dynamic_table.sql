@@ -1,8 +1,7 @@
 /*
-To create a table named my_dynamic_table with 5 columns (col_1 through col_5), 
-run:
-
-    SELECT create_dynamic_table('my_dynamic_table', 5);
+    To create a table named my_dynamic_table with 5 columns 
+    (col_1 through col_5), in the 'public' schema, run:
+        SELECT create_dynamic_table('my_dynamic_table', 5);
 */
 CREATE OR REPLACE FUNCTION {schema}.create_dynamic_table(
     p_table_name TEXT, 
