@@ -24,6 +24,7 @@ BEGIN
 
     select {schema}.uuid_to_short(target_org_id) into HSH;
     select 'FSM' || HSH into TN;
+    select substring(TN, 1, 10) into TN;
     -- 0, index, 1: title, ... values
     PERFORM {schema}.create_dynamic_table(TN, CT + 2);
 	TN := 'public.' || TN;
