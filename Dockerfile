@@ -37,6 +37,6 @@ WORKDIR /src
 COPY ./pyproject.toml /src
 COPY ./src /src
 ENV PATH="/app/.venv/bin:$PATH"
-RUN uv sync --locked
+RUN uv sync
 # Run the application
 # RUN uv run main.py
