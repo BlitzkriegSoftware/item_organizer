@@ -55,8 +55,7 @@ CREATE TABLE IF NOT EXISTS {schema}.item_state_fsm_visualizer
     col_46 text COLLATE pg_catalog."default",
     col_47 text COLLATE pg_catalog."default",
     col_48 text COLLATE pg_catalog."default",
-    col_49 text COLLATE pg_catalog."default",
-    CONSTRAINT item_state_fsm_visualizer_pkey PRIMARY KEY (id)
+    col_49 text COLLATE pg_catalog."default"
 )
 
 TABLESPACE pg_default;

@@ -20,7 +20,7 @@ DECLARE
 	row_record RECORD;
 BEGIN
     -- clear out visualization
-    delete * from {schema}.item_state_fsm_visualizer where org_id = target_org_id;
+    delete from {schema}.item_state_fsm_visualizer where org_id = target_org_id;
 
     SELECT count(*) INTO CT 
     FROM myio.item_state 
@@ -44,8 +44,7 @@ BEGIN
         select item_state_to_id 
         from {schema}.item_state 
         where org_id = target_org_id
-        order by item_state_id
-
+        order by item_state_id;
 
     -- Now do the FSM
     FOR row_record IN
