@@ -97,7 +97,6 @@ if ($null -eq $GIT_ROOT) {
 	Write-Error "Not in GIT Repo"
 	return 9;
 }
-Push-Location $GIT_ROOT
 
 [bool]$da = Get-DockerRunning
 if (! $da) {
@@ -110,6 +109,10 @@ if (! $da) {
 # 	Write-Error "Port ${PORT} for postgres is in use! Stop local service before re-running."
 # 	return 2;
 # }
+
+#
+# Start processing
+Push-Location $GIT_ROOT
 
 # Dispose of any old running Postgres
 $null = (docker stop "${NAME}") 2> $null
