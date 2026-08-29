@@ -41,7 +41,7 @@ BEGIN
 
     -- Temp table to get ordering from
     CREATE TEMP TABLE temp_item_order AS 
-        select item_state_to_id 
+        select item_state_id 
         from {schema}.item_state 
         where org_id = target_org_id
         order by item_state_id;
