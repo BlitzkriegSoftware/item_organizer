@@ -32,10 +32,10 @@ BEGIN
         select item_state_id, state_title, ROW_NUMBER() OVER(order by item_state_id) as row_num from {schema}.item_state where org_id = target_org_id
     LOOP
         SELECT LPAD(cast(row_record.row_num as text), 2, '0') into TDEX;
-        v_sql := 'update {schema}.item_state_fsm_visualizer set ' || format('col_%s = %s', TDEX, row_record.item_state_id ) || ' where row_id = 0 and org_id = ' || target_org_id;
+        v_sql := 'update {schema}.item_state_fsm_visualizer set ' || format('col_%s = %s', TDEX, row_record.item_state_id ) || ' where row_id = 0 and org_id = ' || quote_literal(target_org_id);
         EXECUTE v_sql;
 
-        v_sql = 'Insert into {schema}.item_state_fsm_visualizer (row_id, label) values (' || row_record.row_num || ', ' || format('%s: %s', TDEX, row_record.state_title) || ')';
+        v_sql = 'Insert into {schema}.item_state_fsm_visualizer (row_id, label, org_id) values (' || row_record.row_num || ', ' || format('%s: %s', TDEX, row_record.state_title) || ',' || quote_literal( target_org_id ) || ')';
         EXECUTE v_sql;
     END LOOP;
 
@@ -61,7 +61,7 @@ BEGIN
         END IF;
 
         SELECT LPAD(cast(IVAL as text), 2, '0') into TDEX;
-        v_sql := 'update {schema}.item_state_fsm_visualizer set col_' || IVAL || ' = ' || TYSM || ' where row_id = ' || IRIX; 
+        v_sql := 'update {schema}.item_state_fsm_visualizer set col_' || IVAL || ' = ' || TYSM || ' where row_id = ' || IRIX || ' and org_id = ' || quote_literal(target_org_id); 
         EXECUTE v_sql;
     END LOOP;
 
