@@ -21,7 +21,7 @@ Param (
 Import-Module Microsoft.PowerShell.Utility
 
 # Constantts
-[int]$ORDER_INDEX_MIN = 110;
+[int]$ORDER_INDEX_MIN = 100;
 
 # Variables
 [int]$exitCode = 0;
