@@ -1,6 +1,6 @@
 -- Table: {schema}.user_org
 
--- DROP TABLE IF EXISTS {schema}.user_org;
+DROP TABLE IF EXISTS {schema}.user_org;
 
 CREATE TABLE IF NOT EXISTS {schema}.user_org
 (

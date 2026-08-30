@@ -1,6 +1,6 @@
 -- Table: {schema}.item
 
--- DROP TABLE IF EXISTS {schema}.item;
+DROP TABLE IF EXISTS {schema}.item;
 
 CREATE TABLE IF NOT EXISTS {schema}.item
 (
@@ -23,3 +23,16 @@ ALTER TABLE IF EXISTS {schema}.item
 
 COMMENT ON TABLE {schema}.item
     IS 'the backlog';
+
+-- Indexes
+CREATE INDEX idx_{schema}_item_priority_id ON {schema}.item(priority_id);
+CREATE INDEX idx_{schema}_item_item_state_id ON {schema}.item(item_state_id);
+CREATE INDEX idx_{schema}_item_created_date ON {schema}.item(created_date);
+CREATE INDEX idx_{schema}_item_updated_date ON {schema}.item(updated_date);
+CREATE INDEX idx_{schema}_item_assigned_to  ON {schema}.item(assigned_to);
+CREATE INDEX idx_{schema}_item_created_by   ON {schema}.item(created_by);
+
+-- FKs
+ALTER TABLE orders 
+ADD CONSTRAINT fk_orders_customers 
+FOREIGN KEY (customer_id) REFERENCES customers(id);

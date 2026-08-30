@@ -1,4 +1,5 @@
 -- Table: {schema}.app_configuration
+DROP TABLE IF EXISTS {schema}.app_configuration;
 
 CREATE TABLE {schema}.app_configuration
 (

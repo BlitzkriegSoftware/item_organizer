@@ -1,6 +1,6 @@
 -- Table: {schema}.priority
 
--- DROP TABLE IF EXISTS {schema}.priority;
+DROP TABLE IF EXISTS {schema}.priority;
 
 CREATE TABLE IF NOT EXISTS {schema}.priority
 (
