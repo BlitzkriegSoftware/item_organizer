@@ -6,6 +6,8 @@ CREATE TABLE IF NOT EXISTS {schema}."user"
 (
     user_id uuid NOT NULL DEFAULT gen_random_uuid(),
     email text COLLATE pg_catalog."default" NOT NULL,
+    user_display_name text COLLATE pg_catalog."default" NULL,
+    user_icon_uri text COLLATE pg_catalog."default" NULL,
     password_hash text COLLATE pg_catalog."default" NOT NULL,
     CONSTRAINT user_pkey PRIMARY KEY (user_id)
 )
