@@ -39,29 +39,43 @@ BEGIN
         EXECUTE v_sql;
     END LOOP;
 
-    -- Temp table to get ordering from
-    CREATE TEMP TABLE temp_item_order AS 
-        select item_state_id 
-        from {schema}.item_state 
-        where org_id = target_org_id
-        order by item_state_id;
+
+    raise notice 'Creating Temp Table: temp_item_order';
+	DROP TABLE IF EXISTS temp_item_order;
+    CREATE TEMP TABLE temp_item_order (
+		item_state_id integer,
+		row_num integer
+	);
+
+	raise notice 'filling: temp_item_order';
+	insert into temp_item_order (item_state_id, row_num)
+	select  item_state_id, ROW_NUMBER() OVER(order by item_state_id) as row_num
+	from {schema}.item_state
+	where org_id = target_org_id
+	order by item_state_id;
 
     -- Now do the FSM
     FOR row_record IN
-        select item_state_from_id, item_state_to_id from {schema}.item_state_fsm where org_id = target_org_id order by item_state_from_id, item_state_to_id
+        select item_state_from_id, item_state_to_id from myio.item_state_fsm where org_id = target_org_id order by item_state_from_id, item_state_to_id
     Loop
         -- find the row index
-        select  ROW_NUMBER() OVER(order by item_state_id) into IRIX from temp_item_order where (item_state_id = row_record.item_state_from_id);
+        IRIX := 0;
+		select row_num into IRIX from temp_item_order where (item_state_id = row_record.item_state_from_id);
         -- find the col index
-        select  ROW_NUMBER() OVER(order by item_state_id) into IVAL from temp_item_order where (item_state_id = row_record.item_state_to_id);
-        -- do the update
+		IVAL := 0;
+  	    select row_num into IVAL from temp_item_order where (item_state_id = row_record.item_state_to_id);
+		-- set the symbol
         TSYM := '>';
         IF row_record.item_state_from_id > row_record.item_state_to_id THEN
             TSYM := '<';
         END IF;
 
+		raise notice '% IRIX=% => % IVAL=%', row_record.item_state_from_id, IRIX, row_record.item_state_to_id, IVAL;
+
         SELECT LPAD(cast(IVAL as text), 2, '0') into TDEX;
-        v_sql := 'update {schema}.item_state_fsm_visualizer set ' || format( 'col_%s', TDEX ) || ' = ' || quote_literal(TSYM) || ' where row_id = ' || IRIX || ' and org_id = ' || quote_literal(target_org_id); 
+        v_sql := 'update myio.item_state_fsm_visualizer set ' || format( 'col_%s', TDEX ) || ' = ' || 
+		quote_literal(TSYM) || 
+		' where row_id = ' || IRIX || ' and org_id = ' || quote_literal(target_org_id); 
         EXECUTE v_sql;
     END LOOP;
 
