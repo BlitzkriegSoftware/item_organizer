@@ -6,7 +6,6 @@ CREATE TABLE IF NOT EXISTS {schema}.item_state_fsm_visualizer
     org_id uuid null default '00000000-0000-0000-0000-000000000000',
     row_id int default 0,
     label text COLLATE pg_catalog."default",
-    col_00 text COLLATE pg_catalog."default",
     col_01 text COLLATE pg_catalog."default",
     col_02 text COLLATE pg_catalog."default",
     col_03 text COLLATE pg_catalog."default",

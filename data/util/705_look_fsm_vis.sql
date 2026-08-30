@@ -1,5 +1,4 @@
 select row_id, label
-	, COALESCE(col_00,'') as col_00
 	, COALESCE(col_01,'') as col_01
 	, COALESCE(col_02 ,'') as col_02
 	, COALESCE(col_03 ,'') as col_03
