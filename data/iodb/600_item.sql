@@ -50,7 +50,7 @@ FOREIGN KEY (created_by) REFERENCES {schema}.user(user_id);
 -- Full Text Search
 
 -- Add a computed tsvector column with weighted fields
-ALTER TABLE {schema}.user 
+ALTER TABLE {schema}.item 
 ADD COLUMN search_vector TSVECTOR
 GENERATED ALWAYS AS (
  setweight(to_tsvector('english', COALESCE(title, '')), 'A') ||
@@ -58,6 +58,6 @@ GENERATED ALWAYS AS (
 ) STORED;
 
 -- Create the inverted index
-CREATE INDEX {schema}.full_text_search_item 
-ON {schema}.user 
+CREATE INDEX full_text_search_{schema}_item 
+ON {schema}.item 
 USING GIN(search_vector);
