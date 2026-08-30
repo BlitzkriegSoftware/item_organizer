@@ -40,14 +40,14 @@ BEGIN
         EXECUTE v_sql;
     END LOOP;
 
-    # raise notice 'Creating Temp Table: temp_item_order';
+    -- raise notice 'Creating Temp Table: temp_item_order';
 	DROP TABLE IF EXISTS temp_item_order;
     CREATE TEMP TABLE temp_item_order (
 		item_state_id integer,
 		row_num integer
 	);
 
-	# raise notice 'filling: temp_item_order';
+	-- raise notice 'filling: temp_item_order';
 	insert into temp_item_order (item_state_id, row_num)
 	select  item_state_id, ROW_NUMBER() OVER(order by item_state_id) as row_num
 	from {schema}.item_state
