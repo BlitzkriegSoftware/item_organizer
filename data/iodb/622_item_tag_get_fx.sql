@@ -1,7 +1,6 @@
-CREATE or replace FUNCTION {setting}.item_tag_get
-    (
-        desired_item_id bigint
-	) 
+CREATE or replace FUNCTION {schema}.item_tag_get(
+    desired_item_id bigint
+) 
 RETURNS TABLE (
     tag text
 ) AS $$

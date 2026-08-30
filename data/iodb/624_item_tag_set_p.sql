@@ -1,6 +1,6 @@
 CREATE OR REPLACE PROCEDURE {schema}.item_tag_set(
-        desired_item_id bigint
-        new_tag text
+    desired_item_id bigint,
+    new_tag text
 )
  LANGUAGE 'sql'
 AS $BODY$
