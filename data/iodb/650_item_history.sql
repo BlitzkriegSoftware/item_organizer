@@ -2,7 +2,7 @@
 
 -- DROP TABLE IF EXISTS {schema}.item;
 
-CREATE TABLE IF NOT EXISTS {schema}.item
+CREATE TABLE IF NOT EXISTS {schema}.item_history
 (
     id uuid NOT NULL DEFAULT gen_random_uuid(),
     item_id bigint NOT NULL,
