@@ -42,3 +42,6 @@ BEGIN
 
 END;
 $BODY$;
+
+ALTER PROCEDURE {schema}.post_deploy_test(integer, integer)
+    OWNER TO postgres;

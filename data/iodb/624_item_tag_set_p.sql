@@ -11,3 +11,7 @@ AS $BODY$
     insert into {schema}.item_tag (item_id, tag) 
     values (desired_item_id, new_tag);
 $BODY$
+;
+
+ALTER PROCEDURE {schema}.item_tag_set(bigint, text)
+    OWNER TO postgres;
