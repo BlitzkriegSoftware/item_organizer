@@ -4,7 +4,7 @@
 
 CREATE TABLE IF NOT EXISTS {schema}.organization
 (
-    org_id uuid NOT NULL,
+    org_id uuid NOT NULL DEFAULT gen_random_uuid(),
     parent_org_id uuid default '00000000-0000-0000-0000-000000000000',
     name text COLLATE pg_catalog."default" NOT NULL,
     CONSTRAINT organization_pkey PRIMARY KEY (org_id)
