@@ -1,5 +1,6 @@
 -- DROP TABLE IF EXISTS {schema}.item_state_fsm_visualizer;
 
+-- Editor: More than this many states is not a good idea.
 CREATE TABLE IF NOT EXISTS {schema}.item_state_fsm_visualizer
 (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
