@@ -32,6 +32,7 @@ COPY ./data/postgresql.conf.cron /var/lib/postgresql/data/postgresql.conf.cron
 RUN chmod +r /var/lib/postgresql/data/postgresql.conf.cron
 ENV POSTGRES_SHARED_PRELOAD_LIBRARIES="pg_cron"
 ENV CRON_DATABASE_NAME="postgres"
+ENV IOR_SALT="JDJiJDEyJGU1QTV0Zzk1VGxxVmpBLjdsRERmRnU="
 # Install Application
 WORKDIR /src
 COPY ./pyproject.toml /src

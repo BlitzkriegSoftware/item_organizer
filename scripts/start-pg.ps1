@@ -168,6 +168,11 @@ $null = (Remove-Item -Path $pgDir -Recurse -Force) 2> $null
 #$null = (docker pull $IMAGE) 2> $null
 docker build --progress=plain -t "${CUSTOM_IMAGE}" .
 
+IOR_SALT=$env:IOR_SALT
+if ( [string]::IsNullOrEmpty("${IOR_SALT}") ) {
+	IOR_SALT="JDJiJDEyJGU1QTV0Zzk1VGxxVmpBLjdsRERmRnU="
+}
+
 # Start the container
 docker run -d `
 	-e "POSTGRES_USER=${USERNAME}" `
@@ -175,6 +180,7 @@ docker run -d `
 	-e "PGPASSWORD=${PASSWORD}" `
 	-e "PGPASSFILE=${PGPASS_FILE}" `
 	-e PGDATA='/var/lib/postgresql/data/pgdata' `
+	-e "IOR_SALT=${IOR_SALT}" `
 	--name="${NAME}" `
 	--restart always `
 	-v "${dbPath}:${VOL}" `
