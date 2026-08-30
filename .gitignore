@@ -436,3 +436,5 @@ FodyWeavers.xsd
 **/temp/
 # pgpass
 **/.pgpass
+# pytest 
+.coverage
