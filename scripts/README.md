@@ -3,11 +3,22 @@
 Guide to scripts
 
 - [Scripts](#scripts)
+  - [Script list](#script-list)
   - [Start Postgres and install cron \& pg\_cron](#start-postgres-and-install-cron--pg_cron)
     - [What does it do?](#what-does-it-do)
   - [open a bash shell on Postgres container](#open-a-bash-shell-on-postgres-container)
   - [stop postgres](#stop-postgres)
 
+## Script list
+
+| Script | Use |
+| :--- | :--- |
+| bash-pg.ps1 | Open a bash shell in running container |
+| make-itemorg.ps1 | [see DATA](../data/README.md) |
+| resume-pg.ps1 | resumes stopped container w/o resetting it |
+| start-pg.ps1 | clear rebuild and start of container |
+| stop-pg.ps1 | stop container |
+| test_all.ps1 | run all python tests w. coverage |
 
 ## Start Postgres and install cron & pg_cron
 
@@ -38,8 +49,9 @@ Guide to scripts
 6. Starts python application
 
 Notes:
-* Horrible work arounds, if you have a better way, create an issue, or put in a PR
-* It works though.
+
+- Horrible work arounds, if you have a better way, create an issue, or put in a PR
+- It works though.
 
 ## open a bash shell on Postgres container
 
