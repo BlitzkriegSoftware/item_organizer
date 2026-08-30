@@ -25,14 +25,39 @@ COMMENT ON TABLE {schema}.item
     IS 'the backlog';
 
 -- Indexes
-CREATE INDEX idx_{schema}_item_priority_id ON {schema}.item(priority_id);
-CREATE INDEX idx_{schema}_item_item_state_id ON {schema}.item(item_state_id);
 CREATE INDEX idx_{schema}_item_created_date ON {schema}.item(created_date);
 CREATE INDEX idx_{schema}_item_updated_date ON {schema}.item(updated_date);
+CREATE INDEX idx_{schema}_item_item_state_id ON {schema}.item(item_state_id);
+
+-- FK indexes
+CREATE INDEX idx_{schema}_item_priority_id ON {schema}.item(priority_id);
 CREATE INDEX idx_{schema}_item_assigned_to  ON {schema}.item(assigned_to);
 CREATE INDEX idx_{schema}_item_created_by   ON {schema}.item(created_by);
 
 -- FKs
-ALTER TABLE orders 
-ADD CONSTRAINT fk_orders_customers 
-FOREIGN KEY (customer_id) REFERENCES customers(id);
+ALTER TABLE {schema}.item 
+ADD CONSTRAINT fk_{schema}_item_priority_id
+FOREIGN KEY (priority_id) REFERENCES {schema}.priority(priority_id);
+
+ALTER TABLE {schema}.item 
+ADD CONSTRAINT fk_{schema}_item_assigned_to
+FOREIGN KEY (assigned_to) REFERENCES {schema}.user(user_id);
+
+ALTER TABLE {schema}.item 
+ADD CONSTRAINT fk_{schema}_item_created_by
+FOREIGN KEY (created_by) REFERENCES {schema}.user(user_id);
+
+-- Full Text Search
+
+-- Add a computed tsvector column with weighted fields
+ALTER TABLE {schema}.user 
+ADD COLUMN search_vector TSVECTOR
+GENERATED ALWAYS AS (
+ setweight(to_tsvector('english', COALESCE(title, '')), 'A') ||
+ setweight(to_tsvector('english', COALESCE(body, '')), 'B') 
+) STORED;
+
+-- Create the inverted index
+CREATE INDEX {schema}.full_text_search_item 
+ON {schema}.user 
+USING GIN(search_vector);
