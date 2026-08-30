@@ -17,3 +17,7 @@ RETURN QUERY
     ;
 END;
 $$ LANGUAGE plpgsql;
+
+;
+ALTER FUNCTION {schema}.item_tag_get(bigint)
+    OWNER TO postgres;

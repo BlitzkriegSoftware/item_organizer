@@ -26,3 +26,7 @@ AS $$
         WHERE org_id = p_ancestor_org_id
     );
 $$;
+
+;
+ALTER FUNCTION {schema}.is_org_or_descendant(uuid,uuid)
+    OWNER TO postgres;

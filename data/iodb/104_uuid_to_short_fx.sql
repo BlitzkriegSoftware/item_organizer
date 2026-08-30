@@ -5,3 +5,7 @@ RETURNS text AS $$
     '+/=', '-_'
   );
 $$ LANGUAGE sql IMMUTABLE STRICT;
+
+;
+ALTER FUNCTION {schema}.uuid_to_short(uuid)
+    OWNER TO postgres;

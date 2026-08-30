@@ -17,3 +17,7 @@ AS $$
         )
     );
 $$;
+
+;
+ALTER FUNCTION {schema}.item_state_fsm_valid_transition(integer,integer,uuid)
+    OWNER TO postgres;

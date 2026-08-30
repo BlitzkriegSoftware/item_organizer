@@ -9,3 +9,7 @@ AS $BODY$
     from {setting}.app_configuration 
     where setting_name = name;
 $BODY$
+
+;
+ALTER FUNCTION {schema}.app_configuration_get(character varying(128))
+    OWNER TO postgres;

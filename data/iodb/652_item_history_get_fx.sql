@@ -29,3 +29,7 @@ RETURN QUERY
 
 END;
 $$ LANGUAGE plpgsql;
+
+;
+ALTER FUNCTION {schema}.item_history_get(bigint, integer, integer)
+    OWNER TO postgres;
