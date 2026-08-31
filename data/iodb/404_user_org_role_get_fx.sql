@@ -19,7 +19,7 @@ BEGIN
     from {schema}.user_org uo 
     where (
         uo.user_id = current_user_id and 
-        ui.org_id = target_org_id
+        uo.org_id = target_org_id
     );
 
     IF role_id >= 0 THEN
@@ -44,7 +44,7 @@ BEGIN
             from {schema}.user_org uo 
             where (
                 uo.user_id = current_user_id and 
-                ui.org_id = head_org_id
+                uo.org_id = head_org_id
             );
             IF role_id >= 0 OR head_org_id = empty_uuid THEN
                 try_it = false;
@@ -53,6 +53,10 @@ BEGIN
 
     END LOOP;
 
+    if role_id is null THEN
+        role_id := -1;
+    end if;
+    
     RETURN role_id;
 END;
 $$;
