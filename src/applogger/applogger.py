@@ -1,5 +1,7 @@
+import os
 import logging
 import logging.config
+from pythonjsonlogger import jsonlogger
 
 
 def configure_logging() -> logging.Logger:
