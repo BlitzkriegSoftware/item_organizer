@@ -258,8 +258,16 @@ class datalib:
         """
         query = f"CREATE TABLE IF NOT EXISTS {schema}.{table} ("
         for c in columns:
-            query += c + ", "
-        query += ");"
+            c = c.strip()
+            query += c
+            if not c.endswith(","):
+                query += ","
+
+        query = query.strip()
+        query = query[:-1]
+        query += " );"
+
+        print(f"{query}")
 
         result = datalib.query_execute(conn, query)
         if not result:

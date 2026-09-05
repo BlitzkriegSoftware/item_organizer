@@ -39,5 +39,5 @@ if ($null -eq $GIT_ROOT) {
 # Start processing
 Push-Location $GIT_ROOT
 
-uv run coverage run -m pytest
+uv run coverage run -m pytest -s
 uv run coverage report -m
