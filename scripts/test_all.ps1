@@ -39,5 +39,12 @@ if ($null -eq $GIT_ROOT) {
 # Start processing
 Push-Location $GIT_ROOT
 
-uv run coverage run -m pytest -s
+Write-Host("-" * $Host.UI.RawUI.WindowSize.Width)
+uv run coverage run -m pytest -s -v
+Write-Host("-" * $Host.UI.RawUI.WindowSize.Width)
+Write-Host(" ")
+Write-Host(" ")
+Write-Host("-" * $Host.UI.RawUI.WindowSize.Width)
 uv run coverage report -m
+Write-Host("-" * $Host.UI.RawUI.WindowSize.Width)
+
