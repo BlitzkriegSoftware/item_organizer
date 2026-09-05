@@ -23,6 +23,10 @@ dev = [
 pythonpath = ["src"]
 testpaths = ["tests"]
 
+filterwarnings = [
+    "ignore::DeprecationWarning: pythonjsonlogger.*"
+]
+
 [tool.coverage.run]
 source = ["src"]
 omit = [
