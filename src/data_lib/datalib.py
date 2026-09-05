@@ -1,3 +1,5 @@
+from typing import Any
+
 import psycopg2
 from psycopg2.extras import RealDictCursor, RealDictRow
 import os
@@ -199,3 +201,92 @@ class datalib:
                 cursor.close()
 
         return drows
+
+    @staticmethod
+    def first_value(drows: list[RealDictRow] | None) -> Any:
+        if not drows:
+            return None
+
+        if len(drows) <= 0:
+            return None
+
+        first_val = next(iter(drows[0].values()))
+        return first_val
+
+    @staticmethod
+    def table_exists(
+        conn: psycopg2.extensions.connection,
+        schema: str,
+        table: str,
+    ) -> bool:
+        """
+        _summary_
+
+        Args:
+            conn (psycopg2.extensions.connection): connection
+            schema (str): _description_
+            table (str): _description_
+
+        Returns:
+            bool: _description_
+        """
+        query = f"SELECT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema = '{schema}' AND table_name = '{table}');"
+        drows = datalib.query_return_dict(conn, query)
+        if not drows:
+            return False
+        value = datalib.first_value(drows)
+        return value
+
+    @staticmethod
+    def table_create(
+        conn: psycopg2.extensions.connection,
+        table: str,
+        columns: list[str],
+        schema: str = "public",
+    ) -> bool:
+        """
+        Creates a table for testing
+
+        Args:
+            conn (psycopg2.extensions.connection): connection
+            table (str): table name
+            columns (list[str]): array of column definitions
+            schema (str): (default: public)
+
+        Returns:
+            bool: True on success
+        """
+        query = f"CREATE TABLE IF NOT EXISTS {schema}.{table} ("
+        for c in columns:
+            query += c + ", "
+        query += ");"
+
+        result = datalib.query_execute(conn, query)
+        if not result:
+            return False
+
+        return True
+
+    @staticmethod
+    def table_drop(
+        conn: psycopg2.extensions.connection,
+        table: str,
+        schema: str = "public",
+    ) -> bool:
+        """
+        Drop a table if it exists
+
+        Args:
+            conn (psycopg2.extensions.connection): connection
+            table (str): table name
+            schema (str, optional): Defaults to "public".
+
+        Returns:
+            bool: True on success
+        """
+        query = f"DROP TABLE IF EXISTS {schema}.{table};"
+        result = datalib.query_execute(conn, query)
+        if not result:
+            return False
+
+        return True
