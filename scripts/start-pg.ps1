@@ -181,6 +181,7 @@ docker run -d `
 	-e "PGPASSFILE=${PGPASS_FILE}" `
 	-e PGDATA='/var/lib/postgresql/data/pgdata' `
 	-e "IOR_SALT=${IOR_SALT}" `
+	-e "IOR_PORT=${PORT}" `
 	--name="${NAME}" `
 	--restart always `
 	-v "${dbPath}:${VOL}" `

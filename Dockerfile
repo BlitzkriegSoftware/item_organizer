@@ -33,7 +33,14 @@ RUN chmod +r /var/lib/postgresql/data/postgresql.conf.cron
 ENV POSTGRES_SHARED_PRELOAD_LIBRARIES="pg_cron"
 ENV CRON_DATABASE_NAME="postgres"
 ENV IOR_SALT="JDJiJDEyJGU1QTV0Zzk1VGxxVmpBLjdsRERmRnU="
+ENV IOR_DB="postgres"
+# Use: POSTGRES_USER
+# Use: PGPASSWORD 
+ENV IOR_SCHEMA="myio"
+ENV IOR_PORT="5432"
 # Install Application
+ENV PYTHONUNBUFFERED=1
+ENV LOG_LEVEL=DEBUG
 WORKDIR /src
 COPY ./pyproject.toml /src
 COPY ./src /src
