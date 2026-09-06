@@ -1,6 +1,6 @@
 import pytest
 import os
-from security.AuthManager import AuthManager
+from security_lib.auth_manager import AuthManager
 from common_helpers.base64_helpers import Base64Helper
 
 

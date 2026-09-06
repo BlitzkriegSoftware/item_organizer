@@ -3,10 +3,11 @@ from typing import Any
 import psycopg2
 from psycopg2.extras import RealDictCursor, RealDictRow
 import os
-from src.applogger.applogger import configure_logging
+from app_exceptions.db_exception import DatabaseException
+from src.app_logger.applogger import configure_logging
 
 
-class datalib:
+class DataLib:
     """
     Holder class for data library methods
     """
@@ -27,20 +28,20 @@ class datalib:
             dict[str, str]: configuration
         """
         config = {}
-        config[datalib.ENV_VAR_DB] = os.getenv(datalib.ENV_VAR_DB, "postgres")
-        config[datalib.ENV_VAR_USER] = os.getenv(datalib.ENV_VAR_USER, "postgres")
-        config[datalib.ENV_VAR_PASSWORD] = os.getenv(
-            datalib.ENV_VAR_PASSWORD, "password123-"
+        config[DataLib.ENV_VAR_DB] = os.getenv(DataLib.ENV_VAR_DB, "postgres")
+        config[DataLib.ENV_VAR_USER] = os.getenv(DataLib.ENV_VAR_USER, "postgres")
+        config[DataLib.ENV_VAR_PASSWORD] = os.getenv(
+            DataLib.ENV_VAR_PASSWORD, "password123-"
         )
-        config[datalib.ENV_VAR_HOST] = os.getenv(datalib.ENV_VAR_HOST, "localhost")
-        config[datalib.ENV_VAR_PORT] = os.getenv(datalib.ENV_VAR_PORT, "5432")
+        config[DataLib.ENV_VAR_HOST] = os.getenv(DataLib.ENV_VAR_HOST, "localhost")
+        config[DataLib.ENV_VAR_PORT] = os.getenv(DataLib.ENV_VAR_PORT, "5432")
         return config
 
     @cache
     @staticmethod
     def connection_string(connection_timeout: int = 3):
-        config = datalib.connection_config()
-        cs = f"postgresql://{config[datalib.ENV_VAR_USER]}:{config[datalib.ENV_VAR_PASSWORD]}@{config[datalib.ENV_VAR_HOST]}:{config[datalib.ENV_VAR_PORT]}/{config[datalib.ENV_VAR_DB]}?connect_timeout={connection_timeout}"
+        config = DataLib.connection_config()
+        cs = f"postgresql://{config[DataLib.ENV_VAR_USER]}:{config[DataLib.ENV_VAR_PASSWORD]}@{config[DataLib.ENV_VAR_HOST]}:{config[DataLib.ENV_VAR_PORT]}/{config[DataLib.ENV_VAR_DB]}?connect_timeout={connection_timeout}"
         return cs
 
     @staticmethod
@@ -57,7 +58,7 @@ class datalib:
         Returns:
             psycopg2.extensions.connection | None: connection
         """
-        cs = datalib.connection_string(connect_timeout_seconds)
+        cs = DataLib.connection_string(connect_timeout_seconds)
         try:
             conn = psycopg2.connect(cs)
             conn.autocommit = False
@@ -70,9 +71,9 @@ class datalib:
 
     @staticmethod
     def connection_ok() -> bool:
-        conn = datalib.connection_make(1)
+        conn = DataLib.connection_make(1)
         if conn:
-            datalib.connection_close(conn)
+            DataLib.connection_close(conn)
             return True
         else:
             return False
@@ -159,6 +160,54 @@ class datalib:
         return drows
 
     @staticmethod
+    def query_return_dict_in_one(
+        query: str,
+    ) -> list[RealDictRow] | None:
+        """
+        Does a query that returns rows, and formats each row
+        as a `dict` of column w. values.
+        Empty [] if no rows, None on error
+
+        Important: Objects should contain Schema info!
+
+        Args:
+            query (str): select query
+
+        Returns:
+            list[RealDictRow] | None: list[dict]
+        """
+        conn = DataLib.connection_make()
+        if not conn:
+            raise DatabaseException("Connection failed", "")
+        drows = DataLib.query_return_dict(conn, query)
+        DataLib.connection_close(conn)
+        return drows
+
+    @staticmethod
+    def query_return_single_value_in_one(
+        query: str,
+    ) -> Any:
+        """
+        Does a query that returns rows, and formats each row
+        as a `dict` of column w. values.
+        Empty [] if no rows, None on error
+
+        Important: Objects should contain Schema info!
+
+        Args:
+            query (str): select query
+
+        Returns:
+            list[RealDictRow] | None: list[dict]
+        """
+        conn = DataLib.connection_make()
+        if not conn:
+            raise DatabaseException("Connection failed", "")
+        drows = DataLib.query_return_dict(conn, query)
+        DataLib.connection_close(conn)
+        return DataLib.first_value(drows)
+
+    @staticmethod
     def stored_procedure_make_query(
         procedure_name: str,
         args: tuple,
@@ -209,7 +258,7 @@ class datalib:
         query: str = ""
         with conn.cursor() as cursor:
             try:
-                query = datalib.stored_procedure_make_query(
+                query = DataLib.stored_procedure_make_query(
                     procedure_name, args, schema
                 )
                 cursor.execute(query, args)
@@ -245,7 +294,7 @@ class datalib:
             list[dict], empty if no matches, None on error
         """
         drows: list[RealDictRow] | None
-        query = datalib.stored_procedure_make_query(procedure_name, args, schema)
+        query = DataLib.stored_procedure_make_query(procedure_name, args, schema)
         with conn.cursor(cursor_factory=RealDictCursor) as cursor:
             try:
                 cursor.execute(query, args)
@@ -282,7 +331,7 @@ class datalib:
             ORDER BY p.ordinal_position;
         """
         args = ""
-        result = datalib.query_return_dict(conn, query)
+        result = DataLib.query_return_dict(conn, query)
         if result:
             for row in result:
                 dt = row["data_type"]
@@ -300,10 +349,10 @@ class datalib:
         procedure_name,
         schema: str,
     ) -> bool:
-        args = datalib.stored_procedure_args_list(conn, procedure_name, schema)
+        args = DataLib.stored_procedure_args_list(conn, procedure_name, schema)
 
         query = f"DROP PROCEDURE IF EXISTS {schema}.{procedure_name}({args});"
-        result = datalib.query_execute(conn, query)
+        result = DataLib.query_execute(conn, query)
         if not result:
             return False
 
@@ -327,10 +376,10 @@ class datalib:
             bool: _description_
         """
         query = f"SELECT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema = '{schema}' AND table_name = '{table}');"
-        drows = datalib.query_return_dict(conn, query)
+        drows = DataLib.query_return_dict(conn, query)
         if not drows:
             return False
-        value = datalib.first_value(drows)
+        value = DataLib.first_value(drows)
         return value
 
     @staticmethod
@@ -365,7 +414,7 @@ class datalib:
 
         print(f"{query}")
 
-        result = datalib.query_execute(conn, query)
+        result = DataLib.query_execute(conn, query)
         if not result:
             return False
 
@@ -389,7 +438,7 @@ class datalib:
             bool: True on success
         """
         query = f"DROP TABLE IF EXISTS {schema}.{table};"
-        result = datalib.query_execute(conn, query)
+        result = DataLib.query_execute(conn, query)
         if not result:
             return False
 

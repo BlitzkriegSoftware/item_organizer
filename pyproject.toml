@@ -26,12 +26,12 @@ build-backend = "hatchling.build"
 [tool.hatch.build.targets.wheel]
 packages = [
     "src/app_exceptions",
-    "src/applogger",
-    "src/bizlogic",
+    "src/app_logger",
+    "src/biz_logic",
     "src/common_helpers",
     "src/data_lib", 
     "src/item_organizer", 
-    "src/security"
+    "src/security_lib"
 ]
 
 #[project.scripts]
