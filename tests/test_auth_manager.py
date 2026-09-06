@@ -1,12 +1,13 @@
 import pytest
 import os
-from Security.AuthManager import AuthManager
+from security.AuthManager import AuthManager
+from common_helpers.base64_helpers import Base64Helper
 
 
 def test_salt_round_trip():
     salt1 = AuthManager.Make_Salt()
-    salthash = AuthManager.To_Base64(salt1)
-    salt2 = AuthManager.From_Base64(salthash)
+    salthash = Base64Helper.to_base64(salt1)
+    salt2 = Base64Helper.from_base64(salthash)
     assert salt1 == salt2
 
 
@@ -14,12 +15,12 @@ def test_hash_password():
     fromenv: bool = False
     salthash = os.getenv("IOR_SALT")
     if salthash:
-        salt1 = AuthManager.From_Base64(salthash)
+        salt1 = Base64Helper.from_base64(salthash)
         fromenv = True
     else:
         salt1 = AuthManager.Make_Salt()
 
-    salthash = AuthManager.To_Base64(salt1)
+    salthash = Base64Helper.to_base64(salt1)
     print("Salt ->", salthash, "<-, from ENV: ", fromenv)
 
     password = "password123-"
