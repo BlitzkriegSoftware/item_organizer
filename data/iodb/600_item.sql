@@ -14,6 +14,7 @@ CREATE TABLE IF NOT EXISTS {schema}.item
     created_by uuid DEFAULT '00000000-0000-0000-0000-000000000000'::uuid,
     assigned_to uuid,
     priority_id integer NOT NULL DEFAULT 0,
+    rank integer not null DEFAULT 0,
     search_vector tsvector GENERATED ALWAYS AS (
         setweight(to_tsvector('english'::regconfig, COALESCE(title, ''::text)), 'A'::"char") || 
         setweight(to_tsvector('english'::regconfig, COALESCE(body, ''::text)), 'B'::"char")
