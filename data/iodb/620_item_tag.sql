@@ -24,11 +24,3 @@ ALTER TABLE IF EXISTS {schema}.item_tag
 
 COMMENT ON TABLE {schema}.item_tag
     IS 'item tag cloud';
-
--- Indexes
-CREATE INDEX idx_{schema}_tag_item_id ON {schema}.item_tag(item_id);
-
--- FKs
-ALTER TABLE {schema}.item_tag 
-ADD CONSTRAINT fk_{schema}_item_tag_item_id
-FOREIGN KEY (item_id) REFERENCES {schema}.item(item_id);
