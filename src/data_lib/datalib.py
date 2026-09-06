@@ -1,3 +1,4 @@
+from functools import cache
 from typing import Any
 import psycopg2
 from psycopg2.extras import RealDictCursor, RealDictRow
@@ -10,14 +11,37 @@ class datalib:
     Holder class for data library methods
     """
 
+    ENV_VAR_DB: str = "IOR_DB"
+    ENV_VAR_USER: str = "POSTGRES_USER"
+    ENV_VAR_PASSWORD: str = "PGPASSWORD"
+    ENV_VAR_HOST: str = "IOR_HOST"
+    ENV_VAR_PORT: str = "IOR_DB_PORT"
+
+    @cache
     @staticmethod
-    def connection_ok() -> bool:
-        conn = datalib.connection_make(1)
-        if conn:
-            datalib.connection_close(conn)
-            return True
-        else:
-            return False
+    def connection_config() -> dict[str, str]:
+        """
+        Fetches configuration from environment variables
+
+        Returns:
+            dict[str, str]: configuration
+        """
+        config = {}
+        config[datalib.ENV_VAR_DB] = os.getenv(datalib.ENV_VAR_DB, "postgres")
+        config[datalib.ENV_VAR_USER] = os.getenv(datalib.ENV_VAR_USER, "postgres")
+        config[datalib.ENV_VAR_PASSWORD] = os.getenv(
+            datalib.ENV_VAR_PASSWORD, "password123-"
+        )
+        config[datalib.ENV_VAR_HOST] = os.getenv(datalib.ENV_VAR_HOST, "localhost")
+        config[datalib.ENV_VAR_PORT] = os.getenv(datalib.ENV_VAR_PORT, "5432")
+        return config
+
+    @cache
+    @staticmethod
+    def connection_string(connection_timeout: int = 3):
+        config = datalib.connection_config()
+        cs = f"postgresql://{config[datalib.ENV_VAR_USER]}:{config[datalib.ENV_VAR_PASSWORD]}@{config[datalib.ENV_VAR_HOST]}:{config[datalib.ENV_VAR_PORT]}/{config[datalib.ENV_VAR_DB]}?connect_timeout={connection_timeout}"
+        return cs
 
     @staticmethod
     def connection_make(
@@ -33,28 +57,25 @@ class datalib:
         Returns:
             psycopg2.extensions.connection | None: connection
         """
-        ior_db = os.getenv("IOR_DB", "postgres")
-        postgres_user = os.getenv("POSTGRES_USER", "postgres")
-        pgpass = os.getenv("PGPASSWORD", "password123-")
-        ior_host = "localhost"
-        ior_port = os.getenv("IOR_PORT", "5432")
-
+        cs = datalib.connection_string(connect_timeout_seconds)
         try:
-            conn = psycopg2.connect(
-                dbname=ior_db,
-                user=postgres_user,
-                password=pgpass,
-                host=ior_host,
-                port=ior_port,
-                connect_timeout=connect_timeout_seconds,
-            )
+            conn = psycopg2.connect(cs)
             conn.autocommit = False
         except Exception:  # pragma: no cover
             logger = configure_logging()
-            logger.exception("make: %s,%s", ior_db, postgres_user)
+            logger.exception("make: %s", cs)
             conn = None
 
         return conn
+
+    @staticmethod
+    def connection_ok() -> bool:
+        conn = datalib.connection_make(1)
+        if conn:
+            datalib.connection_close(conn)
+            return True
+        else:
+            return False
 
     @staticmethod
     def connection_close(conn: psycopg2.extensions.connection | None):

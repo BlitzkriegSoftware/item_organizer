@@ -37,14 +37,17 @@ ENV IOR_DB="postgres"
 # Use: POSTGRES_USER
 # Use: PGPASSWORD 
 ENV IOR_SCHEMA="myio"
-ENV IOR_PORT="5432"
+ENV IOR_HOST="localhost"
+ENV IOR_DB_PORT="5432"
 # Install Application
 ENV PYTHONUNBUFFERED=1
 ENV LOG_LEVEL=DEBUG
-WORKDIR /src
-COPY ./pyproject.toml /src
-COPY ./src /src
 ENV PATH="/app/.venv/bin:$PATH"
+WORKDIR /src/
+COPY ./pyproject.toml /src/
+COPY ./uv.lock /src/
+COPY ./LICENSE/ /src/
+COPY ./src/ /src/
 RUN uv sync
 # Run the application
 # RUN uv run main.py

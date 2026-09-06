@@ -1,7 +1,7 @@
 import os
 import logging
 import logging.config
-from pythonjsonlogger import jsonlogger
+from pythonjsonlogger import jsonlogger  # noqa: F401
 
 
 def configure_logging() -> logging.Logger:

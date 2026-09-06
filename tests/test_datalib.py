@@ -163,3 +163,8 @@ class TestDataLib:
             datalib.connection_close(conn)
 
         return
+
+    def test_connection_string(self):
+        cs = datalib.connection_string(5)
+        assert cs is not None
+        print(cs)

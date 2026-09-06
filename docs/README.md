@@ -13,5 +13,13 @@ Make sure to read:
 | Variable | Description | Example |
 | :--- | :--- | :--- |
 | IOR_SQL | Connection string | postgresql://postgres:password123-@localhost:5432/postgres |
-| IOR_PORT | Port the application is served on | 8096 |
-| | | |
+| IOR_HOST | Hostname | localhost |
+| POSTGRES_USER | postgres user | postgres |
+| PGPASSWORD | password | password123- |
+| IOR_DB_PORT | postgres port | 5432 |
+| IOR_DB | DB Name | postgres |
+| IOR_SCHEMA | schema | myio is the default, change this if you generate some other schema |
+| IOR_SALT | password salt | must be generated and set as an environment variable, must not change after IO has been made, use unit tests to generate |
+| UV_NO_DEV | Cache UV build steps | leave unless issues |
+| PYTHONUNBUFFERED | Stop buffering log output | solves lost log issue in containers | 
+| LOG_LEVEL | DEBUG, INFO, WARNING, ERROR, CRITICAL | Debug is default |
