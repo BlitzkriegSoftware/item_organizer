@@ -7,3 +7,9 @@ INSERT INTO {schema}.user_org(
             '00000000-0000-0000-0000-000000000000', 
             8);
             
+-- 2nd user
+INSERT INTO {schema}.user_org(
+	user_id, org_id, org_role_id)
+	VALUES ('00000000-0000-0000-0000-000000000001', 
+            '00000000-0000-0000-0000-000000000001', 
+            4);

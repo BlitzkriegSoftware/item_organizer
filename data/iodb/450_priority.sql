@@ -14,3 +14,6 @@ TABLESPACE pg_default;
 
 ALTER TABLE IF EXISTS {schema}.priority
     OWNER to postgres;
+
+COMMENT ON TABLE {schema}.priority
+    IS 'ITIL Priority merged with app-dev';

@@ -16,7 +16,7 @@ DECLARE
 BEGIN 
 
     IF test_flag > 0 THEN
-        call {schema}.reset_backlog();
+        call {schema}.reset_backlog(9999);
         RAISE NOTICE 'reset_backlog';
     END IF;
 
@@ -27,7 +27,7 @@ BEGIN
     END LOOP;
 
     IF test_flag > 1 THEN
-        call {schema}.reset_backlog();
+        call {schema}.reset_backlog(9999);
         RAISE NOTICE 'reset_backlog';
     END IF;
 
