@@ -5,9 +5,7 @@ By: Claude AI as modified by author
 """
 
 import datetime
-
 import pytest
-
 from common_helpers.datetime_helpers import DateTimeHelpers
 
 
@@ -138,10 +136,22 @@ def test_utc_offset_equivalence_z_vs_explicit(iso8601, dt):
     assert parsed == dt
     assert parsed.utcoffset() == datetime.timedelta(0)
 
-def test_round_trip(iso8601,dt):
+
+@pytest.mark.parametrize(
+    "iso8601, dt",
+    [
+        pytest.param(
+            "2026-09-07T12:00:00Z",
+            datetime.datetime(2026, 9, 7, 12, 0, tzinfo=datetime.timezone.utc),
+            id="utc-basic-roundtrip",
+        ),
+    ],
+)
+def test_round_trip(iso8601, dt):
     parsed = DateTimeHelpers.to_iso8601_with_z(dt)
-    assert dt == parsed
+    assert iso8601 == parsed
+
 
 def test_stamp():
-    parsed = DateTimeHelpers.stamp_now_with_z():
+    parsed = DateTimeHelpers.stamp_now_with_z()
     assert parsed is not None

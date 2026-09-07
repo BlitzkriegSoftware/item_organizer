@@ -1,7 +1,7 @@
 import bcrypt
 
 
-class AuthManager:
+class AuthLibrary:
     """Manages secure database operations and password hashing."""
 
     @staticmethod
@@ -12,7 +12,7 @@ class AuthManager:
 
     @staticmethod
     def Hash_Password(salt: bytes, password: str) -> str:
-        """Hashes a plain-text password using bcrypt with a random salt."""
+        """Hashes a plain-text password using bcrypt with a salt."""
         # Convert string to bytes
         password_bytes = password.encode("utf-8")
         hashed_bytes = bcrypt.hashpw(password_bytes, salt)

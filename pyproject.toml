@@ -6,6 +6,9 @@ readme = "README.md"
 requires-python = ">=3.14"
 dependencies = [
     "bcrypt>=5.0.0",
+    "cryptography>=50.0.1",
+    "cryptography-fernet>=0.1.0",
+    "encryption>=0.0.1",
     "psycopg2>=2.9.12",
     "psycopg2-binary>=2.9.12",
     "python-json-logger>=4.2.0",
