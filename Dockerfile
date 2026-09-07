@@ -1,4 +1,5 @@
 FROM postgres:16.9-trixie
+ARG CACHE_BUST=1
 # Install packages
 RUN apt update -y
 RUN apt upgrade -y
@@ -43,11 +44,15 @@ ENV IOR_DB_PORT="5432"
 ENV PYTHONUNBUFFERED=1
 ENV LOG_LEVEL=DEBUG
 ENV PATH="/app/.venv/bin:$PATH"
-WORKDIR /src/
-COPY ./pyproject.toml /src/
-COPY ./uv.lock /src/
-COPY ./LICENSE/ /src/
-COPY ./src/ /src/
-RUN uv sync
+ENV README_FILE_PATH="./.working/README.md"
+RUN mkdir -p /app/src
+WORKDIR /app
+COPY ./pyproject.toml .
+COPY ./uv.lock .
+COPY ./LICENSE/ .
+COPY $README_FILE_PATH .
+WORKDIR /app/src
+COPY ./src .
+# RUN uv sync
 # Run the application
 # RUN uv run main.py

@@ -137,6 +137,10 @@ $null = (setx POSTGRES_PASSWORD "${PASSWORD}") 2> $null
 [string]$dbPath = Join-Path -Path $GIT_ROOT -ChildPath "data"
 Write-Debug "Data Path: ${dbPath}"
 
+# Working path
+[string]$workPath = Join-Path -Path $GIT_ROOT -ChildPath ".working"
+Write-Debug "Working Path: ${workPath}"
+
 # Create .pgpass file
 $PGPASS_LINES = @(
 	"# File: $HOME/.pgpass",
@@ -163,10 +167,27 @@ $FILES_TO_PATCH = @(
 	".\data\postgresql.conf.cron"
 )
 
+# Make Image Readme.md
+
+$README_FILE = Join-Path -Path $workPath -ChildPath "README.md"
+$README_LINES = @(
+	"# ${CUSTOM_IMAGE}",
+	"",
+	"PostgreSQL 16 with Item-Organizer",
+	
+	"## Ports",
+	"",
+	"- DB_PORT: ${DB_PORT}",
+	"- APP_PORT: ${APP_PORT}"
+)
+$README_LINES | Set-Content -Path $README_FILE -encoding UTF8 
+Write-Output "Created ${README_FILE}"
+
 $SQL_FILES = Get-ChildItem -Path "${dbpath}\*.sql" -File -Recurse
 $SCRIPT_FILES = Get-ChildItem -Path "${dbpath}\*.sh" -File -Recurse
+$WORKING_FILES = Get-ChildItem -Path "${workPath}\*.*" -File -Recurse
 
-$FILES_TO_PATCH = $FILES_TO_PATCH + $SQL_FILES + $SCRIPT_FILES;
+$FILES_TO_PATCH = $FILES_TO_PATCH + $SQL_FILES + $SCRIPT_FILES + $WORKING_FILES;
 foreach ($FilePath in $FILES_TO_PATCH) {
 	(Get-Content -Raw -Path $FilePath) -replace "`r`n", "`n" | Set-Content -Path $FilePath -NoNewline
 }
@@ -184,6 +205,8 @@ if ( [string]::IsNullOrEmpty("${IOR_SALT}") ) {
 	IOR_SALT="JDJiJDEyJGU1QTV0Zzk1VGxxVmpBLjdsRERmRnU="
 }
 
+$README_FILE_PATH = [System.IO.Path]::GetRelativePath("${GIT_ROOT}", "${README_FILE}")
+
 # Start the container
 docker run -d `
 	-e "POSTGRES_USER=${USERNAME}" `
@@ -194,6 +217,7 @@ docker run -d `
 	-e "IOR_SALT=${IOR_SALT}" `
 	-e "IOR_DB_PORT=${DB_PORT}" `
 	-e "IOR_SCHEMA=${IOR_SCHEMA}" `
+	-e "README_FILE_PATH=${README_FILE_PATH}" `
 	--name="${NAME}" `
 	--restart always `
 	-v "${dbPath}:${VOL}" `

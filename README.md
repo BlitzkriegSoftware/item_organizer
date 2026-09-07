@@ -28,13 +28,7 @@ Classic Python + Postgres
 
 in powershell [setx](https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/setx) is friend followed by a **restart of the shell**, or if you have [chocolatey](https://chocolatey.org/) installed, `refreshenv`.
 
-| Variable | Description | Example |
-|:---|:---|:---|
-| IOR_SQL | Connection string (2) | See Text  |
-| IOR_SALT | Password Salt (1) | JDJiJDEyJGU1QTV0Zzk1VGxxVmpBLjdsRERmRnU= |
-| | | |
-| | | |
-| | | |
+See [Admin](./docs/README.md)
 
 (1) See [auth manager](tests\test_auth_manager.py)::test_hash_password to see how this is generated
 (2) See connection string below
