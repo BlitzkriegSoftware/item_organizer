@@ -18,6 +18,8 @@ class DataLib:
     ENV_VAR_HOST: str = "IOR_HOST"
     ENV_VAR_PORT: str = "IOR_DB_PORT"
 
+    DEFAULT_CONNECTION_TIMEOUT_SECONDS: int = 3
+
     @cache
     @staticmethod
     def connection_config() -> dict[str, str]:
@@ -39,14 +41,14 @@ class DataLib:
 
     @cache
     @staticmethod
-    def connection_string(connection_timeout: int = 3):
+    def connection_string(connection_timeout: int = DEFAULT_CONNECTION_TIMEOUT_SECONDS):
         config = DataLib.connection_config()
         cs = f"postgresql://{config[DataLib.ENV_VAR_USER]}:{config[DataLib.ENV_VAR_PASSWORD]}@{config[DataLib.ENV_VAR_HOST]}:{config[DataLib.ENV_VAR_PORT]}/{config[DataLib.ENV_VAR_DB]}?connect_timeout={connection_timeout}"
         return cs
 
     @staticmethod
     def connection_make(
-        connect_timeout_seconds: int = 3,
+        connect_timeout_seconds: int = DEFAULT_CONNECTION_TIMEOUT_SECONDS,
     ) -> psycopg2.extensions.connection | None:
         """
         For the containers environment variables creates
@@ -123,6 +125,45 @@ class DataLib:
                     conn.rollback()
             finally:
                 cursor.close()
+
+        return isOk
+
+    @staticmethod
+    def query_execute_in_one(
+        query: str,
+    ) -> bool:
+        """
+        Execute a query that returns no rows returns true if no errors
+        false if not, and does a rollback!
+
+        Important: Objects should contain Schema info!
+
+        Args:
+            conn (psycopg2.extensions.connection): connection
+            query (str): query with must be a valid SQL
+
+        Returns:
+            bool: True on success
+        """
+        isOk: bool = True
+        conn = DataLib.connection_make(DataLib.DEFAULT_CONNECTION_TIMEOUT_SECONDS)
+        if not conn:
+            raise DatabaseException("unable to connec", query)
+
+        with conn.cursor() as cursor:
+            try:
+                cursor.execute(query)
+                conn.commit()
+            except Exception:  # pragma: no cover
+                isOk = False
+                logger = configure_logging()
+                logger.exception("query: %s", query)
+                if conn:
+                    conn.rollback()
+            finally:
+                cursor.close()
+
+        DataLib.connection_close(conn)
 
         return isOk
 

@@ -2,6 +2,7 @@ import os
 
 from app_exceptions.configuration_exception import ConfigurationException
 from app_exceptions.security_exception import SecurityException
+from app_exceptions.validation_exception import ValidationException
 from data_lib.datalib import DataLib
 from security_lib.auth_manager import AuthManager
 from common_helpers.base64_helpers import Base64Helper
@@ -11,6 +12,8 @@ class UserManager:
     """
     Manager Users
     """
+
+    PASSWORD_HASH_NEEDS_CONFIRM = "CONFIRM"
 
     @staticmethod
     def login(email: str, password: str):
@@ -44,3 +47,24 @@ class UserManager:
         result = AuthManager.Verify_Password(password, hashed)
         if not result:
             raise SecurityException("Invalid Login", email)
+
+    @staticmethod
+    def add_user(
+        email: str,
+        fullname: str,
+        icon_url: str,
+    ):
+        IOR_SCHEMA = os.getenv("IOR_SCHEMA", "")
+        if not IOR_SCHEMA:
+            raise ConfigurationException("Schema Required", "IOR_SCHEMA", "env")
+
+        if not email:
+            raise ValidationException("must not be empty", "email")
+
+        if not fullname:
+            raise ValidationException("must not be empty", "email")
+
+        query = f"insert into {IOR_SCHEMA}.user (email, user_display_name, user_icon_uri, password_hash) values ('{email}','{fullname}','{icon_url}','{UserManager.PASSWORD_HASH_NEEDS_CONFIRM}');"
+        result = DataLib.query_execute_in_one(query)
+        if not result:
+            raise SecurityException("Unable to add user", email)
