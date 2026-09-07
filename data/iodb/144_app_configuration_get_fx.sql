@@ -1,6 +1,8 @@
-CREATE or replace FUNCTION {setting}.app_configuration_get
+DROP FUNCTION IF EXISTS {schema}.app_configuration_get(text)
+
+CREATE or replace FUNCTION {schema}.app_configuration_get
     (
-        name character varying(128)
+        name text
 	) 
 RETURNS character varying(128)
  LANGUAGE 'sql'
@@ -11,5 +13,5 @@ AS $BODY$
 $BODY$
 
 ;
-ALTER FUNCTION {schema}.app_configuration_get(character varying(128))
+ALTER FUNCTION {schema}.app_configuration_get(text)
     OWNER TO postgres;

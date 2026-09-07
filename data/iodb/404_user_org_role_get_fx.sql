@@ -1,3 +1,5 @@
+DROP FUNCTION IF EXISTS {schema}.user_org_role_get(uuid,uuid);
+
 CREATE or replace FUNCTION {schema}.user_org_role_get(
     current_user_id uuid,
     target_org_id uuid
@@ -61,6 +63,6 @@ BEGIN
 END;
 $$;
 
- ;
+;
 ALTER FUNCTION {schema}.user_org_role_get(uuid,uuid)
     OWNER TO postgres;

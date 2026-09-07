@@ -139,6 +139,7 @@ Write-Debug "Data Path: ${dbPath}"
 
 # Working path
 [string]$workPath = Join-Path -Path $GIT_ROOT -ChildPath ".working"
+New-Item -ItemType Directory -Force -Path $workPath | Out-Null
 Write-Debug "Working Path: ${workPath}"
 
 # Create .pgpass file

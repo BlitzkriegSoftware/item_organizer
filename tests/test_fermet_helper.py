@@ -11,18 +11,26 @@ def test_fermet_round_trip():
 
     from_env: bool = False
     IOR_FERMAT = os.getenv("IOR_FERMAT", "")
+    key: bytes = b""
     if IOR_FERMAT:
         from_env = True
         if Base64Helper.is_base64(IOR_FERMAT):
             key = Base64Helper.from_base64(IOR_FERMAT)
         else:
-            key = IOR_FERMAT
+            key = IOR_FERMAT.encode("utf8")
     else:
         key = FermetHelper.generate_key()
         IOR_FERMAT = Base64Helper.to_base64(key)
 
     print(f"setx IOR_FERMAT '{IOR_FERMAT}' # From Env {from_env}")
 
-    cyphered = FermetHelper.encrypt_message(expected, key)
-    actual = FermetHelper.decrypt_message(cyphered, key)
+    cyphered = FermetHelper.encrypt_message_bytes(expected, key)
+    actual = FermetHelper.decrypt_message_bytes(cyphered, key)
+    assert expected == actual
+
+
+def test_round_trip_env_key():
+    expected = "the quick brown fox jumped over the lazy dog."
+    cyphered = FermetHelper.encrypt_message(expected)
+    actual = FermetHelper.decrypt_message(cyphered)
     assert expected == actual

@@ -495,3 +495,11 @@ class DataLib:
 
         first_val = next(iter(drows[0].values()))
         return first_val
+
+    @staticmethod
+    def has_rows(drows: list[RealDictRow] | None) -> bool:
+        if not drows:
+            return False
+        if len(drows) > 0:
+            return True
+        return False

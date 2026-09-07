@@ -1,5 +1,5 @@
 FROM postgres:16.9-trixie
-ARG CACHE_BUST=1
+#ARG CACHE_BUST=1
 # Install packages
 RUN apt update -y
 RUN apt upgrade -y
