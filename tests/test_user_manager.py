@@ -56,6 +56,11 @@ def test_make_disable_user():
     fullname = "test 123"
     iconurl = ""
 
+    query = f"delete from {IOR_SCHEMA}.user where email = '{email}';"
+    DataLib.query_execute_in_one(query)
+    if not query:
+        pytest.fail("Unable to cleanup")
+
     try:
         UserManager.add_user(email, fullname, iconurl)
     except Exception as ex:
@@ -73,15 +78,15 @@ def test_make_disable_user():
     except Exception as ex:
         pytest.fail(str(ex))
 
-    # try:
-    #     status = UserManager.user_status(email)
-    #     if status != UserStatus.DISABLED:
-    #         pytest.fail(f"Should be {UserStatus.DISABLED} was {status}")
-    # except Exception as ex:
-    #     pytest.fail(str(ex))
+    try:
+        status = UserManager.user_status(email)
+        if status != UserStatus.DISABLED:
+            pytest.fail(f"Should be {UserStatus.DISABLED} was {status}")
+    except Exception as ex:
+        pytest.fail(str(ex))
 
-    # try:
-    #     query = f"delete from {IOR_SCHEMA}.user where email = '{email}';"
-    #     DataLib.query_execute_in_one(query)
-    # except Exception as ex:
-    #     pytest.fail(str(ex))
+    try:
+        query = f"delete from {IOR_SCHEMA}.user where email = '{email}';"
+        DataLib.query_execute_in_one(query)
+    except Exception as ex:
+        pytest.fail(str(ex))

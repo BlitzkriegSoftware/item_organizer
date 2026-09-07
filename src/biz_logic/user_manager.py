@@ -211,13 +211,15 @@ class UserManager:
 
         query = f"select password_hash from {IOR_SCHEMA}.user where email = '{email}';"
         result = DataLib.query_return_single_value_in_one(query)
+        result = str(result)
+
         if not result:
             return UserStatus.NOTUSER
 
-        if result == UserStatus.CONFIRM:
+        if UserStatus.CONFIRM.casefold() in result.casefold():
             return UserStatus.CONFIRM
 
-        if result == UserStatus.DISABLED:
+        if UserStatus.DISABLED.casefold() in result.casefold():
             return UserStatus.DISABLED
 
         return UserStatus.ACTIVE
