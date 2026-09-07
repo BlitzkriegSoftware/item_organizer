@@ -20,6 +20,7 @@ Make sure to read:
 | IOR_DB | DB Name | postgres |
 | IOR_SCHEMA | schema | myio is the default, change this if you generate some other schema |
 | IOR_SALT | password salt | must be generated and set as an environment variable, must not change after IO has been made, use unit tests to generate |
+| IOR_FERMAT | encryption key | must be generated andd set as an environment variable, must not change after IO has been made, use unit tests to generate |
 | UV_NO_DEV | Cache UV build steps | leave unless issues |
 | PYTHONUNBUFFERED | Stop buffering log output | solves lost log issue in containers | 
 | LOG_LEVEL | DEBUG, INFO, WARNING, ERROR, CRITICAL | Debug is default |

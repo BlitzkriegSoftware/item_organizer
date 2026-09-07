@@ -200,9 +200,15 @@ $null = (Remove-Item -Path $pgDir -Recurse -Force) 2> $null
 #$null = (docker pull $IMAGE) 2> $null
 docker build --progress=plain -t "${CUSTOM_IMAGE}" .
 
+# Required encryption support variables
 $IOR_SALT = $env:IOR_SALT
 if ( [string]::IsNullOrEmpty("${IOR_SALT}") ) {
-	IOR_SALT="JDJiJDEyJGU1QTV0Zzk1VGxxVmpBLjdsRERmRnU="
+	$IOR_SALT = "JDJiJDEyJGU1QTV0Zzk1VGxxVmpBLjdsRERmRnU="
+}
+
+$IOR_FERMAT = $env:IOR_FERMAT
+if ( [string]::IsNullOrEmpty("${IOR_FERMAT}") ) {
+	$IOR_FERMAT = 'dENwNS1GVGdKZUhzdFdCcC1VMGtmNl9ZVTBpZWpWLWlhcHd1dUY1M0R2MD0='
 }
 
 $README_FILE_PATH = [System.IO.Path]::GetRelativePath("${GIT_ROOT}", "${README_FILE}")
@@ -215,6 +221,7 @@ docker run -d `
 	-e "PGPASSFILE=${PGPASS_FILE}" `
 	-e PGDATA='/var/lib/postgresql/data/pgdata' `
 	-e "IOR_SALT=${IOR_SALT}" `
+	-e "IOR_FERMAT=${IOR_FERMAT}" `
 	-e "IOR_DB_PORT=${DB_PORT}" `
 	-e "IOR_SCHEMA=${IOR_SCHEMA}" `
 	-e "README_FILE_PATH=${README_FILE_PATH}" `
