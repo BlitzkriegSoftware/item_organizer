@@ -147,8 +147,8 @@ class DataLib:
         """
         isOk: bool = True
         conn = DataLib.connection_make(DataLib.DEFAULT_CONNECTION_TIMEOUT_SECONDS)
-        if not conn:
-            raise DatabaseException("unable to connec", query)
+        if not conn:  # pragma: no cover
+            raise DatabaseException("unable to connect", query)
 
         with conn.cursor() as cursor:
             try:
@@ -218,7 +218,7 @@ class DataLib:
             list[RealDictRow] | None: list[dict]
         """
         conn = DataLib.connection_make()
-        if not conn:
+        if not conn:  # pragma: no cover
             raise DatabaseException("Connection failed", "")
         drows = DataLib.query_return_dict(conn, query)
         DataLib.connection_close(conn)
@@ -242,7 +242,7 @@ class DataLib:
             list[RealDictRow] | None: list[dict]
         """
         conn = DataLib.connection_make()
-        if not conn:
+        if not conn:  # pragma: no cover
             raise DatabaseException("Connection failed", "")
         drows = DataLib.query_return_dict(conn, query)
         DataLib.connection_close(conn)
@@ -312,6 +312,35 @@ class DataLib:
                     conn.rollback()
             finally:
                 cursor.close()
+
+        return isOk
+
+    @staticmethod
+    def stored_procedure_execute_all_in_one(
+        procedure_name: str,
+        args: tuple,
+        schema: str = "public",
+    ) -> bool:
+        """
+        Execute a SP with args
+        Rollsback on failure
+
+        Args:
+            procedure_name (str): stored procedure name w. schema
+            args (tuple): args list
+            schema (str): schema
+
+        Returns:
+            bool: True on success
+        """
+        isOk: bool = True
+        conn = DataLib.connection_make()
+        if not conn:  # pragma: no cover
+            raise DatabaseException("Unable to open db", procedure_name)
+
+        isOk = DataLib.stored_procedure_execute(conn, procedure_name, args, schema)
+
+        DataLib.connection_close(conn)
 
         return isOk
 

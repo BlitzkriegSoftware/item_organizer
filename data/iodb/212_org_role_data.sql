@@ -20,3 +20,6 @@ INSERT INTO {schema}.org_role(
 	org_role_id, role_title)
 	VALUES (8, 'owner');
 
+INSERT INTO {schema}.org_role(
+	org_role_id, role_title)
+	VALUES (16, 'admin');

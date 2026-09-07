@@ -86,7 +86,24 @@ def test_make_disable_user():
         pytest.fail(str(ex))
 
     try:
-        query = f"delete from {IOR_SCHEMA}.user where email = '{email}';"
-        DataLib.query_execute_in_one(query)
+        UserManager.user_remove_last_resort(email)
     except Exception as ex:
         pytest.fail(str(ex))
+
+
+def test_user_org_role_get():
+    email = DataLib.query_return_single_value_in_one(
+        "select email from myio.user order by user_id DESC limit 1;"
+    )
+
+    org_id = DataLib.query_return_single_value_in_one(
+        "select org_id from myio.organization order by org_id DESC limit 1;"
+    )
+
+    expected = 8
+    UserManager.user_org_add_by_email(email, org_id, expected)
+
+    actual = UserManager.user_org_role_get_by_email(email, org_id)
+    assert expected == actual
+
+    UserManager.user_org_remove_by_email(email, org_id)

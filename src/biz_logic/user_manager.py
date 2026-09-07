@@ -1,14 +1,16 @@
 from datetime import timezone, datetime
 import os
-
-import pytest
+import uuid
 
 from app_exceptions.configuration_exception import ConfigurationException
+from app_exceptions.db_exception import DatabaseException
 from app_exceptions.security_exception import SecurityException
 from app_exceptions.validation_exception import ValidationException
 from biz_logic.user_status import UserStatus
+from common_helpers.convert_helpers import ConvertHelpers
 from common_helpers.datetime_helpers import DateTimeHelpers
 from common_helpers.type_validators import TypeValidators
+from common_helpers.uuid_helper import UuidHelper
 from data_lib.datalib import DataLib
 from security_lib.auth_library import AuthLibrary
 from common_helpers.base64_helpers import Base64Helper
@@ -21,6 +23,7 @@ class UserManager:
     """
 
     RESET_STAMP_TOLERANCE_MINUTES = 30
+    VALID_USER_ORG_ROLE_IDS = [0, 1, 2, 4, 8, 16]
 
     @staticmethod
     def login(email: str, password: str):
@@ -38,11 +41,11 @@ class UserManager:
             SecurityException: bad login
         """
         IOR_SALT = os.getenv("IOR_SALT", "")
-        if not IOR_SALT:
+        if not IOR_SALT:  # pragma: no cover
             raise ConfigurationException("Salt Required", "IOR_SALT", "env")
 
         IOR_SCHEMA = os.getenv("IOR_SCHEMA", "")
-        if not IOR_SCHEMA:
+        if not IOR_SCHEMA:  # pragma: no cover
             raise ConfigurationException("Schema Required", "IOR_SCHEMA", "env")
 
         query = f"select password_hash from {IOR_SCHEMA}.user where email='{email}';"
@@ -78,7 +81,7 @@ class UserManager:
             SecurityException: unable to add user
         """
         IOR_SCHEMA = os.getenv("IOR_SCHEMA", "")
-        if not IOR_SCHEMA:
+        if not IOR_SCHEMA:  # pragma: no cover
             raise ConfigurationException("Schema Required", "IOR_SCHEMA", "env")
 
         if not email:
@@ -157,7 +160,7 @@ class UserManager:
             _type_: b64 embeddable secret
         """
         IOR_FERMAT = os.getenv("IOR_FERMAT", "")
-        if not IOR_FERMAT:
+        if not IOR_FERMAT:  # pragma: no cover
             raise ConfigurationException("CryptoKey Required", "IOR_FERMAT", "env")
 
         if not email:
@@ -175,7 +178,7 @@ class UserManager:
         limit: int = RESET_STAMP_TOLERANCE_MINUTES,
     ):
         IOR_FERMAT = os.getenv("IOR_FERMAT", "")
-        if not IOR_FERMAT:
+        if not IOR_FERMAT:  # pragma: no cover
             raise ConfigurationException("CryptoKey Required", "IOR_FERMAT", "env")
 
         if not email:
@@ -205,9 +208,18 @@ class UserManager:
 
     @staticmethod
     def user_status(email: str) -> UserStatus:
+        """
+        Gets user status
+
+        Args:
+            email (str): (sic)
+
+        Returns:
+            UserStatus: Enum
+        """
         IOR_SCHEMA = os.getenv("IOR_SCHEMA", "")
-        if not IOR_SCHEMA:
-            pytest.fail("IOR_SCHEMA missing")
+        if not IOR_SCHEMA:  # pragma: no cover
+            raise ConfigurationException("Schema Required", "IOR_SCHEMA", "env")
 
         query = f"select password_hash from {IOR_SCHEMA}.user where email = '{email}';"
         result = DataLib.query_return_single_value_in_one(query)
@@ -223,3 +235,234 @@ class UserManager:
             return UserStatus.DISABLED
 
         return UserStatus.ACTIVE
+
+    @staticmethod
+    def user_remove_last_resort(email: str):
+        IOR_SCHEMA = os.getenv("IOR_SCHEMA", "")
+        if not IOR_SCHEMA:  # pragma: no cover
+            raise ConfigurationException("Schema Required", "IOR_SCHEMA", "env")
+
+        if not email:
+            raise ValidationException("Empty", "email")
+
+        procedure_name = "user_force_remove"
+        args = (email,)
+        isOk = DataLib.stored_procedure_execute_all_in_one(
+            procedure_name, args, IOR_SCHEMA
+        )
+        if not isOk:
+            raise DatabaseException("Execution Failure", procedure_name)
+
+    @staticmethod
+    def user_org_add_by_email(
+        email: str,
+        org_id: uuid.UUID | str,
+        org_role_id: int,
+    ):
+        IOR_SCHEMA = os.getenv("IOR_SCHEMA", "")
+        if not IOR_SCHEMA:  # pragma: no cover
+            raise ConfigurationException("Schema Required", "IOR_SCHEMA", "env")
+
+        if not email:
+            raise ValueError("email required")
+
+        query = f"select user_id from {IOR_SCHEMA}.user where email ='{email}';"
+        user_id = DataLib.query_return_single_value_in_one(query)
+        if not user_id:
+            raise SecurityException("user not found", email)
+
+        user_id = str(user_id)
+        user_id = UuidHelper.to_uuid(user_id)
+
+        if not org_id:
+            raise ValueError("org_id must be UUID (1)")
+
+        if isinstance(org_id, str):
+            if not UuidHelper.is_valid_uuid(org_id):
+                raise ValueError("org_id must be UUID (2)")
+            else:
+                org_id = UuidHelper.to_uuid(org_id)
+
+        UserManager.user_org_add_by_id(user_id, org_id, org_role_id)
+
+    @staticmethod
+    def user_org_add_by_id(
+        user_id: uuid.UUID,
+        org_id: uuid.UUID,
+        org_role_id: int,
+    ):
+        IOR_SCHEMA = os.getenv("IOR_SCHEMA", "")
+        if not IOR_SCHEMA:  # pragma: no cover
+            raise ConfigurationException("Schema Required", "IOR_SCHEMA", "env")
+
+        if not user_id:
+            raise ValueError("user_id must be UUID (1)")
+
+        if isinstance(user_id, str):  # pragma: no cover
+            if not UuidHelper.is_valid_uuid(user_id):
+                raise ValueError("user_id must be UUID (2)")
+            else:
+                user_id = UuidHelper.to_uuid(user_id)
+
+        if not org_id:
+            raise ValueError("org_id must be UUID (1)")
+
+        if isinstance(org_id, str):  # pragma: no cover
+            if not UuidHelper.is_valid_uuid(org_id):
+                raise ValueError("org_id must be UUID (2)")
+            else:
+                org_id = UuidHelper.to_uuid(org_id)
+
+        if org_role_id not in UserManager.VALID_USER_ORG_ROLE_IDS:
+            raise ValueError(
+                f"org role id must be in {UserManager.VALID_USER_ORG_ROLE_IDS} (1)"
+            )
+
+        query = f"delete from {IOR_SCHEMA}.user_org where user_id = '{user_id}' and org_id = '{org_id}';"
+        result = DataLib.query_execute_in_one(query)
+        if not result:
+            raise SecurityException("Unable", query)
+
+        query = f"insert into {IOR_SCHEMA}.user_org (user_id, org_id, org_role_id) values ('{user_id}','{org_id}',{org_role_id})"
+        result = DataLib.query_execute_in_one(query)
+        if not result:
+            raise SecurityException("Unable", query)
+
+    @staticmethod
+    def user_org_remove_by_email(
+        email: str,
+        org_id: uuid.UUID | str,
+    ):
+        IOR_SCHEMA = os.getenv("IOR_SCHEMA", "")
+        if not IOR_SCHEMA:  # pragma: no cover
+            raise ConfigurationException("Schema Required", "IOR_SCHEMA", "env")
+
+        if not email:
+            raise ValueError("email required")
+
+        query = f"select user_id from {IOR_SCHEMA}.user where email='{email}';"
+        user_id = DataLib.query_return_single_value_in_one(query)
+        if not user_id:
+            raise SecurityException("user not found", email)
+
+        user_id = str(user_id)
+        user_id = UuidHelper.to_uuid(user_id)
+
+        if not org_id:
+            raise ValueError("org_id must be UUID (1)")
+
+        if isinstance(org_id, str):
+            if not UuidHelper.is_valid_uuid(org_id):
+                raise ValueError("org_id must be UUID (2)")
+            else:
+                org_id = UuidHelper.to_uuid(org_id)
+
+        UserManager.user_org_remove_by_id(user_id, org_id)
+
+    @staticmethod
+    def user_org_remove_by_id(
+        user_id: uuid.UUID | str,
+        org_id: uuid.UUID | str,
+    ):
+        IOR_SCHEMA = os.getenv("IOR_SCHEMA", "")
+        if not IOR_SCHEMA:  # pragma: no cover
+            raise ConfigurationException("Schema Required", "IOR_SCHEMA", "env")
+
+        if not user_id:  # pragma: no cover
+            raise ValueError("user_id must be UUID (1)")
+
+        if isinstance(user_id, str):  # pragma: no cover
+            if not UuidHelper.is_valid_uuid(user_id):
+                raise ValueError("user_id must be UUID (2)")
+            else:
+                user_id = UuidHelper.to_uuid(user_id)
+
+        if not org_id:  # pragma: no cover
+            raise ValueError("org_id must be UUID (1)")
+
+        if isinstance(org_id, str):  # pragma: no cover
+            if not UuidHelper.is_valid_uuid(org_id):
+                raise ValueError("org_id must be UUID (2)")
+            else:
+                org_id = UuidHelper.to_uuid(org_id)
+
+        query = f"delete from {IOR_SCHEMA}.user_org where user_id = '{user_id}' and org_id = '{org_id}';"
+        result = DataLib.query_execute_in_one(query)
+        if not result:  # pragma: no cover
+            raise SecurityException("Unable", query)
+
+    @staticmethod
+    def user_org_role_get_by_email(
+        email: str,
+        org_id: uuid.UUID | str,
+    ):
+        IOR_SCHEMA = os.getenv("IOR_SCHEMA", "")
+        if not IOR_SCHEMA:  # pragma: no cover
+            raise ConfigurationException("Schema Required", "IOR_SCHEMA", "env")
+
+        query = f"select user_id from {IOR_SCHEMA}.user where email='{email}';"
+        user_id = DataLib.query_return_single_value_in_one(query)
+        if not user_id:
+            raise SecurityException("user not found", email)
+
+        user_id = str(user_id)
+        user_id = UuidHelper.to_uuid(user_id)
+
+        if not user_id:
+            raise ValueError("user_id must be UUID (1)")
+
+        if isinstance(user_id, str):  # pragma: no cover
+            if not UuidHelper.is_valid_uuid(user_id):
+                raise ValueError("user_id must be UUID (2)")
+            else:
+                user_id = UuidHelper.to_uuid(user_id)
+
+        if not org_id:  # pragma: no cover
+            raise ValueError("org_id must be UUID (1)")
+
+        if isinstance(org_id, str):  # pragma: no cover
+            if not UuidHelper.is_valid_uuid(org_id):
+                raise ValueError("org_id must be UUID (2)")
+            else:
+                org_id = UuidHelper.to_uuid(org_id)
+
+        return UserManager.user_org_role_get_by_id(user_id, org_id)
+
+    @staticmethod
+    def user_org_role_get_by_id(
+        user_id: uuid.UUID,
+        org_id: uuid.UUID | str,
+    ) -> int:
+        IOR_SCHEMA = os.getenv("IOR_SCHEMA", "")
+        if not IOR_SCHEMA:  # pragma: no cover
+            raise ConfigurationException("Schema Required", "IOR_SCHEMA", "env")
+
+        if not user_id:  # pragma: no cover
+            raise ValueError("user_id must be UUID (1)")
+
+        if isinstance(user_id, str):  # pragma: no cover
+            if not UuidHelper.is_valid_uuid(user_id):
+                raise ValueError("user_id must be UUID (2)")
+            else:
+                user_id = UuidHelper.to_uuid(user_id)
+
+        if not org_id:  # pragma: no cover
+            raise ValueError("org_id must be UUID (1)")
+
+        if isinstance(org_id, str):  # pragma: no cover
+            if not UuidHelper.is_valid_uuid(org_id):
+                raise ValueError("org_id must be UUID (2)")
+            else:
+                org_id = UuidHelper.to_uuid(org_id)
+
+        query = f"select {IOR_SCHEMA}.user_org_role_get('{user_id}','{org_id}');"
+        result = DataLib.query_return_single_value_in_one(query)
+        if not result:
+            raise SecurityException("No role", query)
+
+        user_role_id = ConvertHelpers.safe_to_int(result, 0)
+
+        if user_role_id not in UserManager.VALID_USER_ORG_ROLE_IDS:
+            raise SecurityException("Bad Role Id", str(user_role_id))
+
+        return user_role_id
