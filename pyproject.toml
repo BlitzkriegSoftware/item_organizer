@@ -16,6 +16,7 @@ dependencies = [
 dev = [
     "coverage>=7.16.0",
     "faker>=40.38.0",
+    "hatchling>=1.32.0",
     "pytest>=9.1.1",
 ]
 
