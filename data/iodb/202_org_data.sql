@@ -3,9 +3,9 @@ TRUNCATE TABLE {schema}.organization;
 -- Required Root Organization
 INSERT INTO {schema}.organization(
 	org_id, parent_org_id, name)
-	VALUES ('00000000-0000-0000-0000-000000000000', '00000000-0000-0000-0000-000000000000', 'root organization');
+	VALUES (0, 0, 'root organization');
 
 -- Mostly ignored sub-org
 INSERT INTO {schema}.organization(
 	org_id, parent_org_id, name)
-	VALUES ('00000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000000', 'child1');
+	VALUES (1, 0, 'child1');

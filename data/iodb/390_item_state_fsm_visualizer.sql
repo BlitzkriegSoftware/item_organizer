@@ -4,7 +4,7 @@ DROP TABLE IF EXISTS {schema}.item_state_fsm_visualizer;
 CREATE TABLE IF NOT EXISTS {schema}.item_state_fsm_visualizer
 (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    org_id uuid null default '00000000-0000-0000-0000-000000000000',
+    org_id bigint null default 0,
     row_id int default 0,
     label text COLLATE pg_catalog."default",
     col_01 text COLLATE pg_catalog."default",

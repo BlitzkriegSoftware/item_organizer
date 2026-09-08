@@ -4,7 +4,7 @@ DROP TABLE IF EXISTS {schema}.item_state_fsm;
 
 CREATE TABLE IF NOT EXISTS {schema}.item_state_fsm
 (
-    org_id uuid null default '00000000-0000-0000-0000-000000000000',
+    org_id bigint not null default 0,
     item_state_from_id integer NOT NULL,
     item_state_to_id integer NOT NULL,
     PRIMARY KEY(org_id, item_state_from_id, item_state_to_id),

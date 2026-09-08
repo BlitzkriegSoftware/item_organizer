@@ -1,7 +1,7 @@
 --DROP PROCEDURE {schema}.visualize_fsm(uuid);
 
 CREATE OR REPLACE PROCEDURE {schema}.visualize_fsm(
-    IN target_org_id uuid DEFAULT '00000000-0000-0000-0000-000000000000'
+    IN target_org_id bigint DEFAULT 0
 )
 LANGUAGE 'plpgsql'
 AS $BODY$

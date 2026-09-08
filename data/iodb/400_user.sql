@@ -4,7 +4,7 @@ DROP TABLE IF EXISTS {schema}."user";
 
 CREATE TABLE IF NOT EXISTS {schema}."user"
 (
-    user_id uuid NOT NULL DEFAULT gen_random_uuid(),
+    user_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     email text COLLATE pg_catalog."default" NOT NULL,
     user_display_name text COLLATE pg_catalog."default" NULL,
     user_icon_uri text COLLATE pg_catalog."default" NULL,

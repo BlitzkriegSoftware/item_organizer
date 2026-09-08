@@ -4,8 +4,8 @@ DROP TABLE IF EXISTS {schema}.user_org;
 
 CREATE TABLE IF NOT EXISTS {schema}.user_org
 (
-    org_id uuid NOT NULL,
-    user_id uuid NOT NULL,
+    org_id bigint NOT NULL,
+    user_id bigint NOT NULL,
     org_role_id integer NOT NULL DEFAULT 2,
     CONSTRAINT user_org_pkey PRIMARY KEY (user_id, org_id),
     CONSTRAINT fk_{schema}_user_org_org_id FOREIGN KEY (org_id)

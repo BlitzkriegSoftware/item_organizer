@@ -1,7 +1,7 @@
 CREATE or replace FUNCTION {schema}.item_state_fsm_valid_transition(
     from_state integer,
     to_state integer,
-    desired_org_id uuid = '00000000-0000-0000-0000-000000000000'
+    desired_org_id bigint = 0
 ) 
 RETURNS boolean
 LANGUAGE sql
@@ -19,5 +19,5 @@ AS $$
 $$;
 
 ;
-ALTER FUNCTION {schema}.item_state_fsm_valid_transition(integer,integer,uuid)
+ALTER FUNCTION {schema}.item_state_fsm_valid_transition(integer,integer,bigint)
     OWNER TO postgres;

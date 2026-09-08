@@ -1,6 +1,6 @@
 CREATE OR REPLACE FUNCTION {schema}.is_org_or_descendant(
-    p_org_id uuid,
-    p_ancestor_org_id uuid
+    p_org_id bigint,
+    p_ancestor_org_id bigint
 )
 RETURNS boolean
 LANGUAGE sql
@@ -28,5 +28,5 @@ AS $$
 $$;
 
 ;
-ALTER FUNCTION {schema}.is_org_or_descendant(uuid,uuid)
+ALTER FUNCTION {schema}.is_org_or_descendant(bigint,bigint)
     OWNER TO postgres;

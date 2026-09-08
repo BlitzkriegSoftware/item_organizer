@@ -4,10 +4,9 @@ DROP TABLE IF EXISTS {schema}.organization;
 
 CREATE TABLE IF NOT EXISTS {schema}.organization
 (
-    org_id uuid NOT NULL DEFAULT gen_random_uuid(),
-    parent_org_id uuid default '00000000-0000-0000-0000-000000000000',
-    name text COLLATE pg_catalog."default" NOT NULL,
-    CONSTRAINT organization_pkey PRIMARY KEY (org_id)
+    org_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    parent_org_id BIGINT default 0,
+    name text COLLATE pg_catalog."default" NOT NULL
 )
 
 TABLESPACE pg_default;

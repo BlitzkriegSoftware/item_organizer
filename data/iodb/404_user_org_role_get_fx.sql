@@ -1,8 +1,8 @@
-DROP FUNCTION IF EXISTS {schema}.user_org_role_get(uuid,uuid);
+DROP FUNCTION IF EXISTS {schema}.user_org_role_get(bigint,bigint);
 
 CREATE or replace FUNCTION {schema}.user_org_role_get(
-    current_user_id uuid,
-    target_org_id uuid
+    current_user_id bigint,
+    target_org_id bigint
 )
 returns integer
 LANGUAGE plpgsql
@@ -11,9 +11,9 @@ AS $$
 DECLARE
   role_id integer := 0;
   try_it bool := true;
-  empty_uuid uuid := '00000000-0000-0000-0000-000000000000';
-  try_org_id uuid := '00000000-0000-0000-0000-000000000000';
-  head_org_id uuid := '00000000-0000-0000-0000-000000000000';
+  empty_uuid bigint := 0;
+  try_org_id bigint := 0;
+  head_org_id bigint := 0;
 
 BEGIN
 
@@ -64,5 +64,5 @@ END;
 $$;
 
 ;
-ALTER FUNCTION {schema}.user_org_role_get(uuid,uuid)
+ALTER FUNCTION {schema}.user_org_role_get(bigint,bigint)
     OWNER TO postgres;

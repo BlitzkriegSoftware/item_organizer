@@ -11,5 +11,5 @@ select row_id, label
 	--, COALESCE(col_10 ,'') as col_10
 	--, COALESCE(col_11 ,'') as col_11
 from {schema}.item_state_fsm_visualizer
-where org_id = '00000000-0000-0000-0000-000000000000'
+where org_id = 0
 order by row_id
