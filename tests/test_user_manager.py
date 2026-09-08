@@ -56,10 +56,7 @@ def test_make_disable_user():
     fullname = "test 123"
     iconurl = ""
 
-    query = f"delete from {IOR_SCHEMA}.user where email = '{email}';"
-    DataLib.query_execute_in_one(query)
-    if not query:
-        pytest.fail("Unable to cleanup")
+    UserManager.user_remove_last_resort(email)
 
     try:
         UserManager.add_user(email, fullname, iconurl)

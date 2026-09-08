@@ -17,7 +17,7 @@ BEGIN
         where email = email_to_remove
     LOOP
 
-        IF user_id > 0 THEN
+        IF row_record.user_id > 0 THEN
 
             FOR inner_row_record IN
                 select item_id from {schema}.item

@@ -105,6 +105,7 @@ class UserManager:
             raise SecurityException("User exists already", email)
 
         query = f"insert into {IOR_SCHEMA}.user (email, user_display_name, user_icon_uri, password_hash) values ('{email}','{fullname}','{icon_url}','{UserStatus.CONFIRM}');"
+        print("query: ", query)
         result = DataLib.query_execute_in_one(query)
         if not result:
             raise SecurityException("Unable to add user", email)
