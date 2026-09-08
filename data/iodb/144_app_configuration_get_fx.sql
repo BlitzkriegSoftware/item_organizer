@@ -1,4 +1,4 @@
-DROP FUNCTION IF EXISTS {schema}.app_configuration_get(text)
+DROP FUNCTION IF EXISTS {schema}.app_configuration_get(text);
 
 CREATE or replace FUNCTION {schema}.app_configuration_get
     (
