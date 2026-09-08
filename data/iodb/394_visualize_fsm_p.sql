@@ -83,5 +83,5 @@ BEGIN
 END;
 $BODY$;
 
-ALTER PROCEDURE {schema}.visualize_fsm(uuid)
+ALTER PROCEDURE {schema}.visualize_fsm(bigint)
     OWNER TO postgres;
