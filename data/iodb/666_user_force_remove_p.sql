@@ -41,7 +41,7 @@ BEGIN
             delete from {schema}.user
                 where user_id = row_record.user_id;
         ELSE
-            raise error "You can not remove root user!"
+            RAISE EXCEPTION "You can not remove root user!"
         END IF; -- user_id > 0
     END LOOP;
 END;
