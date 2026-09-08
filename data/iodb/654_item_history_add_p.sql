@@ -18,5 +18,5 @@ BEGIN
 END;
 $BODY$;
 
-ALTER PROCEDURE {schema}.item_history_add(bigint, text, uuid, timestamp with time zone)
+ALTER PROCEDURE {schema}.item_history_add(bigint, text, text, timestamp with time zone)
     OWNER TO postgres;
