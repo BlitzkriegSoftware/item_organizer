@@ -1,3 +1,5 @@
+DROP PROCEDURE IF EXISTS {schema}.item_history_add;
+
 CREATE OR REPLACE PROCEDURE {schema}.item_history_add(
     history_item_id bigint,
     history_note text,

@@ -8,7 +8,7 @@ RETURNS character varying(128)
  LANGUAGE 'sql'
 AS $BODY$
 	select setting_value 
-    from {setting}.app_configuration 
+    from {schema}.app_configuration 
     where setting_name = name;
 $BODY$
 
