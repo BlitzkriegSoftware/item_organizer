@@ -17,7 +17,7 @@ BEGIN
         where email = email_to_remove
     LOOP
 
-        if user_id > 0 then
+        IF user_id > 0 THEN
 
             FOR inner_row_record IN
                 select item_id from {schema}.item
@@ -41,7 +41,7 @@ BEGIN
             delete from {schema}.user
                 where user_id = row_record.user_id;
         ELSE
-            RAISE EXCEPTION "You can not remove root user!"
+            RAISE EXCEPTION 'You can not remove root user!';
         END IF; -- user_id > 0
     END LOOP;
 END;
