@@ -1,6 +1,8 @@
 from datetime import timezone, datetime
 import os
 
+from varname import nameof
+
 
 from app_exceptions.configuration_exception import ConfigurationException
 from app_exceptions.db_exception import DatabaseException
@@ -87,14 +89,14 @@ class UserManager:
             raise ValidationException("must not be empty", "email")
 
         if not TypeValidators.is_email(email):  # pragma: no cover
-            raise ValidationException("malformed", f"email: {email}")
+            raise ValidationException("malformed", nameof(email), email)
 
         if not fullname:  # pragma: no cover
             raise ValidationException("must not be empty", "email")
 
         if icon_url:  # pragma: no cover
             if not TypeValidators.is_url(icon_url):
-                raise ValidationException("malformed", f"icon_url: {icon_url}")
+                raise ValidationException("malformed", nameof(icon_url), icon_url)
 
         query = (
             f"select user_display_name from {IOR_SCHEMA}.user where email='{email}';"
@@ -133,7 +135,7 @@ class UserManager:
             raise ValidationException("must not be empty", "email")
 
         if not TypeValidators.is_email(email):  # pragma: no cover
-            raise ValidationException("malformed", f"email: {email}")
+            raise ValidationException("malformed", nameof(email), email)
 
         query = f"update {IOR_SCHEMA}.user set password_hash ='{UserStatus.DISABLED}' where email = '{email}';"
         result = DataLib.query_execute_in_one(query)
@@ -205,23 +207,31 @@ class UserManager:
             raise ValidationException("Empty", "hashed")
 
         if not Base64Helper.is_base64(hashed):  # pragma: no cover
-            raise ValidationException("Provided hash corrupt (0)", "hashed")
+            raise ValidationException(
+                "Provided hash corrupt (0)", nameof(hashed), hashed
+            )
 
         plain_text = FermetHelper.decrypt_message(hashed)
 
         fields = plain_text.split("/")
         if not fields or len(fields) < 2:  # pragma: no cover
-            raise ValidationException("Provided hash corrupt (1)", "hashed")
+            raise ValidationException(
+                "Provided hash corrupt (1)", nameof(hashed), hashed
+            )
 
         if fields[0].casefold() != email.casefold():  # pragma: no cover
-            raise ValidationException("Provided hash corrupt (2)", "hashed")
+            raise ValidationException(
+                "Provided hash corrupt (2)", nameof(hashed), hashed
+            )
 
         dtnow = datetime.now(timezone.utc)
         dtstamp = DateTimeHelpers.from_iso8601(fields[1])
         diff = dtnow - dtstamp
         whole_minutes = int(diff.total_seconds() // 60)
         if whole_minutes > limit:  # pragma: no cover
-            raise ValidationException("Provided hash expired (3)", "hashed")
+            raise ValidationException(
+                "Provided hash expired (3)", nameof(hashed), hashed
+            )
 
     @staticmethod
     def user_status(email: str) -> UserStatus:
@@ -332,7 +342,7 @@ class UserManager:
             org_role_id (int): must be valid in UserManager.VALID_USER_ORG_ROLE_IDS
 
         Raises:
-            ConfigurationException: IOR_SCHEMA 
+            ConfigurationException: IOR_SCHEMA
             ValueError: invalid org role id
             SecurityException:  unable(0)
             SecurityException:  unable(1)

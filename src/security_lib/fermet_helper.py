@@ -1,6 +1,7 @@
 import os
 
 from cryptography.fernet import Fernet
+from varname import nameof
 
 from app_exceptions.configuration_exception import ConfigurationException
 from app_exceptions.validation_exception import ValidationException
@@ -41,13 +42,13 @@ class FermetHelper:
             raise ValueError("message required")
 
         IOR_FERMAT = os.getenv("IOR_FERMAT", "")
-        if not IOR_FERMAT: # pragma: no cover
+        if not IOR_FERMAT:  # pragma: no cover
             raise ConfigurationException("Cypther key must be set", "IOR_FERMET")
 
         if Base64Helper.is_base64(IOR_FERMAT):
             key = Base64Helper.from_base64(IOR_FERMAT)
-        else: # pragma: no cover
-            raise ValidationException("Expected b64", "IOR_FERMAT")
+        else:  # pragma: no cover
+            raise ValidationException("Expected b64", nameof(IOR_FERMAT), IOR_FERMAT)
 
         message_bytes = message.encode("utf-8")
 
@@ -70,17 +71,17 @@ class FermetHelper:
         Returns:
             str: _description_
         """
-        if not cypher_b64: # pragma: no cover
+        if not cypher_b64:  # pragma: no cover
             raise ValueError("cypher text required")
 
         IOR_FERMAT = os.getenv("IOR_FERMAT", "")
-        if not IOR_FERMAT: # pragma: no cover
+        if not IOR_FERMAT:  # pragma: no cover
             raise ConfigurationException("Cypther key must be set", "IOR_FERMET")
 
         if Base64Helper.is_base64(IOR_FERMAT):
             key = Base64Helper.from_base64(IOR_FERMAT)
         else:
-            raise ValidationException("Expected b64", "IOR_FERMAT")
+            raise ValidationException("Expected b64", nameof(IOR_FERMAT), IOR_FERMAT)
 
         if Base64Helper.is_base64(cypher_b64):
             cypher_bytes = Base64Helper.from_base64(cypher_b64)
