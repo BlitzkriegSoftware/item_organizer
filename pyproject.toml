@@ -9,8 +9,10 @@ dependencies = [
     "cryptography>=50.0.1",
     "cryptography-fernet>=0.1.0",
     "encryption>=0.0.1",
+    "fastapi[standard]>=0.141.1",
     "psycopg2>=2.9.12",
     "psycopg2-binary>=2.9.12",
+    "pydantic>=2.13.5",
     "python-json-logger>=4.2.0",
     "sqlalchemy>=2.0.52",
 ]
@@ -21,6 +23,11 @@ dev = [
     "faker>=40.38.0",
     "hatchling>=1.32.0",
     "pytest>=9.1.1",
+    "sphinx>=9.1.0",
+    "sphinx-autobuild>=2025.8.25",
+    "sphinx-conestack-theme>=1.1.1",
+    "sphinx-markdown-builder>=0.6.11",
+    "sphinx-new-tab-link>=0.8.2",
 ]
 
 [build-system]
