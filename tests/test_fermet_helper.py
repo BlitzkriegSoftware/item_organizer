@@ -24,8 +24,12 @@ def test_fermet_round_trip():
 
     print(f"setx IOR_FERMAT '{IOR_FERMAT}' # From Env {from_env}")
 
-    cyphered = FermetHelper.encrypt_message_bytes(expected, key)
-    actual = FermetHelper.decrypt_message_bytes(cyphered, key)
+    expected_bytes = expected.encode("utf-8")
+
+    cyphered = FermetHelper.encrypt_bytes(expected_bytes, key)
+    
+    actual_bytes = FermetHelper.decrypt_bytes(cyphered, key)
+    actual = actual_bytes.decode("utf-8")
     assert expected == actual
 
 

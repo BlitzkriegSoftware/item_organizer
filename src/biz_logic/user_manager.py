@@ -477,3 +477,28 @@ class UserManager:
             raise SecurityException("Bad Role Id", str(user_role_id))
 
         return user_role_id
+
+    @staticmethod
+    def email_to_user_id(email: str) -> int:
+        """
+        Look up user_id by email
+
+        Args:
+            email (str): (sic)
+
+        Raises:
+            ConfigurationException: IOR_SCHEMA
+
+        Returns:
+            int: user_id (-1 if not found)
+        """
+        IOR_SCHEMA = os.getenv("IOR_SCHEMA", "")
+        if not IOR_SCHEMA:  # pragma: no cover
+            raise ConfigurationException("Schema Required", "IOR_SCHEMA", "env")
+
+        query = f"select user_id from {IOR_SCHEMA}.user where email='{email}';"
+        user_id = DataLib.query_return_single_value_in_one(query)
+        if not user_id:  # pragma: no cover
+            user_id = -1
+
+        return ConvertHelpers.safe_to_int(user_id, -1)

@@ -9,9 +9,6 @@ CREATE OR REPLACE PROCEDURE {schema}.item_history_add(
 LANGUAGE 'plpgsql'
 AS $BODY$
 
-DECLARE
-    history_id uuid = gen_random_uuid();
-
 BEGIN
     insert into {schema}.item_history(id, item_id, created_date, created_by, note)
     values (history_id, history_item_id, history_date, history_by, history_note);

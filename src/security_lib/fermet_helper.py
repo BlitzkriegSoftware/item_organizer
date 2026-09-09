@@ -15,16 +15,66 @@ class FermetHelper:
 
     @staticmethod
     def generate_key_b64() -> str:
+        """Generates key as Base64
+        Returns:
+            str: base64 encoded key
+        """
         key = FermetHelper.generate_key()
         return Base64Helper.to_base64(key)
 
     @staticmethod
     def encrypt_message(message: str) -> str:
+        """Encrypt text
+
+        Args:
+            message (str): plain text to encrypt
+
+        Raises:
+            ValueError: missing message
+            ConfigurationException: IOR_FERMAT
+            ValidationException: not base64
+
+        Returns:
+            str: base64 encoded encrypted text
+        """
         if not message:
             raise ValueError("message required")
 
         IOR_FERMAT = os.getenv("IOR_FERMAT", "")
-        if not IOR_FERMAT:
+        if not IOR_FERMAT: # pragma: no cover
+            raise ConfigurationException("Cypther key must be set", "IOR_FERMET")
+
+        if Base64Helper.is_base64(IOR_FERMAT):
+            key = Base64Helper.from_base64(IOR_FERMAT)
+        else: # pragma: no cover
+            raise ValidationException("Expected b64", "IOR_FERMAT")
+
+        message_bytes = message.encode("utf-8")
+
+        cyphered = FermetHelper.encrypt_bytes(message_bytes, key)
+
+        return Base64Helper.to_base64(cyphered)
+
+    @staticmethod
+    def decrypt_message(cypher_b64: str) -> str:
+        """decrypt
+
+        Args:
+            cypher_b64 (str): base64 encoded cypher text
+
+        Raises:
+            ValueError: missing cypher text
+            ConfigurationException: IOR_FERMAT
+            ValidationException: not base64
+
+        Returns:
+            str: _description_
+        """
+        if not cypher_b64: # pragma: no cover
+            raise ValueError("cypher text required")
+
+        IOR_FERMAT = os.getenv("IOR_FERMAT", "")
+        if not IOR_FERMAT: # pragma: no cover
             raise ConfigurationException("Cypther key must be set", "IOR_FERMET")
 
         if Base64Helper.is_base64(IOR_FERMAT):
@@ -32,45 +82,38 @@ class FermetHelper:
         else:
             raise ValidationException("Expected b64", "IOR_FERMAT")
 
-        cyphered = FermetHelper.encrypt_message_bytes(message, key)
+        if Base64Helper.is_base64(cypher_b64):
+            cypher_bytes = Base64Helper.from_base64(cypher_b64)
+        else:
+            cypher_bytes = cypher_b64.encode("utf-8")
 
-        return Base64Helper.to_base64(cyphered)
+        decrypted_bytes = FermetHelper.decrypt_bytes(cypher_bytes, key)
+
+        plain_text = decrypted_bytes.decode("utf-8")
+
+        return plain_text
 
     @staticmethod
-    def encrypt_message_bytes(message: str, key: bytes) -> bytes:
-        """Encrypts a string message using the provided key."""
-        # Convert the string to bytes
-        encoded_message = message.encode("utf-8")
+    def encrypt_bytes(message_bytes: bytes, key: bytes) -> bytes:
+        """encrypt bytes
+
+        Args:
+            message (bytes): bytes to encrypt
+            key (bytes): key to use for encryption
+
+        Returns:
+            bytes: encrypted bytes
+        """
 
         # Initialize Fernet with the key
         f = Fernet(key)
 
         # Encrypt the token
-        encrypted_message = f.encrypt(encoded_message)
+        encrypted_message = f.encrypt(message_bytes)
         return encrypted_message
 
     @staticmethod
-    def decrypt_message(cypher_b64: str) -> str:
-        if not cypher_b64:
-            raise ValueError("cypher text required")
-
-        IOR_FERMAT = os.getenv("IOR_FERMAT", "")
-        if not IOR_FERMAT:
-            raise ConfigurationException("Cypther key must be set", "IOR_FERMET")
-
-        if Base64Helper.is_base64(IOR_FERMAT):
-            key = Base64Helper.from_base64(IOR_FERMAT)
-        else:
-            raise ValidationException("Expected b64", "IOR_FERMAT")
-
-        cyther_bytes = Base64Helper.from_base64(cypher_b64)
-
-        plain_text = FermetHelper.decrypt_message_bytes(cyther_bytes, key)
-
-        return plain_text
-
-    @staticmethod
-    def decrypt_message_bytes(encrypted_message: bytes, key: bytes) -> str:
+    def decrypt_bytes(encrypted_message: bytes, key: bytes) -> bytes:
         """Decrypts an encrypted byte token back into a string message."""
         # Initialize Fernet with the key
         f = Fernet(key)
@@ -78,5 +121,5 @@ class FermetHelper:
         # Decrypt the token
         decrypted_bytes = f.decrypt(encrypted_message)
 
-        # Decode the bytes back to a readable string
-        return decrypted_bytes.decode("utf-8")
+        # Return the decrypted bytes
+        return decrypted_bytes
