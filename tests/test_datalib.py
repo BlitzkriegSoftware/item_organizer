@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 
 import pytest
@@ -168,3 +169,22 @@ class TestDataLib:
         cs = DataLib.connection_string(5)
         assert cs is not None
         print(cs)
+
+    def test_has_no_rows(self):
+        can_test = DataLib.connection_ok()
+        if not can_test:
+            pytest.skip(TestDataLib.NO_TEST)
+            return
+
+        IOR_SCHEMA = os.getenv("IOR_SCHEMA", "")
+        if not IOR_SCHEMA:
+            pytest.fail("IOR_SCHEMA missing")
+
+        conn = DataLib.connection_make()
+        assert conn is not None
+
+        query = f"SELECT email FROM {IOR_SCHEMA}.user where id = -1;"
+        result = DataLib.query_return_single_value_in_one(query)
+        assert not DataLib.has_rows(result)
+
+        DataLib.connection_close(conn)
