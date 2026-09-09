@@ -177,6 +177,23 @@ class UserManager:
         hashed: str,
         limit: int = RESET_STAMP_TOLERANCE_MINUTES,
     ):
+        """validate hash
+
+        Args:
+            email (str): (sic)
+            hashed (str): previously generated hash
+            limit (int, optional): In minutes. Defaults to RESET_STAMP_TOLERANCE_MINUTES.
+
+        Raises:
+            ConfigurationException: IOR_FERMAT
+            ValidationException: email missing
+            ValidationException: hash missing
+            ValidationException: hash not base64
+            ValidationException: hash corrupt (0)
+            ValidationException: hash corrupt (1)
+            ValidationException: hash corrupt (2)
+            ValidationException: hash expired (3)
+        """
         IOR_FERMAT = os.getenv("IOR_FERMAT", "")
         if not IOR_FERMAT:  # pragma: no cover
             raise ConfigurationException("CryptoKey Required", "IOR_FERMAT", "env")
@@ -239,6 +256,16 @@ class UserManager:
 
     @staticmethod
     def user_remove_last_resort(email: str):
+        """yank user forceable, reassign all items to admin
+
+        Args:
+            email (str): (sic)
+
+        Raises:
+            ConfigurationException: IOR_SCHEMA
+            ValidationException: email missing
+            DatabaseException: execution failure
+        """
         IOR_SCHEMA = os.getenv("IOR_SCHEMA", "")
         if not IOR_SCHEMA:  # pragma: no cover
             raise ConfigurationException("Schema Required", "IOR_SCHEMA", "env")
@@ -260,6 +287,19 @@ class UserManager:
         org_id: int,
         org_role_id: int,
     ):
+        """add user to org
+
+        Args:
+            email (str): (sic)
+            org_id (int): _(sic)
+            org_role_id (int): must be valid in UserManager.VALID_USER_ORG_ROLE_IDS
+
+        Raises:
+            ConfigurationException: IOR_SCHEMA
+            ValueError: email missing
+            SecurityException: user not found
+            SecurityException: invalid org role id
+        """
         IOR_SCHEMA = os.getenv("IOR_SCHEMA", "")
         if not IOR_SCHEMA:  # pragma: no cover
             raise ConfigurationException("Schema Required", "IOR_SCHEMA", "env")
@@ -284,6 +324,19 @@ class UserManager:
         org_id: int,
         org_role_id: int,
     ):
+        """add to org by id
+
+        Args:
+            user_id (int): (sic)
+            org_id (int): _(sic)
+            org_role_id (int): must be valid in UserManager.VALID_USER_ORG_ROLE_IDS
+
+        Raises:
+            ConfigurationException: IOR_SCHEMA 
+            ValueError: invalid org role id
+            SecurityException:  unable(0)
+            SecurityException:  unable(1)
+        """
         IOR_SCHEMA = os.getenv("IOR_SCHEMA", "")
         if not IOR_SCHEMA:  # pragma: no cover
             raise ConfigurationException("Schema Required", "IOR_SCHEMA", "env")
