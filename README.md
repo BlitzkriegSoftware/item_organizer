@@ -11,6 +11,10 @@ An open source easy to run item organizer for backlog management
     - [Make sure Docker is running](#make-sure-docker-is-running)
     - [Start Postgres \& Plug-ins, and program](#start-postgres--plug-ins-and-program)
   - [Project Organization](#project-organization-1)
+  - [Documentation: Sphinx](#documentation-sphinx)
+    - [Clean output folder](#clean-output-folder)
+    - [Generating Documentation](#generating-documentation)
+    - [Live HTML documentation](#live-html-documentation)
 
 ## See also
 
@@ -64,3 +68,27 @@ Docker must be running
 ```
 
 ## Project Organization
+
+
+## Documentation: Sphinx
+
+- See:
+  - [sphinx-doc.org](https://www.sphinx-doc.org/en/master/index.html)
+
+### Clean output folder
+
+```powershell
+ .\make.ps1 clean
+ ```
+
+### Generating Documentation
+
+```powershell
+uv run sphinx-build -M markdown docs/source docs/build
+```
+
+### Live HTML documentation
+
+```powershell
+uv run sphinx-autobuild docs/source docs/build/html
+```
