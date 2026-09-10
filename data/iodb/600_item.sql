@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS {schema}.item
     created_by bigint DEFAULT 0,
     assigned_to bigint DEFAULT 0,
     priority_id integer NOT NULL DEFAULT 0,
-    rank integer not null DEFAULT 0,
+    rankorder integer not null DEFAULT 0,
     search_vector tsvector GENERATED ALWAYS AS (
         setweight(to_tsvector('english'::regconfig, COALESCE(title, ''::text)), 'A'::"char") || 
         setweight(to_tsvector('english'::regconfig, COALESCE(body, ''::text)), 'B'::"char")
