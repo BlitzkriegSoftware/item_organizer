@@ -6,7 +6,8 @@ from app_exceptions.db_exception import DatabaseException
 from app_exceptions.validation_exception import ValidationException
 from biz_logic.user_manager import UserManager
 from data_lib.datalib import DataLib
-from psycopg2.extras import  RealDictRow
+from psycopg2.extras import RealDictRow
+
 
 class ItemManager:
     """Item Manager is responsible for managing items in the application."""
@@ -65,7 +66,6 @@ class ItemManager:
         rankorder: int = 0,
     ) -> int:
         item_id: int = -1
-        priority_list = ItemManager.priority_list_get()
 
         IOR_SCHEMA = os.getenv("IOR_SCHEMA", "")  # noqa: F821
         if not IOR_SCHEMA:
@@ -81,8 +81,14 @@ class ItemManager:
             raise ValidationException("required", nameof(created_by), str(created_by))
         if assigned_to < 0:
             raise ValidationException("required", nameof(assigned_to), str(assigned_to))
-        if item_state_id not in UserManager.VALID_USER_ORG_ROLE_IDS:
-            raise ValidationException("required", nameof(assigned_to), str(assigned_to))
+
+        priority_list = ItemManager.priority_list_get()
+        item_state_list = ItemManager.item_state_list_get(org_id)
+
+        if item_state_id not in item_state_list.keys():
+            raise ValidationException(
+                "required", nameof(item_state_id), str(item_state_id)
+            )
         if priority_id not in priority_list.keys():
             raise ValidationException("invalid", nameof(priority_id), str(priority_id))
 
@@ -111,12 +117,20 @@ class ItemManager:
         if not history_by:
             raise ValidationException("must not be empty", nameof(history_by), "")
 
-        query = f"select {IOR_SCHEMA}.item_history_add({item_id}, '{history_note}', '{history_by}');"
-        result = DataLib.query_execute_in_one(query)
+        procedure_name = "item_history_add"
+        args = (
+            item_id,
+            history_note,
+            history_by,
+        )
+
+        result = DataLib.stored_procedure_execute_all_in_one(
+            procedure_name, args, IOR_SCHEMA
+        )
         if not result:
             raise DatabaseException(
                 f"Failed to add item history for item_id: {item_id} with note: {history_note} by: {history_by}",
-                query,
+                procedure_name,
             )
 
     @staticmethod
@@ -136,12 +150,20 @@ class ItemManager:
         if history_by < -1:
             raise ValidationException("bad value", nameof(history_by), history_by)
 
-        query = f"select {IOR_SCHEMA}.item_history_add_by_id({item_id}, '{history_note}', {history_by});"
-        result = DataLib.query_execute_in_one(query)
+        procedure_name = "item_history_add_by_id"
+        args = (
+            item_id,
+            history_note,
+            history_by,
+        )
+
+        result = DataLib.stored_procedure_execute_all_in_one(
+            procedure_name, args, IOR_SCHEMA
+        )
         if not result:
             raise DatabaseException(
                 f"Failed to add item history for item_id: {item_id} with note: {history_note} by: {history_by}",
-                query,
+                procedure_name,
             )
 
     @staticmethod
@@ -163,4 +185,7 @@ class ItemManager:
             raise DatabaseException("unable (0)", f"{procedure_name}({item_id})")
 
     @staticmethod
-    def item_get(item_id: int,) -> RealDictRow | None:
+    def item_get(
+        item_id: int,
+    ) -> RealDictRow | None:
+        return None
