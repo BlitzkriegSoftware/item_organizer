@@ -109,7 +109,7 @@ class UserManager:
         print("query: ", query)
         result = DataLib.query_execute_in_one(query)
         if not result:  # pragma: no cover
-            raise SecurityException("Unable to add user", email)
+            raise SecurityException(f"Unable to add user", email)
 
     @staticmethod
     def disable_user(

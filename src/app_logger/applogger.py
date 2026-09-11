@@ -1,9 +1,11 @@
+from functools import cache
 import os
 import logging
 import logging.config
 from pythonjsonlogger import jsonlogger  # noqa: F401
 
 
+@cache
 def configure_logging() -> logging.Logger:
     # 1. Define configuration using dictConfig
     LOGGING_CONFIG = {

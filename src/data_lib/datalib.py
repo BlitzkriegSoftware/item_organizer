@@ -1,8 +1,10 @@
-from functools import cache
-from typing import Any
-import psycopg2
-from psycopg2.extras import RealDictCursor, RealDictRow
 import os
+import inspect
+import psycopg2
+from functools import cache
+from typing import Any, MutableMapping
+from psycopg2.extras import RealDictCursor, RealDictRow
+
 from app_exceptions.db_exception import DatabaseException
 from src.app_logger.applogger import configure_logging
 
@@ -64,9 +66,11 @@ class DataLib:
         try:
             conn = psycopg2.connect(cs)
             conn.autocommit = False
-        except Exception:  # pragma: no cover
-            logger = configure_logging()
-            logger.exception("make: %s", cs)
+        except Exception as ex:  # pragma: no cover
+            DataLib.log_exception(
+                "open connection",
+                ex,
+            )
             conn = None
 
         return conn
@@ -117,10 +121,12 @@ class DataLib:
             try:
                 cursor.execute(query)
                 conn.commit()
-            except Exception:  # pragma: no cover
+            except Exception as ex:  # pragma: no cover
                 isOk = False
-                logger = configure_logging()
-                logger.exception("query: %s", query)
+                DataLib.log_exception(
+                    query,
+                    ex,
+                )
                 if conn:
                     conn.rollback()
             finally:
@@ -154,10 +160,12 @@ class DataLib:
             try:
                 cursor.execute(query)
                 conn.commit()
-            except Exception:  # pragma: no cover
+            except Exception as ex:  # pragma: no cover
                 isOk = False
-                logger = configure_logging()
-                logger.exception("query: %s", query)
+                DataLib.log_exception(
+                    query,
+                    ex,
+                )
                 if conn:
                     conn.rollback()
             finally:
@@ -191,9 +199,11 @@ class DataLib:
             try:
                 cursor.execute(query)
                 drows = cursor.fetchall()
-            except Exception:  # pragma: no cover
-                logger = configure_logging()
-                logger.exception("query: %s", query)
+            except Exception as ex:  # pragma: no cover
+                DataLib.log_exception(
+                    query,
+                    ex,
+                )
                 drows = None
             finally:
                 cursor.close()
@@ -217,11 +227,14 @@ class DataLib:
         Returns:
             list[RealDictRow] | None: list[dict]
         """
+        drows: list[RealDictRow] | None = []
         conn = DataLib.connection_make()
         if not conn:  # pragma: no cover
             raise DatabaseException("Connection failed", "")
-        drows = DataLib.query_return_dict(conn, query)
-        DataLib.connection_close(conn)
+        try:
+            drows = DataLib.query_return_dict(conn, query)
+        finally:
+            DataLib.connection_close(conn)
         return drows
 
     @staticmethod
@@ -241,11 +254,14 @@ class DataLib:
         Returns:
             list[RealDictRow] | None: list[dict]
         """
+        drows: list[RealDictRow] | None = []
         conn = DataLib.connection_make()
         if not conn:  # pragma: no cover
             raise DatabaseException("Connection failed", "")
-        drows = DataLib.query_return_dict(conn, query)
-        DataLib.connection_close(conn)
+        try:
+            drows = DataLib.query_return_dict(conn, query)
+        finally:
+            DataLib.connection_close(conn)
         return DataLib.first_value(drows)
 
     @staticmethod
@@ -304,10 +320,12 @@ class DataLib:
                 )
                 cursor.execute(query, args)
                 conn.commit()
-            except Exception:  # pragma: no cover
+            except Exception as ex:  # pragma: no cover
                 isOk = False
-                logger = configure_logging()
-                logger.exception("query: %s(%s)", query, args)
+                DataLib.log_exception(
+                    query,
+                    ex,
+                )
                 if conn:
                     conn.rollback()
             finally:
@@ -337,10 +355,10 @@ class DataLib:
         conn = DataLib.connection_make()
         if not conn:  # pragma: no cover
             raise DatabaseException("Unable to open db", procedure_name)
-
-        isOk = DataLib.stored_procedure_execute(conn, procedure_name, args, schema)
-
-        DataLib.connection_close(conn)
+        try:
+            isOk = DataLib.stored_procedure_execute(conn, procedure_name, args, schema)
+        finally:
+            DataLib.connection_close(conn)
 
         return isOk
 
@@ -369,9 +387,11 @@ class DataLib:
             try:
                 cursor.execute(query, args)
                 drows = cursor.fetchall()
-            except Exception:  # pragma: no cover
-                logger = configure_logging()
-                logger.exception("query: %s(%s)", procedure_name, args)
+            except Exception as ex:  # pragma: no cover
+                DataLib.log_exception(
+                    query,
+                    ex,
+                )
                 drows = None
             finally:
                 cursor.close()
@@ -532,3 +552,30 @@ class DataLib:
         if len(drows) > 0:
             return True
         return False
+
+    @staticmethod
+    def log_exception(
+        query: str,
+        ex: Exception,
+        extra: MutableMapping[str, object] = {},
+    ):
+        context = ""
+        frame = inspect.currentframe()
+        if frame is None:
+            context = "<no frame support>"
+        else:
+            caller_frame = frame.f_back
+            if caller_frame is None:
+                context = f"{frame}.<module or top-level>"
+            else:
+                context = caller_frame.f_code.co_name
+
+        if context:
+            extra["context"] = context
+        if query:
+            extra["query"] = query
+        if ex:
+            extra["exception"] = ex
+
+        logger = configure_logging()
+        logger.exception("%s; %s; %s", context, query, str(ex), extra=extra)
