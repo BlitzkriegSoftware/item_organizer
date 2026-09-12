@@ -1,12 +1,11 @@
 import os
-import inspect
 import psycopg2
 from functools import cache
-from typing import Any, MutableMapping
+from typing import Any
 from psycopg2.extras import RealDictCursor, RealDictRow
 
 from app_exceptions.db_exception import DatabaseException
-from src.app_logger.applogger import configure_logging
+from src.app_logger.applogger import AppLogger
 
 
 class DataLib:
@@ -67,7 +66,7 @@ class DataLib:
             conn = psycopg2.connect(cs)
             conn.autocommit = False
         except Exception as ex:  # pragma: no cover
-            DataLib.log_exception(
+            AppLogger.log_exception(
                 "open connection",
                 ex,
             )
@@ -123,7 +122,7 @@ class DataLib:
                 conn.commit()
             except Exception as ex:  # pragma: no cover
                 isOk = False
-                DataLib.log_exception(
+                AppLogger.log_exception(
                     query,
                     ex,
                 )
@@ -162,7 +161,7 @@ class DataLib:
                 conn.commit()
             except Exception as ex:  # pragma: no cover
                 isOk = False
-                DataLib.log_exception(
+                AppLogger.log_exception(
                     query,
                     ex,
                 )
@@ -200,7 +199,7 @@ class DataLib:
                 cursor.execute(query)
                 drows = cursor.fetchall()
             except Exception as ex:  # pragma: no cover
-                DataLib.log_exception(
+                AppLogger.log_exception(
                     query,
                     ex,
                 )
@@ -322,7 +321,7 @@ class DataLib:
                 conn.commit()
             except Exception as ex:  # pragma: no cover
                 isOk = False
-                DataLib.log_exception(
+                AppLogger.log_exception(
                     query,
                     ex,
                 )
@@ -388,7 +387,7 @@ class DataLib:
                 cursor.execute(query, args)
                 drows = cursor.fetchall()
             except Exception as ex:  # pragma: no cover
-                DataLib.log_exception(
+                AppLogger.log_exception(
                     query,
                     ex,
                 )
@@ -552,30 +551,3 @@ class DataLib:
         if len(drows) > 0:
             return True
         return False
-
-    @staticmethod
-    def log_exception(
-        query: str,
-        ex: Exception,
-        extra: MutableMapping[str, object] = {},
-    ):
-        context = ""
-        frame = inspect.currentframe()
-        if frame is None:
-            context = "<no frame support>"
-        else:
-            caller_frame = frame.f_back
-            if caller_frame is None:
-                context = f"{frame}.<module or top-level>"
-            else:
-                context = caller_frame.f_code.co_name
-
-        if context:
-            extra["context"] = context
-        if query:
-            extra["query"] = query
-        if ex:
-            extra["exception"] = ex
-
-        logger = configure_logging()
-        logger.exception("%s; %s; %s", context, query, str(ex), extra=extra)

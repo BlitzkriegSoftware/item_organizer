@@ -4,7 +4,7 @@ from varname import nameof
 from app_exceptions.configuration_exception import ConfigurationException
 from app_exceptions.db_exception import DatabaseException
 from app_exceptions.validation_exception import ValidationException
-from biz_logic.user_manager import UserManager
+from app_logger.applogger import AppLogger
 from data_lib.datalib import DataLib
 from psycopg2.extras import RealDictRow
 
@@ -93,6 +93,8 @@ class ItemManager:
             raise ValidationException("invalid", nameof(priority_id), str(priority_id))
 
         query = f"INSERT INTO {IOR_SCHEMA}.item (title, body, org_id, item_state_id, created_by, assigned_to, priority_id, rankorder) VALUES ( '{title}', '{body}', {org_id}, {item_state_id}, {created_by}, {assigned_to}, {priority_id}, {rankorder}) returning item_id;"
+
+        AppLogger.log_info(query)
 
         item_id = DataLib.query_return_single_value_in_one(query)
         if not item_id:

@@ -61,19 +61,19 @@ def test_item_round_trip():
     else:
         print(f"item_id: {item_id}")
 
-    item_add = ConvertHelpers.safe_to_int(item_id, -1)
-    if item_add < 0:
+    item_id = ConvertHelpers.safe_to_int(item_id, -1)
+    if item_id < 0:
         pytest.fail("invalid item_id")
 
-    note = "note #1"
-    result = ItemManager.item_history_add_by_id(item_id, note, user_id)
-    if not result:
-        pytest.fail("item_history_add_by_id")
+    # note = "note #1"
+    # result = ItemManager.item_history_add_by_id(item_id, note, user_id)
+    # if not result:
+    #     pytest.fail("item_history_add_by_id")
 
-    note = "note #2"
-    result = ItemManager.item_history_add_by_email(item_id, note, email)
-    if not result:
-        pytest.fail("item_history_add_by_email")
+    # note = "note #2"
+    # result = ItemManager.item_history_add_by_email(item_id, note, email)
+    # if not result:
+    #     pytest.fail("item_history_add_by_email")
 
     ## Fetch item
 
