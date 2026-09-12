@@ -37,7 +37,7 @@ Import-Module Microsoft.PowerShell.Utility
 	Application Variables
 #>
 
-[int]$APP_PORT = 8097 
+[int]$IOR_APP_PORT = $env:IOR_APP_PORT ?? 8097 
 
 function Find-GitRepositoryRoot {
 	param (
@@ -179,7 +179,7 @@ $README_LINES = @(
 	"## Ports",
 	"",
 	"- DB_PORT: ${DB_PORT}",
-	"- APP_PORT: ${APP_PORT}"
+	"- IOR_APP_PORT: ${IOR_APP_PORT}"
 )
 $README_LINES | Set-Content -Path $README_FILE -encoding UTF8 
 Write-Output "Created ${README_FILE}"
@@ -223,6 +223,7 @@ docker run -d `
 	-e PGDATA='/var/lib/postgresql/data/pgdata' `
 	-e "IOR_SALT=${IOR_SALT}" `
 	-e "IOR_FERMAT=${IOR_FERMAT}" `
+	-e "IOR_IOR_APP_PORT=${IOR_APP_PORT}" `
 	-e "IOR_DB_PORT=${DB_PORT}" `
 	-e "IOR_SCHEMA=${IOR_SCHEMA}" `
 	-e "README_FILE_PATH=${README_FILE_PATH}" `
@@ -230,7 +231,7 @@ docker run -d `
 	--restart always `
 	-v "${dbPath}:${VOL}" `
 	-p "${DB_PORT}:${DB_PORT}" `
-	-p "${APP_PORT}:${APP_PORT}" `
+	-p "${IOR_APP_PORT}:${IOR_APP_PORT}" `
 	"${CUSTOM_IMAGE}"
 
 # Wait for Startup
