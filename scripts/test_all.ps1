@@ -8,6 +8,7 @@ param (
     [bool]$ShowOutPut = $False
 )
 
+[string]$tempFilePath = "n/a"
 
 function Find-GitRepositoryRoot {
     param (
@@ -56,8 +57,10 @@ if ($ShowOutPut) {
     Write-Host("=" * $Host.UI.RawUI.WindowSize.Width)
 }
 else {
+    $tempFile = New-TemporaryFile
+    $tempFilePath = $tempFile.FullName
     Write-Host("Running pytest with coverage (output will be hidden)")
-    . uv run coverage run -m pytest  *> $null
+    . uv run coverage run -m pytest  *> $tempFilePath
     $ec = $?
 }
 
@@ -65,11 +68,11 @@ else {
 
 if ($ec -eq $true) {
     Write-Host("-" * $Host.UI.RawUI.WindowSize.Width)
-    uv run coverage report -m
+    . uv run coverage report -m
     Write-Host("-" * $Host.UI.RawUI.WindowSize.Width)
 }
 else {
-    Write-Host("No tests were run or all tests failed. use -ShowOutPut $True to see the output.")
+    Write-Host("No tests were run or all tests failed. Log: ${tempFilePath}")
 }
 
 Pop-Location
