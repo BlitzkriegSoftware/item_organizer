@@ -3,7 +3,9 @@ from pathlib import Path
 
 import pytest
 from faker import Faker
+from varname import nameof
 
+from app_logger.applogger import AppLogger
 from data_lib.datalib import DataLib
 
 
@@ -149,12 +151,12 @@ class TestDataLib:
                 if not result:
                     pytest.fail(f"unable to: {query}")
 
-            query = f"SELECT * FROM {TestDataLib.schema}.{TestDataLib.table};"
+            query = f"SELECT email FROM {TestDataLib.schema}.{TestDataLib.table};"
             drows = DataLib.query_return_dict(conn, query)
-            if drows:
+            assert drows is not None 
+            if drows and DataLib.has_rows(drows):
                 for r in drows:
-                    print(r)
-            assert drows is not None
+                    AppLogger.log_debug(query, {"email": r["email"]}, "testing")
 
             result = DataLib.table_drop(conn, TestDataLib.table, TestDataLib.schema)
             if not result:

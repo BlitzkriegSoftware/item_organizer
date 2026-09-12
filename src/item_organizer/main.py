@@ -29,14 +29,18 @@ app.add_middleware(
 
 
 def main():
-    IOR_APP_PORT=os.getenv("IOR_APP_PORT","0")
+    IOR_APP_PORT = os.getenv("IOR_APP_PORT", "0")
     port = int(IOR_APP_PORT)
     if port <= 0:
-        AppLogger.log_fatal()
+        AppLogger.log_fatal(
+            "Missing Config", nameof(IOR_APP_PORT), {}, logger_name=nameof(main)
+        )
+        return 1
+
     message: str = f"item-organizer start up on port: {port}"
     AppLogger.log_info(message, {}, logger_name=nameof(main))
     uvicorn.run("main:app", host="0.0.0.0", port=port)
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     main()

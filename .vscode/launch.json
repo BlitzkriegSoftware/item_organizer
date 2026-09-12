@@ -14,6 +14,22 @@
             "env": {
                 "PYTHONPATH": "${workspaceFolder}/src"
             }
-        }
+        },
+        {
+          "type": "PowerShell",
+          "request": "launch",
+          "name": "PowerShell Launch (current file)",
+          "script": "${file}",
+          "args": [],
+          "cwd": "${file}"
+      },
+      {
+          "type": "PowerShell",
+          "request": "launch",
+          "name": "test_all.ps1",
+          "script": "${workspaceFolder}/scripts/test_all.ps1",
+          "args": [],
+          "cwd": "${workspaceFolder}/scripts"
+      }
     ]
 }

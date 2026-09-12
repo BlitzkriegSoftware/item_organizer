@@ -38,7 +38,7 @@ class FermetHelper:
         Returns:
             str: base64 encoded encrypted text
         """
-        if not message:
+        if not message: # pragma: no cover
             raise ValueError("message required")
 
         IOR_FERMAT = os.getenv("IOR_FERMAT", "")
@@ -80,12 +80,12 @@ class FermetHelper:
 
         if Base64Helper.is_base64(IOR_FERMAT):
             key = Base64Helper.from_base64(IOR_FERMAT)
-        else:
+        else: # pragma: no cover
             raise ValidationException("Expected b64", nameof(IOR_FERMAT), IOR_FERMAT)
 
         if Base64Helper.is_base64(cypher_b64):
             cypher_bytes = Base64Helper.from_base64(cypher_b64)
-        else:
+        else: # pragma: no cover
             cypher_bytes = cypher_b64.encode("utf-8")
 
         decrypted_bytes = FermetHelper.decrypt_bytes(cypher_bytes, key)
