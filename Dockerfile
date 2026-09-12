@@ -41,19 +41,24 @@ ENV IOR_DB="postgres"
 ENV IOR_SCHEMA="myio"
 ENV IOR_HOST="localhost"
 ENV IOR_DB_PORT="5432"
+ENV IOR_APP_PORT="8097"
 # Install Application
 ENV PYTHONUNBUFFERED=1
 ENV LOG_LEVEL=DEBUG
 ENV PATH="/app/.venv/bin:$PATH"
 ENV README_FILE_PATH="./.working/README.md"
 RUN mkdir -p /app/src
+RUN mkdir -p /app/www
+WORKDIR /app/src
+COPY ./src .
+WORKDIR /app/www
+COPY ./www .
 WORKDIR /app
 COPY ./pyproject.toml .
 COPY ./uv.lock .
 COPY ./LICENSE/ .
 COPY $README_FILE_PATH .
-WORKDIR /app/src
-COPY ./src .
+
 # RUN uv sync
 # Run the application
 # RUN uv run main.py
