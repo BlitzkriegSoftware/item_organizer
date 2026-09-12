@@ -3,6 +3,7 @@ import psycopg2
 from functools import cache
 from typing import Any
 from psycopg2.extras import RealDictCursor, RealDictRow
+from varname import nameof
 
 from app_exceptions.db_exception import DatabaseException
 from src.app_logger.applogger import AppLogger
@@ -69,6 +70,8 @@ class DataLib:
             AppLogger.log_exception(
                 "open connection",
                 ex,
+                {},
+                logger_name=nameof(DataLib.connection_make),
             )
             conn = None
 
@@ -125,6 +128,8 @@ class DataLib:
                 AppLogger.log_exception(
                     query,
                     ex,
+                    {},
+                    logger_name=nameof(DataLib.query_execute),
                 )
                 if conn:
                     conn.rollback()
@@ -164,6 +169,8 @@ class DataLib:
                 AppLogger.log_exception(
                     query,
                     ex,
+                    {},
+                    logger_name=nameof(DataLib.query_execute_in_one)
                 )
                 if conn:
                     conn.rollback()
@@ -193,15 +200,20 @@ class DataLib:
         Returns:
             list[RealDictRow] | None: list[dict]
         """
-        drows: list[RealDictRow] | None
+        drows: list[RealDictRow] | None = []
+        
         with conn.cursor(cursor_factory=RealDictCursor) as cursor:
             try:
                 cursor.execute(query)
                 drows = cursor.fetchall()
+                conn.commit()
             except Exception as ex:  # pragma: no cover
+                conn.rollback()
                 AppLogger.log_exception(
                     query,
                     ex,
+                    {},
+                    logger_name=nameof(DataLib.query_return_dict)
                 )
                 drows = None
             finally:
@@ -317,16 +329,25 @@ class DataLib:
                 query = DataLib.stored_procedure_make_query(
                     procedure_name, args, schema
                 )
+                AppLogger.log_info(
+                    query, 
+                    AppLogger.make_log_extra(procedure_name=procedure_name, args=args), 
+                    logger_name=nameof(DataLib.stored_procedure_execute),
+                )
                 cursor.execute(query, args)
                 conn.commit()
             except Exception as ex:  # pragma: no cover
                 isOk = False
+                if conn:
+                    conn.rollback()
+                
                 AppLogger.log_exception(
                     query,
                     ex,
+                    AppLogger.make_log_extra(procedure_name=procedure_name, args=args), 
+                    logger_name=nameof(DataLib.stored_procedure_execute)
                 )
-                if conn:
-                    conn.rollback()
+
             finally:
                 cursor.close()
 
@@ -390,6 +411,8 @@ class DataLib:
                 AppLogger.log_exception(
                     query,
                     ex,
+                    {},
+                    logger_name=nameof(DataLib.stored_procedure_query)
                 )
                 drows = None
             finally:

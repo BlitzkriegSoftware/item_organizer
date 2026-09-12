@@ -1,11 +1,14 @@
 import os
+from pydoc import Helper
 
 import pytest
 from varname import nameof
 
+from app_logger.applogger import AppLogger
 from biz_logic.item_manager import ItemManager
 from common_helpers.convert_helpers import ConvertHelpers
 from data_lib.datalib import DataLib
+from test_helpers.test_helper import TestHelper
 
 
 def test_priority_list_get():
@@ -40,8 +43,10 @@ def test_item_round_trip():
     print(nameof(priority_list), priority_list)
     priority_id = next(iter(priority_list))
 
-    title = "test test test"
-    body = "body body body"
+    title = TestHelper.random_string(10)
+    body = TestHelper.random_string(25)
+
+    # AppLogger.log_info(f"test_item_round_trip: title={title}, body={body}, org_id={org_id}, created_by={created_by}, assigned_to={assigned_to}, item_state_id={item_state_id}, priority_id={priority_id}")
 
     rankorder = 99
 
@@ -59,24 +64,37 @@ def test_item_round_trip():
     if not item_id:
         pytest.fail("Bad item_add()")
     else:
-        print(f"item_id: {item_id}")
+        AppLogger.log_info(f"item_id: {item_id}")
 
     item_id = ConvertHelpers.safe_to_int(item_id, -1)
     if item_id < 0:
         pytest.fail("invalid item_id")
 
-    # note = "note #1"
-    # result = ItemManager.item_history_add_by_id(item_id, note, user_id)
-    # if not result:
-    #     pytest.fail("item_history_add_by_id")
-
-    # note = "note #2"
-    # result = ItemManager.item_history_add_by_email(item_id, note, email)
-    # if not result:
-    #     pytest.fail("item_history_add_by_email")
 
     ## Fetch item
+    drows = DataLib.query_return_dict_in_one(
+        f"select * from {IOR_SCHEMA}.item where item_id = {item_id};"
+    )
+    if not drows:
+        pytest.fail("no results data (1)")
 
-    # result = ItemManager.item_remove(item_id)
-    # if not result:
-    #     pytest.fail("item_remove")
+
+    note = "note #1"
+    result = ItemManager.item_history_add_by_id(item_id, note, user_id)
+    if not result:
+        pytest.fail("item_history_add_by_id")
+
+    note = "note #2"
+    result = ItemManager.item_history_add_by_email(item_id, note, email)
+    if not result:
+        pytest.fail("item_history_add_by_email")
+
+    drows = DataLib.query_return_dict_in_one(
+        f"select * from {IOR_SCHEMA}.item_history where item_id = {item_id};"
+    )
+    if not drows:
+        pytest.fail("no results data (2)")
+
+    result = ItemManager.item_remove(item_id)
+    if not result:
+        pytest.fail("item_remove")

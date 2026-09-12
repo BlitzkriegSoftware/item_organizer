@@ -183,7 +183,7 @@ class TestDataLib:
         conn = DataLib.connection_make()
         assert conn is not None
 
-        query = f"SELECT email FROM {IOR_SCHEMA}.user where id = -1;"
+        query = f"SELECT email FROM {IOR_SCHEMA}.user where user_id = -1;"
         result = DataLib.query_return_single_value_in_one(query)
         assert not DataLib.has_rows(result)
 

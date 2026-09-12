@@ -63,7 +63,7 @@ def test_is_a_user():
         pytest.fail("IOR_SCHEMA missing")
 
     email = DataLib.query_return_single_value_in_one(
-        "select email from myio.user order by user_id DESC limit 1;"
+        f"select email from {IOR_SCHEMA}.user order by user_id DESC limit 1;"
     )
 
     try:
@@ -154,12 +154,16 @@ def test_user_org_role_get():
 
 
 def test_user_org_role_get_bad():
+    IOR_SCHEMA = os.getenv("IOR_SCHEMA", "")
+    if not IOR_SCHEMA:
+        pytest.fail("IOR_SCHEMA missing")
+
     email = DataLib.query_return_single_value_in_one(
-        "select email from myio.user order by user_id DESC limit 1;"
+        f"select email from {IOR_SCHEMA}.user order by user_id DESC limit 1;"
     )
 
     org_id = DataLib.query_return_single_value_in_one(
-        "select org_id from myio.organization order by org_id DESC limit 1;"
+        f"select org_id from {IOR_SCHEMA}.organization order by org_id DESC limit 1;"
     )
 
     expected = 3

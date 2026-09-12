@@ -94,7 +94,7 @@ class ItemManager:
 
         query = f"INSERT INTO {IOR_SCHEMA}.item (title, body, org_id, item_state_id, created_by, assigned_to, priority_id, rankorder) VALUES ( '{title}', '{body}', {org_id}, {item_state_id}, {created_by}, {assigned_to}, {priority_id}, {rankorder}) returning item_id;"
 
-        AppLogger.log_info(query)
+        # AppLogger.log_info(query,{}, logger_name=nameof(ItemManager.item_add))
 
         item_id = DataLib.query_return_single_value_in_one(query)
         if not item_id:
@@ -160,7 +160,7 @@ class ItemManager:
         )
 
         result = DataLib.stored_procedure_execute_all_in_one(
-            procedure_name, args, IOR_SCHEMA
+            procedure_name, args, IOR_SCHEMA,
         )
         if not result:
             raise DatabaseException(
