@@ -107,7 +107,8 @@ class ItemManager:
         item_id: int,
         history_note: str,
         history_by: str = "(system)",
-    ):
+    ) -> bool:
+        isOk = True
         IOR_SCHEMA = os.getenv("IOR_SCHEMA", "")  # noqa: F821
         if not IOR_SCHEMA:
             raise ConfigurationException("missing", "IOR_SCHEMA")
@@ -130,17 +131,21 @@ class ItemManager:
             procedure_name, args, IOR_SCHEMA
         )
         if not result:
+            isOk = False
             raise DatabaseException(
                 f"Failed to add item history for item_id: {item_id} with note: {history_note} by: {history_by}",
                 procedure_name,
             )
+            
+        return isOk
 
     @staticmethod
     def item_history_add_by_id(
         item_id: int,
         history_note: str,
         history_by: int = -1,
-    ):
+    )-> bool:
+        isOk = True
         IOR_SCHEMA = os.getenv("IOR_SCHEMA", "")  # noqa: F821
         if not IOR_SCHEMA:
             raise ConfigurationException("missing", "IOR_SCHEMA")
@@ -163,11 +168,14 @@ class ItemManager:
             procedure_name, args, IOR_SCHEMA,
         )
         if not result:
+            isOk = False
             raise DatabaseException(
                 f"Failed to add item history for item_id: {item_id} with note: {history_note} by: {history_by}",
                 procedure_name,
             )
-
+    
+        return isOk
+    
     @staticmethod
     def item_remove(
         item_id: int,

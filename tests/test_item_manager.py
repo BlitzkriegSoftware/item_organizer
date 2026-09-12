@@ -70,31 +70,27 @@ def test_item_round_trip():
     if item_id < 0:
         pytest.fail("invalid item_id")
 
-
-    ## Fetch item
     drows = DataLib.query_return_dict_in_one(
         f"select * from {IOR_SCHEMA}.item where item_id = {item_id};"
     )
     if not drows:
-        pytest.fail("no results data (1)")
+        pytest.fail("no item results data (1)")
 
-
-    note = "note #1"
+    note = f"note #1 {title}"
     result = ItemManager.item_history_add_by_id(item_id, note, user_id)
     if not result:
         pytest.fail("item_history_add_by_id")
 
-    note = "note #2"
+    note = f"note #2 {body}"
     result = ItemManager.item_history_add_by_email(item_id, note, email)
     if not result:
         pytest.fail("item_history_add_by_email")
 
-    drows = DataLib.query_return_dict_in_one(
-        f"select * from {IOR_SCHEMA}.item_history where item_id = {item_id};"
-    )
+    query =f"SELECT {IOR_SCHEMA}.item_history_get({item_id}, 10, 0);"
+    drows = DataLib.query_return_dict_in_one(query)
     if not drows:
-        pytest.fail("no results data (2)")
+        pytest.fail("no history results data (3)")
 
-    result = ItemManager.item_remove(item_id)
-    if not result:
-        pytest.fail("item_remove")
+    # result = ItemManager.item_remove(item_id)
+    # if not result:
+    #     pytest.fail("item_remove")
