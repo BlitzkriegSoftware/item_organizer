@@ -1,4 +1,4 @@
-DROP PROCEDURE IF EXISTS {schema}.item_tag_set(bigint,text) 
+DROP PROCEDURE IF EXISTS {schema}.item_tag_set(bigint,text);
 
 CREATE OR REPLACE PROCEDURE {schema}.item_tag_set(
     desired_item_id bigint,

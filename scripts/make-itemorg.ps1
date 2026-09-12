@@ -30,6 +30,11 @@ Import-Module Microsoft.PowerShell.Utility
 # Variables
 [int]$exitCode = 0;
 [string]$pbin = 'C:\Program Files\PostgreSQL\16\bin\psql.exe';
+$tempFile = New-TemporaryFile
+[string]$tempFilePath = $tempFile.FullName
+if (Test-Path -Path $tempFilePath) {
+    Remove-Item -Path $tempFilePath -Force
+}
 
 #
 # Functions
@@ -134,17 +139,19 @@ foreach ($FilePath in $SQL_FILES) {
 }
 
 if ($JustThisIndex -eq 0) {
+    [bool]$ec = $false 
     # Play the SQL Scripts (in order) at Postgres Instance
     foreach ($FilePath in $SQL_FILES) {
         [string]$filename = [System.IO.Path]::GetFileName($FilePath)
         [int]$oi = Get-OrderIndex -ScriptName $filename;
         if ($oi -ge $ORDER_INDEX_MIN) {
             try {
-                Write-Output "`n=============================================="
-                Write-Output "Executing: ${filename}"
-                Write-Output "=============================================="
-                # Set-PSDebug -Trace 2   
-                . $pbin -f $FilePath $ConnectionString
+                Write-Output "`n==============================================" | Tee-Object -Append -FilePath $tempFilePath
+                Write-Output "Executing: ${filename}" | Tee-Object -Append -FilePath $tempFilePath
+                Write-Output "==============================================" | Tee-Object -Append -FilePath $tempFilePath
+                # Set-PSDebug -Trace 2
+                . $pbin -f $FilePath $ConnectionString 2>&1 | Tee-Object -Append -FilePath $tempFilePath
+                $ec = $?
             }
             catch {
                 Write-Output "Error: $_"
@@ -152,6 +159,7 @@ if ($JustThisIndex -eq 0) {
             finally {
                 # Set-PSDebug -Off
             }
+            Write-Host("`nSuccess: ${ec}`n")
         }
     }
 }
@@ -161,10 +169,11 @@ else {
             [string]$filename = [System.IO.Path]::GetFileName($FilePath)
             [int]$oi = Get-OrderIndex -ScriptName $filename;
             if ($oi -eq $JustThisIndex) {
-                Write-Output "`n----------------------------------------------"
-                Write-Output "Executing: ${filename}"
-                Write-Output "----------------------------------------------"            
-                . $pbin -f $FilePath $ConnectionString
+                Write-Output "`n----------------------------------------------" | Tee-Object -Append -FilePath $tempFilePath
+                Write-Output "Executing: ${filename}" | Tee-Object -Append -FilePath $tempFilePath
+                Write-Output "----------------------------------------------" | Tee-Object -Append -FilePath $tempFilePath 
+                . $pbin -f $FilePath $ConnectionString 2>&1 | Tee-Object -Append -FilePath $tempFilePath
+                $ec = $?
                 break;
             }
         }
@@ -175,16 +184,19 @@ else {
                 [string]$filename = [System.IO.Path]::GetFileName($FilePath)
                 [int]$oi = Get-OrderIndex -ScriptName $filename;
                 if ($oi -ge $ContinueIndex) {
-                    Write-Output "`n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-                    Write-Output "Executing: ${filename}"
-                    Write-Output "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"            
-                    . $pbin -f $FilePath $ConnectionString
+                    Write-Output "`n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" | Tee-Object -Append -FilePath $tempFilePath
+                    Write-Output "Executing: ${filename}" | Tee-Object -Append -FilePath $tempFilePath
+                    Write-Output "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" | Tee-Object -Append -FilePath $tempFilePath
+                    . $pbin -f $FilePath $ConnectionString 2>&1 | Tee-Object -Append -FilePath $tempFilePath
+                    $ec = $?
                     break;
                 }
             }
         }
     }
 }
+
+Write-Host "Log File: ${tempFilePath}"
 #
 # Exit()
 Pop-Location

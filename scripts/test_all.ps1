@@ -8,7 +8,9 @@ param (
     [bool]$ShowOutPut = $False
 )
 
-[string]$tempFilePath = "n/a"
+
+$tempFile = New-TemporaryFile
+[string]$tempFilePath = $tempFile.FullName
 
 function Find-GitRepositoryRoot {
     param (
@@ -55,8 +57,6 @@ if ($ShowOutPut) {
     Write-Host("=" * $Host.UI.RawUI.WindowSize.Width)
 }
 else {
-    $tempFile = New-TemporaryFile
-    $tempFilePath = $tempFile.FullName
     Write-Host("Running pytest with coverage (output will be hidden)")
     . uv run coverage run -m pytest  *> $tempFilePath
     $ec = $?
