@@ -1,3 +1,5 @@
+DROP FUNCTION IF EXISTS {schema}.item_tag_get(bigint);
+
 CREATE or replace FUNCTION {schema}.item_tag_get(
     desired_item_id bigint
 ) 

@@ -1,4 +1,4 @@
-DROP PROCEDURE IF EXISTS {schema}.item_remove;
+DROP PROCEDURE IF EXISTS {schema}.item_remove(bigint);
 
 CREATE OR REPLACE PROCEDURE {schema}.item_remove(
     target_item_id bigint

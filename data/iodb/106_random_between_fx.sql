@@ -1,5 +1,3 @@
--- FUNCTION: {schema}.random_between(integer, integer)
-
 DROP FUNCTION IF EXISTS {schema}.random_between(integer, integer);
 
 CREATE OR REPLACE FUNCTION {schema}.random_between(

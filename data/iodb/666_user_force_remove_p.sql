@@ -1,4 +1,4 @@
-DROP PROCEDURE IF EXISTS {schema}.user_force_remove();
+DROP PROCEDURE IF EXISTS {schema}.user_force_remove(text);
 
 CREATE OR REPLACE PROCEDURE {schema}.user_force_remove(
     email_to_remove text

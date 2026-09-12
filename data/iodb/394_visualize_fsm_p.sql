@@ -1,4 +1,4 @@
---DROP PROCEDURE {schema}.visualize_fsm(uuid);
+DROP PROCEDURE IF EXISTS {schema}.visualize_fsm(bigint);
 
 CREATE OR REPLACE PROCEDURE {schema}.visualize_fsm(
     IN target_org_id bigint DEFAULT 0

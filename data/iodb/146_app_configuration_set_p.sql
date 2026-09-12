@@ -1,4 +1,4 @@
-DROP PROCEDURE IF EXISTS {schema}.app_configuration_set;
+DROP PROCEDURE IF EXISTS {schema}.app_configuration_set(text,text);
 
 CREATE OR REPLACE PROCEDURE {schema}.app_configuration_set(
         item_name text,

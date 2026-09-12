@@ -1,3 +1,5 @@
+DROP FUNCTION IF EXISTS {schema}.is_org_or_descendant(bigint, bigint);
+
 CREATE OR REPLACE FUNCTION {schema}.is_org_or_descendant(
     p_org_id bigint,
     p_ancestor_org_id bigint

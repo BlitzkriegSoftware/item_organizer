@@ -1,3 +1,5 @@
+DROP FUNCTION IF EXISTS {schema}.item_state_fsm_valid_transition(integer, integer,bigint);
+
 CREATE or replace FUNCTION {schema}.item_state_fsm_valid_transition(
     from_state integer,
     to_state integer,

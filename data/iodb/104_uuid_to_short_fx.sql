@@ -1,3 +1,5 @@
+DROP FUNCTION IF EXISTS {schema}.uuid_to_short(uuid);
+
 CREATE OR REPLACE FUNCTION {schema}.uuid_to_short(u uuid) 
 RETURNS text AS $$
   SELECT translate(

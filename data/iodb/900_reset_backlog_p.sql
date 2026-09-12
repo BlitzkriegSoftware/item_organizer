@@ -1,7 +1,7 @@
 -- RESET ALL ITEM Data
 -- This is the nucular option
 
-DROP PROCEDURE IF EXISTS {schema}.reset_backlog();
+DROP PROCEDURE IF EXISTS {schema}.reset_backlog(integer);
 
 CREATE OR REPLACE PROCEDURE {schema}.reset_backlog(flag integer)
 LANGUAGE 'plpgsql'

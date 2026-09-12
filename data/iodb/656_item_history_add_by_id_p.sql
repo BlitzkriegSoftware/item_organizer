@@ -1,4 +1,4 @@
-DROP PROCEDURE IF EXISTS {schema}.item_history_add_by_id;
+DROP PROCEDURE IF EXISTS {schema}.item_history_add_by_id(bigint, text, bigint, timestamp with time zone);
 
 CREATE OR REPLACE PROCEDURE {schema}.item_history_add_by_id(
     history_item_id bigint,
