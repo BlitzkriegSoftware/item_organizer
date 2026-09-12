@@ -17,12 +17,12 @@ class ItemManager:
     def priority_list_get() -> dict[int, str]:
         priority_list: dict[int, str] = {}
         IOR_SCHEMA = os.getenv("IOR_SCHEMA", "")  # noqa: F821
-        if not IOR_SCHEMA:
+        if not IOR_SCHEMA: # pragma: no cover
             raise ConfigurationException("missing", "IOR_SCHEMA")
 
         query = f"select priority_id, priority_title from {IOR_SCHEMA}.priority order by priority_id;"
         result = DataLib.query_return_dict_in_one(query)
-        if not result:
+        if not result: # pragma: no cover
             raise DatabaseException("unable (0)", query)
 
         for row in result:
@@ -39,12 +39,12 @@ class ItemManager:
     ) -> dict[int, str]:
         item_state_list: dict[int, str] = {}
         IOR_SCHEMA = os.getenv("IOR_SCHEMA", "")  # noqa: F821
-        if not IOR_SCHEMA:
+        if not IOR_SCHEMA: # pragma: no cover
             raise ConfigurationException("missing", "IOR_SCHEMA")
 
         query = f"select item_state_id, state_title from {IOR_SCHEMA}.item_state where org_id = {org_id} order by item_state_id;"
         result = DataLib.query_return_dict_in_one(query)
-        if not result:
+        if not result: # pragma: no cover
             raise DatabaseException("unable (0)", query)
 
         for row in result:
@@ -68,7 +68,7 @@ class ItemManager:
         item_id: int = -1
 
         IOR_SCHEMA = os.getenv("IOR_SCHEMA", "")  # noqa: F821
-        if not IOR_SCHEMA:
+        if not IOR_SCHEMA: # pragma: no cover
             raise ConfigurationException("missing", "IOR_SCHEMA")
 
         if not title:
@@ -110,7 +110,7 @@ class ItemManager:
     ) -> bool:
         isOk = True
         IOR_SCHEMA = os.getenv("IOR_SCHEMA", "")  # noqa: F821
-        if not IOR_SCHEMA:
+        if not IOR_SCHEMA: # pragma: no cover
             raise ConfigurationException("missing", "IOR_SCHEMA")
 
         if item_id < 0:
@@ -130,7 +130,7 @@ class ItemManager:
         result = DataLib.stored_procedure_execute_all_in_one(
             procedure_name, args, IOR_SCHEMA
         )
-        if not result:
+        if not result: # pragma: no cover
             isOk = False
             raise DatabaseException(
                 f"Failed to add item history for item_id: {item_id} with note: {history_note} by: {history_by}",
@@ -147,7 +147,7 @@ class ItemManager:
     )-> bool:
         isOk = True
         IOR_SCHEMA = os.getenv("IOR_SCHEMA", "")  # noqa: F821
-        if not IOR_SCHEMA:
+        if not IOR_SCHEMA: # pragma: no cover
             raise ConfigurationException("missing", "IOR_SCHEMA")
 
         if item_id < 0:
@@ -167,7 +167,7 @@ class ItemManager:
         result = DataLib.stored_procedure_execute_all_in_one(
             procedure_name, args, IOR_SCHEMA,
         )
-        if not result:
+        if not result: # pragma: no cover
             isOk = False
             raise DatabaseException(
                 f"Failed to add item history for item_id: {item_id} with note: {history_note} by: {history_by}",
@@ -182,7 +182,7 @@ class ItemManager:
     )-> bool:
         isOk = True
         IOR_SCHEMA = os.getenv("IOR_SCHEMA", "")  # noqa: F821
-        if not IOR_SCHEMA:
+        if not IOR_SCHEMA: # pragma: no cover
             raise ConfigurationException("missing", "IOR_SCHEMA")
 
         procedure_name = "item_remove"
@@ -192,14 +192,8 @@ class ItemManager:
             procedure_name, args, IOR_SCHEMA
         )
 
-        if not results:
+        if not results: # pragma: no cover
             isOk = False
             raise DatabaseException("unable (0)", f"{procedure_name}({item_id})")
 
         return isOk
-    
-    @staticmethod
-    def item_get(
-        item_id: int,
-    ) -> RealDictRow | None:
-        return None

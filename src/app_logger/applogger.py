@@ -43,11 +43,63 @@ class AppLogger:
     @cache
     @staticmethod
     def logger_get(logger_name: str | None = None) -> logging.Logger:
+        """Get a logger instance as configured by LOGGING_CONFIG. 
+        
+        Args:
+            logger_name (str | None, optional): Defaults to __name__.
+
+        Returns:
+            logging.Logger: _description_
+        """
         logging.config.dictConfig(AppLogger.LOGGING_CONFIG)
         if not logger_name:
             logger_name = __name__
         logger = logging.getLogger(logger_name)
         return logger
+
+    @staticmethod
+    def log_fatal(
+        message: str,
+        configurationKey: str | None = None,
+        extra: MutableMapping[str, object] = {},
+        logger_name: str | None = None
+    ):
+        """Structured logging for fatal level messages.
+        
+        Should: include a configurationKey if the fatal is related to a configuration issue.
+                In the form of `{configurationSource}:{configurationKey}`
+                Message should be a human readable message describing the fatal error.
+                Particularly useful for configuration issues, but can be used for any fatal error.
+        """
+        if not message:
+            return
+
+        if configurationKey:
+            extra[nameof(configurationKey)] = configurationKey
+
+        logger = AppLogger.logger_get(logger_name)
+        filename, lineno, co_name, sinfo = logger.findCaller(False, AppLogger.Stack_Recurse_Depth)
+
+        key = f"{AppLogger.Log_Field_Prefix}{nameof(filename)}"
+        if filename and key not in extra:
+            extra[key] = filename
+
+        key = f"{AppLogger.Log_Field_Prefix}{nameof(lineno)}"
+        if lineno and key not in extra:
+            extra[key] = lineno
+
+        key = f"{AppLogger.Log_Field_Prefix}{nameof(co_name)}"
+        if co_name and key not in extra:
+            extra[key] = co_name
+
+        key = f"{AppLogger.Log_Field_Prefix}{nameof(sinfo)}"
+        if sinfo and key not in extra:
+            extra[key] = sinfo
+
+        logger.fatal(
+            message,
+            extra=extra,
+        )
 
     @staticmethod
     def log_exception(
@@ -56,6 +108,14 @@ class AppLogger:
         extra: MutableMapping[str, object] = {},
         logger_name: str | None = None
     ):
+        """Stuctured logging for exceptions.
+
+        Args:
+            query (str): (or message) Manditory!
+            ex (Exception): Manditory!
+            extra (MutableMapping[str, object], optional): _description_. Defaults to {}.
+            logger_name (str | None, optional): Defaults to None.
+        """
         if not query:
             query = ""
         else:
@@ -93,6 +153,7 @@ class AppLogger:
         extra: MutableMapping[str, object] = {},
         logger_name: str | None = None
     ):
+        """Structured logging for info level messages."""
         if not message:
             return
 
@@ -119,6 +180,48 @@ class AppLogger:
             message,
             extra=extra,
         )
+
+
+    @staticmethod
+    def log_debug(
+        message: str,
+        extra: MutableMapping[str, object] = {},
+        logger_name: str | None = None
+    ):
+        """Structured logging for debug level messages."""
+        if not message:
+            return
+
+        logger = AppLogger.logger_get(logger_name)
+        filename, lineno, co_name, sinfo = logger.findCaller(False, AppLogger.Stack_Recurse_Depth)
+
+        key = f"{AppLogger.Log_Field_Prefix}{nameof(filename)}"
+        if filename and key not in extra:
+            extra[key] = filename
+
+        key = f"{AppLogger.Log_Field_Prefix}{nameof(lineno)}"
+        if lineno and key not in extra:
+            extra[key] = lineno
+
+        key = f"{AppLogger.Log_Field_Prefix}{nameof(co_name)}"
+        if co_name and key not in extra:
+            extra[key] = co_name
+
+        key = f"{AppLogger.Log_Field_Prefix}{nameof(sinfo)}"
+        if sinfo and key not in extra:
+            extra[key] = sinfo
+
+        logger.debug(
+            message,
+            extra=extra,
+        )
+
+
+
+
+
+
+
 
     @staticmethod
     def make_log_extra(**kwargs) -> MutableMapping[str, object]:

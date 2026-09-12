@@ -38,3 +38,8 @@ def test_round_trip_env_key():
     cyphered = FermetHelper.encrypt_message(expected)
     actual = FermetHelper.decrypt_message(cyphered)
     assert expected == actual
+
+
+def test_generate_key_b64():
+    key_b64 = FermetHelper.generate_key_b64()
+    assert Base64Helper.is_base64(key_b64)
