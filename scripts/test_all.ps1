@@ -1,4 +1,13 @@
-#    Run all pytests with coverage
+<#
+.SYNOPSIS
+    Run all tests and generate coverage report
+#>    
+
+param (
+    [Parameter(Mandatory = $false)]
+    [bool]$ShowOutPut = $False
+)
+
 
 function Find-GitRepositoryRoot {
     param (
@@ -39,12 +48,28 @@ if ($null -eq $GIT_ROOT) {
 # Start processing
 Push-Location $GIT_ROOT
 
-Write-Host("-" * $Host.UI.RawUI.WindowSize.Width)
-uv run coverage run -m pytest -s -v
-Write-Host("-" * $Host.UI.RawUI.WindowSize.Width)
-Write-Host(" ")
-Write-Host(" ")
-Write-Host("-" * $Host.UI.RawUI.WindowSize.Width)
-uv run coverage report -m
-Write-Host("-" * $Host.UI.RawUI.WindowSize.Width)
+if ($ShowOutPut) {
+    Write-Host("=" * $Host.UI.RawUI.WindowSize.Width)
+    # Write-Host("Running pytest with coverage (output will be shown)")
+    . uv run coverage run -m pytest -s -v
+    $ec = $?
+    Write-Host("=" * $Host.UI.RawUI.WindowSize.Width)
+}
+else {
+    Write-Host("Running pytest with coverage (output will be hidden)")
+    . uv run coverage run -m pytest  *> $null
+    $ec = $?
+}
 
+# Write-Host("`nExit Code: ${ec}`n")
+
+if ($ec -eq $true) {
+    Write-Host("-" * $Host.UI.RawUI.WindowSize.Width)
+    uv run coverage report -m
+    Write-Host("-" * $Host.UI.RawUI.WindowSize.Width)
+}
+else {
+    Write-Host("No tests were run or all tests failed. use -ShowOutPut $True to see the output.")
+}
+
+Pop-Location
