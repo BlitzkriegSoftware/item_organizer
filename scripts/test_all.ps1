@@ -38,7 +38,6 @@ function Find-GitRepositoryRoot {
 
 Set-StrictMode -Version 2.0
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls -bor [Net.SecurityProtocolType]::Tls11 -bor [Net.SecurityProtocolType]::Tls12
-Push-Location $PSScriptRoot
 
 $GIT_ROOT = Find-GitRepositoryRoot -FilePath $PSScriptRoot
 if ($null -eq $GIT_ROOT) {
@@ -46,8 +45,7 @@ if ($null -eq $GIT_ROOT) {
     return 9;
 }
 
-# Start processing
-Push-Location $GIT_ROOT
+Set-Location -Path $GIT_ROOT
 
 if ($ShowOutPut) {
     Write-Host("=" * $Host.UI.RawUI.WindowSize.Width)
