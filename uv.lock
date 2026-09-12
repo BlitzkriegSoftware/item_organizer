@@ -794,6 +794,7 @@ dependencies = [
     { name = "psycopg2-binary" },
     { name = "pydantic" },
     { name = "python-json-logger" },
+    { name = "python-multipart" },
     { name = "sqlalchemy" },
     { name = "varname" },
 ]
@@ -822,6 +823,7 @@ requires-dist = [
     { name = "psycopg2-binary", specifier = ">=2.9.12" },
     { name = "pydantic", specifier = ">=2.13.5" },
     { name = "python-json-logger", specifier = ">=4.2.0" },
+    { name = "python-multipart", specifier = ">=0.0.32" },
     { name = "sqlalchemy", specifier = ">=2.0.52" },
     { name = "varname", specifier = ">=1.0.0" },
 ]
