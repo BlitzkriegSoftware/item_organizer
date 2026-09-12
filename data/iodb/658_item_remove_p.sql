@@ -7,6 +7,7 @@ LANGUAGE 'plpgsql'
 AS $BODY$
 
 BEGIN
+    delete from {schema}.item_nv where item_id = target_item_id;
     delete from {schema}.item_tag where item_id = target_item_id;
     delete from {schema}.item_history where item_id = target_item_id;
     delete from {schema}.item where item_id = target_item_id;

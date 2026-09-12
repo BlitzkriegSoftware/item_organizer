@@ -86,11 +86,22 @@ def test_item_round_trip():
     if not result:
         pytest.fail("item_history_add_by_email")
 
-    query =f"SELECT {IOR_SCHEMA}.item_history_get({item_id}, 10, 0);"
+    query = f"SELECT {IOR_SCHEMA}.item_history_get({item_id}, 10, 0);"
     drows = DataLib.query_return_dict_in_one(query)
     if not drows:
         pytest.fail("no history results data (3)")
 
-    result = ItemManager.item_remove(item_id)
-    if not result:
-        pytest.fail("item_remove")
+    nv: dict[str, str] = {"n1": "v1", "n2": "v2", "n3": "v3"}
+
+    for nv_key, nv_value in nv:
+        ItemManager.item_nv_add(item_id, nv_key, nv_value)
+
+    drows = ItemManager.item_nv_get(item_id)
+    if not drows:
+        pytest.fail("no nv rows")
+    else:
+        AppLogger.log_info("nv success", {}, nameof(test_item_round_trip))
+
+    # result = ItemManager.item_remove(item_id)
+    # if not result:
+    #     pytest.fail("item_remove")

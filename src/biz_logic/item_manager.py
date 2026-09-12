@@ -201,7 +201,19 @@ class ItemManager:
         return isOk
 
     @staticmethod
-    def nv_get(item_id: int) -> dict[str, str]:
+    def item_nv_get(item_id: int) -> dict[str, str]:
+        """
+        Get NV items.
+
+        Args:
+            item_id (int): PK
+
+        Raises:
+            ConfigurationException: IOR_SCHEMA
+
+        Returns:
+            dict[str, str]: NV Items never None
+        """
         d: dict[str, str] = {}
         IOR_SCHEMA = os.getenv("IOR_SCHEMA", "")  # noqa: F821
         if not IOR_SCHEMA:  # pragma: no cover
@@ -218,7 +230,7 @@ class ItemManager:
         return d
 
     @staticmethod
-    def nv_add(
+    def item_nv_add(
         item_id: int,
         nv_key: str,
         nv_value: str,
@@ -240,13 +252,16 @@ class ItemManager:
             DatabaseException: Execute
 
         Returns:
-            bool: _description_
+            bool: True if so
         """
         isOk = True
 
         IOR_SCHEMA = os.getenv("IOR_SCHEMA", "")  # noqa: F821
         if not IOR_SCHEMA:  # pragma: no cover
             raise ConfigurationException("missing", "IOR_SCHEMA")
+
+        if not nv_key:
+            raise ValidationException("required", nameof(nv_key))
 
         procedure_name = "item_nv_set"
         args = (
@@ -262,7 +277,7 @@ class ItemManager:
         if not results:  # pragma: no cover
             isOk = False
             raise DatabaseException(
-                "unable (0)", f"{procedure_name}({item_id, nv_key, {nv_value}})"
+                "unable (0)", f"{procedure_name}({item_id}, {nv_key}, {nv_value})"
             )
 
         return isOk
