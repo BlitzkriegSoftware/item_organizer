@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link
       rel="icon"
-      href="https://media.geeksforgeeks.org/wp-content/cdn-uploads/gfg_200X200.png"
+      href="https://raw.githubusercontent.com/BlitzkriegSoftware/item_organizer/refs/heads/main/www/asset/favicon.ico"
       type="image/x-icon"
     />
     <title>Blitzkrieg Software: item organizer</title>
@@ -56,12 +56,18 @@
   </head>
   <body>
     <!-- Main Container -->
-    <div class="container">
+    <div class="container-fluid">
       <form>
-        <div class="btn-group" role="group"></div>
-        <div class="btn-group" role="group"></div>
-        <div class="btn-group" role="group"></div>
-        <div class="btn-group" role="group"></div>
+          <button
+            id="newitem"
+            class="btn btn-primary actionbutton"
+          >
+            <i class="bi bi-file-plus"></i> New Item
+          </button>
+        </div>
+        <div class="btn-group" role="group"><i class="bi bi-filter-square"></i></div>
+        <div class="btn-group" role="group"><i class="bi bi-sort-up"></i></div>
+        <div class="btn-group" role="group"><i class="bi bi-bookmark-heart"></i></div>
       </form>
       <div id="debug" class="debugtext"></div>
       <div id="result"></div>
