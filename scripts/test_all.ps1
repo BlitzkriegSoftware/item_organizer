@@ -64,7 +64,7 @@ else {
     $ec = $?
 }
 
-# Write-Host("`nExit Code: ${ec}`n")
+Write-Host("`nLog: ${tempFilePath}`nExit Code: ${ec}`n")
 
 if ($ec -eq $true) {
     Write-Host("-" * $Host.UI.RawUI.WindowSize.Width)
@@ -72,7 +72,7 @@ if ($ec -eq $true) {
     Write-Host("-" * $Host.UI.RawUI.WindowSize.Width)
 }
 else {
-    Write-Host("No tests were run or all tests failed. Log: ${tempFilePath}")
+    Write-Host("No tests were run or all tests failed.")
 }
 
 Pop-Location
