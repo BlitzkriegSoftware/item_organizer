@@ -24,7 +24,7 @@ Param (
 
 Import-Module Microsoft.PowerShell.Utility
 
-# Constantts
+# Constants
 [int]$ORDER_INDEX_MIN = 100;
 
 # Variables

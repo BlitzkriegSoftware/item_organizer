@@ -91,6 +91,6 @@ def test_item_round_trip():
     if not drows:
         pytest.fail("no history results data (3)")
 
-    # result = ItemManager.item_remove(item_id)
-    # if not result:
-    #     pytest.fail("item_remove")
+    result = ItemManager.item_remove(item_id)
+    if not result:
+        pytest.fail("item_remove")

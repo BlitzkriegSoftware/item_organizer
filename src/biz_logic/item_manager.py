@@ -179,7 +179,8 @@ class ItemManager:
     @staticmethod
     def item_remove(
         item_id: int,
-    ):
+    )-> bool:
+        isOk = True
         IOR_SCHEMA = os.getenv("IOR_SCHEMA", "")  # noqa: F821
         if not IOR_SCHEMA:
             raise ConfigurationException("missing", "IOR_SCHEMA")
@@ -192,8 +193,11 @@ class ItemManager:
         )
 
         if not results:
+            isOk = False
             raise DatabaseException("unable (0)", f"{procedure_name}({item_id})")
 
+        return isOk
+    
     @staticmethod
     def item_get(
         item_id: int,
