@@ -26,3 +26,6 @@ BEGIN
 END; 
 $BODY$
 ;
+
+ALTER PROCEDURE {schema}.item_nv_set(bigint, text, text)
+    OWNER TO postgres;
