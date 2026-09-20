@@ -5,7 +5,7 @@
 
 param (
     [Parameter(Mandatory = $false)]
-    [bool]$ShowOutPut = $False
+    [bool]$ShowOutput = $False
 )
 
 
@@ -49,7 +49,7 @@ if ($null -eq $GIT_ROOT) {
 
 Set-Location -Path $GIT_ROOT
 
-if ($ShowOutPut) {
+if ($ShowOutput) {
     Write-Host("=" * $Host.UI.RawUI.WindowSize.Width)
     # Write-Host("Running pytest with coverage (output will be shown)")
     . uv run coverage run -m pytest -s -v
@@ -73,4 +73,4 @@ else {
     Write-Host("No tests were run or all tests failed.")
 }
 
-Pop-Location
+Set-Location -Path $GIT_ROOT

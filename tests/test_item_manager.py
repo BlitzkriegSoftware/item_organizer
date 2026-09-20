@@ -43,6 +43,9 @@ def test_item_round_trip():
     print(nameof(priority_list), priority_list)
     priority_id = next(iter(priority_list))
 
+    item_kind_list = ItemManager.item_kind_list_get()
+    item_kind_id = next(iter(item_kind_list))
+
     title = TestHelper.random_string(10)
     body = TestHelper.random_string(25)
 
@@ -54,6 +57,7 @@ def test_item_round_trip():
         title,
         body,
         org_id,
+        item_kind_id,
         created_by,
         assigned_to,
         item_state_id,

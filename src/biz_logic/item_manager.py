@@ -74,7 +74,7 @@ class ItemManager:
             raise DatabaseException("unable (0)", query)
 
         for row in result:
-            id = row["item_state_id"]
+            id = row["item_kind_id"]
             text = row["kind_title"]
             item_kind_list[id] = text
 
@@ -276,9 +276,11 @@ class ItemManager:
             raise ConfigurationException("missing", "IOR_SCHEMA")
 
         query = f"SELECT {IOR_SCHEMA}.item_nv_get({item_id})"
+        AppLogger.log_debug(query)
         drows = DataLib.query_return_dict_in_one(query)
         if drows:
             for r in drows:
+                AppLogger.log_debug(str(r.keys()))
                 m_key = r["nv_key"]
                 m_value = r["nv_value"]
                 d[m_key] = m_value
