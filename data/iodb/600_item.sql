@@ -8,6 +8,7 @@ CREATE TABLE IF NOT EXISTS {schema}.item
     title text COLLATE pg_catalog."default" NOT NULL,
     body text COLLATE pg_catalog."default" NOT NULL,
     org_id bigint not null,
+    item_kind_id integer not null,
     created_date timestamp with time zone DEFAULT now(),
     updated_date timestamp with time zone DEFAULT now(),
     item_state_id integer NOT NULL,
@@ -19,6 +20,10 @@ CREATE TABLE IF NOT EXISTS {schema}.item
         setweight(to_tsvector('english'::regconfig, COALESCE(title, ''::text)), 'A'::"char") || 
         setweight(to_tsvector('english'::regconfig, COALESCE(body, ''::text)), 'B'::"char")
     ) STORED,
+    CONSTRAINT fk_{schema}_item_item_kind_id FOREIGN KEY (item_kind_id)
+        REFERENCES {schema}."item_kind" (item_kind_id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
     CONSTRAINT fk_{schema}_item_assigned_to FOREIGN KEY (assigned_to)
         REFERENCES {schema}."user" (user_id) MATCH SIMPLE
         ON UPDATE NO ACTION

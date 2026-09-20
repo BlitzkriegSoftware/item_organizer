@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS {schema}.item_history
     created_date timestamp with time zone DEFAULT now(),
     created_by text not NULL,
     note text COLLATE pg_catalog."default" NOT NULL,
-    CONSTRAINT fk_{schema}_item_history_item_id FOREIGN KEY (item_id)
+    CONSTRAINT fk_{schema}_item_history_t_item_id FOREIGN KEY (item_id)
         REFERENCES {schema}.item (item_id) MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE NO ACTION
