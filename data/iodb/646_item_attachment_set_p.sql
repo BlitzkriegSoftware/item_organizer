@@ -1,4 +1,3 @@
-
 DROP PROCEDURE IF EXISTS {schema}.item_attachment_set(bigint, bigint, text, text, text, timestamp with time zone);
 
 CREATE OR REPLACE PROCEDURE {schema}.item_attachment_set(

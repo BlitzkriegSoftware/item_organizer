@@ -1,6 +1,4 @@
--- Table: {schema}.item
-
--- DROP TABLE IF EXISTS {schema}.item;
+DROP TABLE IF EXISTS {schema}.item CASCADE;
 
 CREATE TABLE IF NOT EXISTS {schema}.item
 (

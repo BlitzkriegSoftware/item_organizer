@@ -1,5 +1,3 @@
--- Table: {schema}.relationship
-
 DROP TABLE IF EXISTS {schema}.relationship;
 
 CREATE TABLE IF NOT EXISTS {schema}.relationship

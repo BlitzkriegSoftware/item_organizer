@@ -1,5 +1,3 @@
--- Table: {schema}.user
-
 DROP TABLE IF EXISTS {schema}."user";
 
 CREATE TABLE IF NOT EXISTS {schema}."user"

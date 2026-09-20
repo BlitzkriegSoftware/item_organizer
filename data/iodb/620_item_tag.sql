@@ -1,5 +1,3 @@
--- Table: {schema}.item_tag
-
 DROP TABLE IF EXISTS {schema}.item_tag;
 
 CREATE TABLE IF NOT EXISTS {schema}.item_tag
