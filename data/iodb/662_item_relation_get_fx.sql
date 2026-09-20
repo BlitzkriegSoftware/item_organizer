@@ -4,21 +4,23 @@ CREATE or replace FUNCTION {schema}.item_relation_get(
     desired_item_id bigint
 ) 
 RETURNS TABLE (
-    from_id integer,
     to_id integer,
+    to_title text,
     re_id integer,
-    cap_text text
+    re_text text
 ) AS $$
 BEGIN
 RETURN QUERY 
     SELECT
-        ir.from_item_id,
         ir.to_item_id,
+        it.title,
         ir.relationship_id,
-        re.caption
+        re.relationship_title
     FROM {schema}.item_relation ir 
     LEFT JOIN {schema}.relationship re  
     on ir.relationship_id = re.relationship_id
+    LEFT JOIN {schema}.Item it 
+    on ir.to_item_id = it.item_it
     WHERE
         ir.from_item_id = desired_item_id
     ORDER BY

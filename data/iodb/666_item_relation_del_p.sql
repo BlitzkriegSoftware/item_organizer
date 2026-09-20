@@ -8,7 +8,6 @@ LANGUAGE 'plpgsql'
 AS $BODY$
 
 BEGIN
-
     -- remove relation and its reciprocal
     DELETE from {schema}.item_relation 
     WHERE from_item_id = in_from_id AND
@@ -17,7 +16,6 @@ BEGIN
     DELETE from {schema}.item_relation 
     WHERE from_item_id = in_to_id AND
           to_item_id = in_from_id;
-
 END; 
 $BODY$
 ;
