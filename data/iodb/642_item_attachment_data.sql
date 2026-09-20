@@ -1,0 +1,1 @@
+truncate table {schema}.item_attachment;
