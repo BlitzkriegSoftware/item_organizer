@@ -1,3 +1,4 @@
+from datetime import datetime
 import os
 from pydoc import Helper
 
@@ -9,6 +10,7 @@ from biz_logic.item_manager import ItemManager
 from common_helpers.convert_helpers import ConvertHelpers
 from data_lib.datalib import DataLib
 from test_helpers.test_helper import TestHelper
+from biz_logic.model_attachment import AttachmentModel
 
 
 def test_priority_list_get():
@@ -97,14 +99,30 @@ def test_item_round_trip():
 
     nv: dict[str, str] = {"n1": "v1", "n2": "v2", "n3": "v3"}
 
-    for nv_key, nv_value in nv:
+    for nv_key in nv:
+        nv_value = nv[nv_key]
         ItemManager.item_nv_add(item_id, nv_key, nv_value)
 
-    drows = ItemManager.item_nv_get(item_id)
-    if not drows:
+    d = ItemManager.item_nv_get(item_id)
+    if not d:
         pytest.fail("no nv rows")
     else:
         AppLogger.log_info("nv success", {}, nameof(test_item_round_trip))
+
+    attach: dict[str, str] = {
+        "file1": "\\\\fs:file1",
+        "file2": "\\\\fs:file2",
+        "url3": "https://sto1/file3",
+        "url4": "https://sto1/file4",
+    }
+
+    for fn in attach:
+        url = attach[fn]
+        ItemManager.item_attachment_add(item_id, 1, fn, url, "")
+
+    la = ItemManager.item_attachment_get(item_id)
+    if not la:
+        pytest.fail("no attachment rows")
 
     # result = ItemManager.item_remove(item_id)
     # if not result:

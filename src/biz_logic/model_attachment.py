@@ -10,14 +10,12 @@ class AttachmentModel:
         email: str,
         caption: str,
         storage_url: str,
-        file_hash: str,
         created_on: datetime.datetime,
     ):
         self.created_by = created_by
         self.email = email
         self.caption = caption
         self.file_url = storage_url
-        self.file_hash = file_hash
         self.created_on = created_on
 
     def __str__(self) -> str:

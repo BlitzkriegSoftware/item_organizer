@@ -7,7 +7,6 @@ CREATE TABLE IF NOT EXISTS {schema}.item_attachment
     created_by bigint DEFAULT 0,
     caption text COLLATE pg_catalog."default" NOT NULL,
     storage_url text COLLATE pg_catalog."default" NOT NULL,
-    file_hash text  COLLATE pg_catalog."default" NULL,
     created_date timestamp with time zone DEFAULT now(),
     CONSTRAINT fk_{schema}_item_attachment_item_id FOREIGN KEY (item_id)
         REFERENCES {schema}.item (item_id) MATCH SIMPLE

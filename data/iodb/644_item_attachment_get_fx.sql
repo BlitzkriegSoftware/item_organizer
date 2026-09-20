@@ -8,7 +8,6 @@ RETURNS TABLE (
     email text,
     caption text,
     storage_url text,
-    file_hash text,
     created_date timestamp with time zone
 ) AS $$
 BEGIN
@@ -18,7 +17,6 @@ RETURN QUERY
        ur.email,
        ia.caption,
        ia.storage_url,
-       ia.file_hash,
        ia.created_by
     FROM
         {schema}.item_attachment ia

@@ -274,9 +274,8 @@ class ItemManager:
         IOR_SCHEMA = os.getenv("IOR_SCHEMA", "")  # noqa: F821
         if not IOR_SCHEMA:  # pragma: no cover
             raise ConfigurationException("missing", "IOR_SCHEMA")
-
-        query = f"SELECT {IOR_SCHEMA}.item_nv_get({item_id})"
-        AppLogger.log_debug(query)
+        query = f" SELECT it.nv_key ,it.nv_value FROM {IOR_SCHEMA}.item_nv it WHERE it.item_id = {item_id} ORDER BY it.nv_key ASC ;"
+        # query = f"SELECT {IOR_SCHEMA}.item_nv_get({item_id})"
         drows = DataLib.query_return_dict_in_one(query)
         if drows:
             for r in drows:
@@ -385,7 +384,6 @@ class ItemManager:
                     r["email"],
                     r["caption"],
                     r["storage_url"],
-                    r["file_hash"],
                     r["created_date"],
                 )
                 d.append(a)
@@ -394,7 +392,10 @@ class ItemManager:
 
     @staticmethod
     def item_attachment_add(
-        item_id: int, user_id: int, caption: str, storage_url: str, file_hash: str
+        item_id: int,
+        user_id: int,
+        caption: str,
+        storage_url: str,
     ) -> bool:
         isOk = True
         IOR_SCHEMA = os.getenv("IOR_SCHEMA", "")  # noqa: F821
@@ -409,11 +410,9 @@ class ItemManager:
             raise ValidationException("must not be empty", nameof(caption), "")
         if not storage_url:
             raise ValidationException("must not be empty", nameof(storage_url), "")
-        if not file_hash:
-            file_hash = ""
 
         procedure_name = "item_attachment_set"
-        args = (item_id, user_id, caption, storage_url, file_hash)
+        args = (item_id, user_id, caption, storage_url)
 
         result = DataLib.stored_procedure_execute_all_in_one(
             procedure_name,
