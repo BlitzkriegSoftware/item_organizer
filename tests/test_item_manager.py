@@ -118,7 +118,7 @@ def test_item_round_trip():
 
     for fn in attach:
         url = attach[fn]
-        ItemManager.item_attachment_add(item_id, 1, fn, url, "")
+        ItemManager.item_attachment_add(item_id, 1, fn, url)
 
     la = ItemManager.item_attachment_get(item_id)
     if not la:

@@ -374,8 +374,13 @@ class ItemManager:
         IOR_SCHEMA = os.getenv("IOR_SCHEMA", "")  # noqa: F821
         if not IOR_SCHEMA:  # pragma: no cover
             raise ConfigurationException("missing", "IOR_SCHEMA")
-
-        query = f"SELECT {IOR_SCHEMA}.item_attachment_get({item_id})"
+        # created_by bigint,
+        # email text,
+        # caption text,
+        # storage_url text,
+        # created_date timestamp with time zone
+        # query = f"SELECT {IOR_SCHEMA}.item_attachment_get({item_id})"
+        query = f" SELECT ia.created_by, ur.email, ia.caption, ia.storage_url, ia.created_date FROM {IOR_SCHEMA}.item_attachment ia left join {IOR_SCHEMA}.user ur on ia.created_by = ur.user_id WHERE ia.item_id = {item_id} ORDER BY ia.created_date DESC ;"
         drows = DataLib.query_return_dict_in_one(query)
         if drows:
             for r in drows:

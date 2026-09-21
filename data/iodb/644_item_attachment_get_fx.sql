@@ -13,11 +13,11 @@ RETURNS TABLE (
 BEGIN
 RETURN QUERY 
     SELECT 
-       ur.user_id,
+       ia.created_by,
        ur.email,
        ia.caption,
        ia.storage_url,
-       ia.created_by
+       ia.created_date
     FROM
         {schema}.item_attachment ia
         left join {schema}.user ur 
