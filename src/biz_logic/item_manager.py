@@ -584,31 +584,93 @@ class ItemManager:
         if not IOR_SCHEMA:  # pragma: no cover
             raise ConfigurationException("missing", "IOR_SCHEMA")
 
-        # query = f"SELECT {IOR_SCHEMA}.item_attachment_get({item_id})"
-        query = ""
+        query = f"SELECT ir.to_item_id, it.title, ir.relationship_id, re.relationship_title FROM {IOR_SCHEMA}.item_relation ir LEFT JOIN {IOR_SCHEMA}.relationship re ON ir.relationship_id = re.relationship_id LEFT JOIN {IOR_SCHEMA}.Item it ON ir.to_item_id = it.item_it WHEREir.from_item_id = {item_id} ORDER BY re.relationship_id DESC;"
+
         drows = DataLib.query_return_dict_in_one(query)
         if drows:
             for r in drows:
-                a = RelationModel(r["to_id"], r["to_title"], r["re_id"], r["re_text"])
+                a = RelationModel(
+                    r["to_item_id"],
+                    r["title"],
+                    r["relationship_id"],
+                    r["relationship_title"],
+                )
                 d.append(a)
 
         return d
 
     #
     # Tags
+    @staticmethod
     def item_tag_add(
         item_id: int,
         tag: str,
     ) -> bool:
-        pass
+        isOk = True
+        IOR_SCHEMA = os.getenv("IOR_SCHEMA", "")  # noqa: F821
+        if not IOR_SCHEMA:  # pragma: no cover
+            raise ConfigurationException("missing", "IOR_SCHEMA")
 
+        procedure_name = "item_tag_set"
+        args = (
+            item_id,
+            tag,
+        )
+
+        result = DataLib.stored_procedure_execute_all_in_one(
+            procedure_name,
+            args,
+            IOR_SCHEMA,
+        )
+        if not result:  # pragma: no cover
+            isOk = False
+            raise DatabaseException(
+                f"Failed to add item history for item_id: {item_id} as: {tag}",
+                procedure_name,
+            )
+
+        return isOk
+
+    @staticmethod
     def item_tag_remove(
         item_id: int,
         tag: str,
     ) -> bool:
-        pass
+        isOk = True
+        IOR_SCHEMA = os.getenv("IOR_SCHEMA", "")  # noqa: F821
+        if not IOR_SCHEMA:  # pragma: no cover
+            raise ConfigurationException("missing", "IOR_SCHEMA")
 
+        procedure_name = "item_tag_del"
+        args = (
+            item_id,
+            tag,
+        )
+
+        result = DataLib.stored_procedure_execute_all_in_one(
+            procedure_name,
+            args,
+            IOR_SCHEMA,
+        )
+        if not result:  # pragma: no cover
+            isOk = False
+            raise DatabaseException(
+                f"Failed to add item history for item_id: {item_id} as: {tag}",
+                procedure_name,
+            )
+
+        return isOk
+
+    @staticmethod
     def item_tag_get(item_id: int) -> list[str]:
         d: list[str] = []
+        IOR_SCHEMA = os.getenv("IOR_SCHEMA", "")  # noqa: F821
+        if not IOR_SCHEMA:  # pragma: no cover
+            raise ConfigurationException("missing", "IOR_SCHEMA")
+        query = f"SELECT it.tag FROM {IOR_SCHEMA}.item_tag it WHERE it.item_id = {item_id} ORDER BY it.tag ASC;"
+        drows = DataLib.query_return_dict_in_one(query)
+        if drows:
+            for r in drows:
+                d.append(r["tag"])
 
         return d

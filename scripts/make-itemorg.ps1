@@ -150,7 +150,7 @@ if ($JustThisIndex -eq 0) {
                 Write-Output "Executing: ${filename}" | Tee-Object -Append -FilePath $tempFilePath
                 Write-Output "==============================================" | Tee-Object -Append -FilePath $tempFilePath
                 # Set-PSDebug -Trace 2
-                . $pbin -f $FilePath $ConnectionString 2>&1 | Tee-Object -Append -FilePath $tempFilePath
+                . $pbin -f $FilePath $ConnectionString 2>&1 | Select-String -NotMatch -Pattern "skipping" | Tee-Object -Append -FilePath $tempFilePath
                 $ec = $?
             }
             catch {
@@ -172,7 +172,7 @@ else {
                 Write-Output "`n----------------------------------------------" | Tee-Object -Append -FilePath $tempFilePath
                 Write-Output "Executing: ${filename}" | Tee-Object -Append -FilePath $tempFilePath
                 Write-Output "----------------------------------------------" | Tee-Object -Append -FilePath $tempFilePath 
-                . $pbin -f $FilePath $ConnectionString 2>&1 | Tee-Object -Append -FilePath $tempFilePath
+                . $pbin -f $FilePath $ConnectionString 2>&1 | Select-String -NotMatch -Pattern "skipping"  | Tee-Object -Append -FilePath $tempFilePath
                 $ec = $?
                 break;
             }
@@ -187,7 +187,7 @@ else {
                     Write-Output "`n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" | Tee-Object -Append -FilePath $tempFilePath
                     Write-Output "Executing: ${filename}" | Tee-Object -Append -FilePath $tempFilePath
                     Write-Output "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" | Tee-Object -Append -FilePath $tempFilePath
-                    . $pbin -f $FilePath $ConnectionString 2>&1 | Tee-Object -Append -FilePath $tempFilePath
+                    . $pbin -f $FilePath $ConnectionString 2>&1 | Select-String -NotMatch -Pattern "skipping" | Tee-Object -Append -FilePath $tempFilePath
                     $ec = $?
                     break;
                 }
