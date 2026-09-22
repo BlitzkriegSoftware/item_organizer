@@ -167,10 +167,7 @@ class DataLib:
             except Exception as ex:  # pragma: no cover
                 isOk = False
                 AppLogger.log_exception(
-                    query,
-                    ex,
-                    {},
-                    logger_name=nameof(DataLib.query_execute_in_one)
+                    query, ex, {}, logger_name=nameof(DataLib.query_execute_in_one)
                 )
                 if conn:
                     conn.rollback()
@@ -201,7 +198,7 @@ class DataLib:
             list[RealDictRow] | None: list[dict]
         """
         drows: list[RealDictRow] | None = []
-        
+
         with conn.cursor(cursor_factory=RealDictCursor) as cursor:
             try:
                 cursor.execute(query)
@@ -210,10 +207,7 @@ class DataLib:
             except Exception as ex:  # pragma: no cover
                 conn.rollback()
                 AppLogger.log_exception(
-                    query,
-                    ex,
-                    {},
-                    logger_name=nameof(DataLib.query_return_dict)
+                    query, ex, {}, logger_name=nameof(DataLib.query_return_dict)
                 )
                 drows = None
             finally:
@@ -329,23 +323,18 @@ class DataLib:
                 query = DataLib.stored_procedure_make_query(
                     procedure_name, args, schema
                 )
-                AppLogger.log_info(
-                    query, 
-                    AppLogger.make_log_extra(procedure_name=procedure_name, args=args), 
-                    logger_name=nameof(DataLib.stored_procedure_execute),
-                )
                 cursor.execute(query, args)
                 conn.commit()
             except Exception as ex:  # pragma: no cover
                 isOk = False
                 if conn:
                     conn.rollback()
-                
+
                 AppLogger.log_exception(
                     query,
                     ex,
-                    AppLogger.make_log_extra(procedure_name=procedure_name, args=args), 
-                    logger_name=nameof(DataLib.stored_procedure_execute)
+                    AppLogger.make_log_extra(procedure_name=procedure_name, args=args),
+                    logger_name=nameof(DataLib.stored_procedure_execute),
                 )
 
             finally:
@@ -409,10 +398,7 @@ class DataLib:
                 drows = cursor.fetchall()
             except Exception as ex:  # pragma: no cover
                 AppLogger.log_exception(
-                    query,
-                    ex,
-                    {},
-                    logger_name=nameof(DataLib.stored_procedure_query)
+                    query, ex, {}, logger_name=nameof(DataLib.stored_procedure_query)
                 )
                 drows = None
             finally:

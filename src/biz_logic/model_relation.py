@@ -18,4 +18,5 @@ class RelationModel:
         r_link = LinkHelper.format_item_link(
             self.relation_title, self.to_item_id, self.to_title
         )
-        return f"<div class='b-relation'>{r_link}</div>"
+        e_link = f"<a href='' data-kind='relation-edit' data-id='{self.relation_id}'><i class='bi bi-pencil-square'></i></a>"
+        return f"<div class='b-relation'>{r_link} {e_link}</div>"

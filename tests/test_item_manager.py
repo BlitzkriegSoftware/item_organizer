@@ -1,11 +1,12 @@
-from datetime import datetime
+# from datetime import datetime
+from itertools import islice
 import os
-from pydoc import Helper
+# from pydoc import Helper
 
 import pytest
-from varname import nameof
+# from varname import nameof
 
-from app_logger.applogger import AppLogger
+# from app_logger.applogger import AppLogger
 from biz_logic.item_manager import ItemManager
 from biz_logic.model_user import UserModel
 from common_helpers.convert_helpers import ConvertHelpers
@@ -30,11 +31,12 @@ def get_user(IOR_SCHEMA: str) -> UserModel:
         user_id = ConvertHelpers.safe_to_int(user_result[0]["user_id"], -1)
         email = user_result[0]["email"]
 
-    return UserModel(user_id, email)
+    model = UserModel(user_id, email)
+    print(model)
+    return model
 
 
 def make_item(
-    IOR_SCHEMA: str,
     index: int,
     user: UserModel,
     org_id: int,
@@ -53,6 +55,8 @@ def make_item(
     item_kind_list = ItemManager.item_kind_list_get()
     item_kind_id = next(iter(item_kind_list))
 
+    title = f"[{index}] {title}"
+
     rankorder = 99
 
     item_id = ItemManager.item_add(
@@ -70,7 +74,7 @@ def make_item(
     if not item_id:
         pytest.fail("Bad item_add()")
     else:
-        AppLogger.log_info(f"item_id: {item_id}")
+        print(f"item_id: {item_id}")
 
     item_id = ConvertHelpers.safe_to_int(item_id, -1)
     if item_id < 0:
@@ -93,7 +97,7 @@ def test_item_round_trip():
 
     # Item
 
-    item_id_1 = make_item(IOR_SCHEMA, 0, user, org_id, title, body)
+    item_id_1 = make_item(0, user, org_id, title, body)
 
     drows = DataLib.query_return_dict_in_one(
         f"select * from {IOR_SCHEMA}.item where item_id = {item_id_1};"
@@ -116,6 +120,9 @@ def test_item_round_trip():
     history = ItemManager.item_history_get(item_id_1, 0, 10)
     if not history:
         pytest.fail("No history")
+    else:
+        for h in history:
+            print(h)
 
     # Name Values
 
@@ -129,7 +136,12 @@ def test_item_round_trip():
     if not d:
         pytest.fail("no nv rows")
     else:
-        AppLogger.log_info("nv success", {}, nameof(test_item_round_trip))
+        for k in d:
+            print(k, d[k])
+
+    nv_key = next(iter(nv))
+    url = nv[nv_key]
+    result = ItemManager.item_nv_remove(item_id_1, url)
 
     # Attachments
 
@@ -149,6 +161,15 @@ def test_item_round_trip():
     la: list[AttachmentModel] = ItemManager.item_attachment_get(item_id_1)
     if not la:
         pytest.fail("no attachment rows")
+    else:
+        for at in la:
+            print(at)
+
+    nv_key = next(iter(attach))
+    url = attach[nv_key]
+    result = ItemManager.item_attachment_remove(item_id_1, url)
+    if not result:
+        pytest.fail("no remove attachment")
 
     # Tags
 
@@ -166,29 +187,53 @@ def test_item_round_trip():
     tags = ItemManager.item_tag_get(item_id_1)
     if not tags:
         pytest.fail("no tags gotten")
+    else:
+        print(tags)
 
     # Relations
+
     title = TestHelper.random_string(12)
     body = TestHelper.random_string(35)
     org_id = 0
 
-    item_id_2 = make_item(IOR_SCHEMA, 1, user, org_id, title, body)
+    item_id_2 = make_item(1, user, org_id, title, body)
 
     ri = next(iter(relations))
+    ri2 = next(islice(relations, 1, None))
 
     result = ItemManager.item_relation_add(item_id_1, item_id_2, ri)
     if not result:
         pytest.fail("Unable to add relation")
 
+    title = TestHelper.random_string(12)
+    body = TestHelper.random_string(35)
+    item_id_3 = make_item(3, user, org_id, title, body)
+
+    result = ItemManager.item_relation_add(item_id_1, item_id_3, ri2)
+    if not result:
+        pytest.fail(f"Unable to add relation {ri2}")
+
     r_list = ItemManager.item_relation_get(item_id_1)
     if not r_list:
-        pytest.fail("Unable to add relation")
+        pytest.fail(f"Unable to get relations {item_id_1}")
+    else:
+        for r in r_list:
+            print(r)
+
+    result = ItemManager.item_relation_remove(item_id_1, item_id_3)
+    if not r_list:
+        pytest.fail(f"Unable to remove relations {item_id_1}->{item_id_3}")
 
     # clean up
 
-    # result = ItemManager.item_remove(item_id)
-    # if not result:
-    #     pytest.fail("item_remove 1")
-    # result = ItemManager.item_remove(item_id_2)
-    # if not result:
-    #     pytest.fail("item_remove 2")
+    result = ItemManager.item_remove(item_id_1)
+    if not result:
+        pytest.fail(f"item_remove {item_id_1}")
+
+    result = ItemManager.item_remove(item_id_2)
+    if not result:
+        pytest.fail(f"item_remove {item_id_2}")
+
+    result = ItemManager.item_remove(item_id_3)
+    if not result:
+        pytest.fail(f"item_remove {item_id_3}")

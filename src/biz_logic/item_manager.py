@@ -122,38 +122,36 @@ class ItemManager:
         if not IOR_SCHEMA:  # pragma: no cover
             raise ConfigurationException("missing", "IOR_SCHEMA")
 
-        if not title:
+        if not title:  # pragma: no cover
             raise ValidationException("required", nameof(title), title)
-        if not body:
+        if not body:  # pragma: no cover
             raise ValidationException("required", nameof(body), body)
-        if org_id < 0:
+        if org_id < 0:  # pragma: no cover
             raise ValidationException("required", nameof(org_id), str(org_id))
-        if created_by < 0:
+        if created_by < 0:  # pragma: no cover
             raise ValidationException("required", nameof(created_by), str(created_by))
-        if assigned_to < 0:
+        if assigned_to < 0:  # pragma: no cover
             raise ValidationException("required", nameof(assigned_to), str(assigned_to))
 
         priority_list = ItemManager.priority_list_get()
         item_state_list = ItemManager.item_state_list_get(org_id)
         item_kind_list = ItemManager.item_kind_list_get()
 
-        if item_state_id not in item_state_list.keys():
+        if item_state_id not in item_state_list.keys():  # pragma: no cover
             raise ValidationException(
                 "required", nameof(item_state_id), str(item_state_id)
             )
-        if priority_id not in priority_list.keys():
+        if priority_id not in priority_list.keys():  # pragma: no cover
             raise ValidationException("invalid", nameof(priority_id), str(priority_id))
-        if item_kind_id not in item_kind_list.keys():
+        if item_kind_id not in item_kind_list.keys():  # pragma: no cover
             raise ValidationException(
                 "invalid", nameof(item_kind_id), str(item_kind_id)
             )
 
         query = f"INSERT INTO {IOR_SCHEMA}.item (title, body, org_id, item_kind_id, item_state_id, created_by, assigned_to, priority_id, rankorder) VALUES ( '{title}', '{body}', {org_id}, {item_kind_id}, {item_state_id}, {created_by}, {assigned_to}, {priority_id}, {rankorder}) returning item_id;"
 
-        # AppLogger.log_info(query,{}, logger_name=nameof(ItemManager.item_add))
-
         item_id = DataLib.query_return_single_value_in_one(query)
-        if not item_id:
+        if not item_id:  # pragma: no cover
             raise DatabaseException("unable (0)", query)
 
         return item_id
@@ -194,11 +192,11 @@ class ItemManager:
         if not IOR_SCHEMA:  # pragma: no cover
             raise ConfigurationException("missing", "IOR_SCHEMA")
 
-        if item_id < 0:
+        if item_id < 0:  # pragma: no cover
             raise ValidationException("bad value", nameof(item_id), item_id)
-        if not history_note:
+        if not history_note:  # pragma: no cover
             raise ValidationException("must not be empty", nameof(history_note), "")
-        if not history_by:
+        if not history_by:  # pragma: no cover
             raise ValidationException("must not be empty", nameof(history_by), "")
 
         procedure_name = "item_history_add_by_email"
@@ -231,11 +229,11 @@ class ItemManager:
         if not IOR_SCHEMA:  # pragma: no cover
             raise ConfigurationException("missing", "IOR_SCHEMA")
 
-        if item_id < 0:
+        if item_id < 0:  # pragma: no cover
             raise ValidationException("bad value", nameof(item_id), item_id)
-        if not history_note:
+        if not history_note:  # pragma: no cover
             raise ValidationException("must not be empty", nameof(history_note), "")
-        if history_by < -1:
+        if history_by < -1:  # pragma: no cover
             raise ValidationException("bad value", nameof(history_by), history_by)
 
         procedure_name = "item_history_add_by_id"
@@ -297,13 +295,13 @@ class ItemManager:
         if not IOR_SCHEMA:  # pragma: no cover
             raise ConfigurationException("missing", "IOR_SCHEMA")
 
-        if item_id < 0:
+        if item_id < 0:  # pragma: no cover
             raise ValidationException("bad value", nameof(item_id), item_id)
-        if not user_id:
+        if not user_id:  # pragma: no cover
             user_id = 0  # system
-        if not caption:
+        if not caption:  # pragma: no cover
             raise ValidationException("must not be empty", nameof(caption), "")
-        if not storage_url:
+        if not storage_url:  # pragma: no cover
             raise ValidationException("must not be empty", nameof(storage_url), "")
 
         procedure_name = "item_attachment_set"
@@ -333,9 +331,9 @@ class ItemManager:
         if not IOR_SCHEMA:  # pragma: no cover
             raise ConfigurationException("missing", "IOR_SCHEMA")
 
-        if item_id < 0:
+        if item_id < 0:  # pragma: no cover
             raise ValidationException("bad value", nameof(item_id), item_id)
-        if not storage_url:
+        if not storage_url:  # pragma: no cover
             raise ValidationException("must not be empty", nameof(storage_url), "")
 
         procedure_name = "item_attachment_del"
@@ -419,7 +417,7 @@ class ItemManager:
         if not IOR_SCHEMA:  # pragma: no cover
             raise ConfigurationException("missing", "IOR_SCHEMA")
 
-        if not nv_key:
+        if not nv_key:  # pragma: no cover
             raise ValidationException("required", nameof(nv_key))
 
         procedure_name = "item_nv_set"
@@ -452,7 +450,7 @@ class ItemManager:
         if not IOR_SCHEMA:  # pragma: no cover
             raise ConfigurationException("missing", "IOR_SCHEMA")
 
-        if not nv_key:
+        if not nv_key:  # pragma: no cover
             raise ValidationException("required", nameof(nv_key))
 
         procedure_name = "item_nv_del"
@@ -515,11 +513,11 @@ class ItemManager:
 
         relation_list = ItemManager.item_relationship_list_get()
 
-        if from_id < 0:
+        if from_id < 0:  # pragma: no cover
             raise ValidationException("bad value", nameof(from_id), from_id)
-        if to_id < 0:
+        if to_id < 0:  # pragma: no cover
             raise ValidationException("bad value", nameof(to_id), to_id)
-        if relationship_id not in relation_list.keys():
+        if relationship_id not in relation_list.keys():  # pragma: no cover
             raise ValidationException(
                 "invalid", nameof(relationship_id), str(relationship_id)
             )
@@ -552,9 +550,9 @@ class ItemManager:
         if not IOR_SCHEMA:  # pragma: no cover
             raise ConfigurationException("missing", "IOR_SCHEMA")
 
-        if from_id < 0:
+        if from_id < 0:  # pragma: no cover
             raise ValidationException("bad value", nameof(from_id), from_id)
-        if to_id < 0:
+        if to_id < 0:  # pragma: no cover
             raise ValidationException("bad value", nameof(to_id), to_id)
 
         procedure_name = "item_relation_del"

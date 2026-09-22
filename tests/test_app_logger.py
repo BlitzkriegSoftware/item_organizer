@@ -73,3 +73,10 @@ def test_logger_debug_extra():
         test_extra,
         logger_name=nameof(test_logger_debug_extra),
     )
+
+
+def test_make_log_extra():
+    d: dict[str, str] = {"moo": "cows", "baa": "sheep", "maq": "ducks"}
+    extras = AppLogger.make_log_extra(vls=d)
+    print(extras)
+    assert extras is not None
