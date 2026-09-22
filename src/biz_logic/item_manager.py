@@ -584,7 +584,7 @@ class ItemManager:
         if not IOR_SCHEMA:  # pragma: no cover
             raise ConfigurationException("missing", "IOR_SCHEMA")
 
-        query = f"SELECT ir.to_item_id, it.title, ir.relationship_id, re.relationship_title FROM {IOR_SCHEMA}.item_relation ir LEFT JOIN {IOR_SCHEMA}.relationship re ON ir.relationship_id = re.relationship_id LEFT JOIN {IOR_SCHEMA}.Item it ON ir.to_item_id = it.item_it WHEREir.from_item_id = {item_id} ORDER BY re.relationship_id DESC;"
+        query = f"SELECT ir.to_item_id, it.title, ir.relationship_id, re.relationship_title FROM {IOR_SCHEMA}.item_relation ir LEFT JOIN {IOR_SCHEMA}.relationship re ON ir.relationship_id = re.relationship_id LEFT JOIN {IOR_SCHEMA}.Item it ON ir.to_item_id = it.item_id WHERE ir.from_item_id = {item_id} ORDER BY re.relationship_id DESC;"
 
         drows = DataLib.query_return_dict_in_one(query)
         if drows:
