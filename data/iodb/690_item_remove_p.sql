@@ -8,9 +8,10 @@ AS $BODY$
 
 BEGIN
     delete from {schema}.item_attachment where item_id = target_item_id;
-    delete from {schema}.item_nv where item_id = target_item_id;
-    delete from {schema}.item_tag where item_id = target_item_id;
     delete from {schema}.item_history where item_id = target_item_id;
+    delete from {schema}.item_nv where item_id = target_item_id;
+    delete from {schema}.item_relation where item_id = target_item_id;
+    delete from {schema}.item_tag where item_id = target_item_id;
     delete from {schema}.item where item_id = target_item_id;
 END;
 $BODY$;

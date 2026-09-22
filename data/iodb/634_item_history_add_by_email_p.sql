@@ -1,6 +1,6 @@
-DROP PROCEDURE IF EXISTS {schema}.item_history_add;
+DROP PROCEDURE IF EXISTS {schema}.item_history_add_by_email(bigint,text,text,timestamp with time zone);
 
-CREATE OR REPLACE PROCEDURE {schema}.item_history_add(
+CREATE OR REPLACE PROCEDURE {schema}.item_history_add_by_email(
     history_item_id bigint,
     history_note text,
     history_by text = '(system)',
@@ -15,5 +15,5 @@ BEGIN
 END;
 $BODY$;
 
-ALTER PROCEDURE {schema}.item_history_add(bigint, text, text, timestamp with time zone)
+ALTER PROCEDURE {schema}.item_history_add_by_email(bigint, text, text, timestamp with time zone)
     OWNER TO postgres;

@@ -18,4 +18,4 @@ class RelationModel:
         r_link = LinkHelper.format_item_link(
             self.caption, self.to_item_id, self.to_title
         )
-        return f"{r_link}"
+        return f"<div class='b-relation'>{r_link}</div>"

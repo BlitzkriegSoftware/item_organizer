@@ -22,4 +22,4 @@ class AttachmentModel:
         d_link = DateTimeHelpers.to_iso8601_with_z(self.created_on)
         u_link = LinkHelper.format_user(self.created_by, self.email)
         a_link = LinkHelper.format_attachment(self.caption, self.file_url)
-        return f"{d_link} {u_link} {a_link}"
+        return f"<div class='b-attachment'>{d_link} {u_link} {a_link}</div>"

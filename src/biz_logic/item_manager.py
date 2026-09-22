@@ -6,6 +6,7 @@ from app_exceptions.db_exception import DatabaseException
 from app_exceptions.validation_exception import ValidationException
 from app_logger.applogger import AppLogger
 from biz_logic.model_attachment import AttachmentModel
+from biz_logic.model_history import HistoryModel
 from biz_logic.model_relation import RelationModel
 from data_lib.datalib import DataLib
 from psycopg2.extras import RealDictRow
@@ -101,8 +102,7 @@ class ItemManager:
         return item_relationship_list
 
     #
-    # Item and related stuff
-    #
+    # Item
 
     @staticmethod
     def item_add(
@@ -180,6 +180,9 @@ class ItemManager:
 
         return isOk
 
+    #
+    # History
+
     @staticmethod
     def item_history_add_by_email(
         item_id: int,
@@ -198,7 +201,7 @@ class ItemManager:
         if not history_by:
             raise ValidationException("must not be empty", nameof(history_by), "")
 
-        procedure_name = "item_history_add"
+        procedure_name = "item_history_add_by_email"
         args = (
             item_id,
             history_note,
@@ -256,35 +259,134 @@ class ItemManager:
 
         return isOk
 
+    # History can not be removed.
+
     @staticmethod
-    def item_nv_get(item_id: int) -> dict[str, str]:
-        """
-        Get NV items.
-
-        Args:
-            item_id (int): PK
-
-        Raises:
-            ConfigurationException: IOR_SCHEMA
-
-        Returns:
-            dict[str, str]: NV Items never None
-        """
-        d: dict[str, str] = {}
+    def item_history_get(
+        item_id: int,
+        skip_offset: int,
+        max_rows: int,
+    ) -> list[HistoryModel]:
+        d: list[HistoryModel] = []
         IOR_SCHEMA = os.getenv("IOR_SCHEMA", "")  # noqa: F821
         if not IOR_SCHEMA:  # pragma: no cover
             raise ConfigurationException("missing", "IOR_SCHEMA")
-        query = f" SELECT it.nv_key ,it.nv_value FROM {IOR_SCHEMA}.item_nv it WHERE it.item_id = {item_id} ORDER BY it.nv_key ASC ;"
-        # query = f"SELECT {IOR_SCHEMA}.item_nv_get({item_id})"
+
+        query = f"SELECT ih.created_date ,coalesce(ih.created_by, '(system)') as created_by ,ih.note FROM {IOR_SCHEMA}.item_history as ih left join {IOR_SCHEMA}.user us on ih.created_by = us.email WHERE ih.item_id = {item_id} ORDER BY created_date DESC LIMIT ({max_rows}) OFFSET ({skip_offset});"
+        drows = DataLib.query_return_dict_in_one(query)
+        if drows:
+            rnum = skip_offset * max_rows
+            for r in drows:
+                rnum = rnum + 1
+                h = HistoryModel(r["created_date"], r["created_by"], r["note"], rnum)
+                d.append(h)
+
+        return d
+
+    #
+    # Attachment
+    @staticmethod
+    def item_attachment_add(
+        item_id: int,
+        user_id: int,
+        caption: str,
+        storage_url: str,
+    ) -> bool:
+        isOk = True
+        IOR_SCHEMA = os.getenv("IOR_SCHEMA", "")  # noqa: F821
+        if not IOR_SCHEMA:  # pragma: no cover
+            raise ConfigurationException("missing", "IOR_SCHEMA")
+
+        if item_id < 0:
+            raise ValidationException("bad value", nameof(item_id), item_id)
+        if not user_id:
+            user_id = 0  # system
+        if not caption:
+            raise ValidationException("must not be empty", nameof(caption), "")
+        if not storage_url:
+            raise ValidationException("must not be empty", nameof(storage_url), "")
+
+        procedure_name = "item_attachment_set"
+        args = (item_id, user_id, caption, storage_url)
+
+        result = DataLib.stored_procedure_execute_all_in_one(
+            procedure_name,
+            args,
+            IOR_SCHEMA,
+        )
+        if not result:  # pragma: no cover
+            isOk = False
+            raise DatabaseException(
+                f"Failed to add item history for item_id: {item_id} with: {caption} by: {storage_url}",
+                procedure_name,
+            )
+
+        return isOk
+
+    @staticmethod
+    def item_attachment_remove(
+        item_id: int,
+        storage_url: str,
+    ) -> bool:
+        isOk = True
+        IOR_SCHEMA = os.getenv("IOR_SCHEMA", "")  # noqa: F821
+        if not IOR_SCHEMA:  # pragma: no cover
+            raise ConfigurationException("missing", "IOR_SCHEMA")
+
+        if item_id < 0:
+            raise ValidationException("bad value", nameof(item_id), item_id)
+        if not storage_url:
+            raise ValidationException("must not be empty", nameof(storage_url), "")
+
+        procedure_name = "item_attachment_del"
+        args = (
+            item_id,
+            storage_url,
+        )
+
+        result = DataLib.stored_procedure_execute_all_in_one(
+            procedure_name,
+            args,
+            IOR_SCHEMA,
+        )
+        if not result:  # pragma: no cover
+            isOk = False
+            raise DatabaseException(
+                f"Failed to add item history for item_id: {item_id} by: {storage_url}",
+                procedure_name,
+            )
+
+        return isOk
+
+    @staticmethod
+    def item_attachment_get(item_id: int) -> list[AttachmentModel]:
+        d: list[AttachmentModel] = []
+        IOR_SCHEMA = os.getenv("IOR_SCHEMA", "")  # noqa: F821
+        if not IOR_SCHEMA:  # pragma: no cover
+            raise ConfigurationException("missing", "IOR_SCHEMA")
+        # created_by bigint,
+        # email text,
+        # caption text,
+        # storage_url text,
+        # created_date timestamp with time zone
+        # query = f"SELECT {IOR_SCHEMA}.item_attachment_get({item_id})"
+        query = f" SELECT ia.created_by, ur.email, ia.caption, ia.storage_url, ia.created_date FROM {IOR_SCHEMA}.item_attachment ia left join {IOR_SCHEMA}.user ur on ia.created_by = ur.user_id WHERE ia.item_id = {item_id} ORDER BY ia.created_date DESC ;"
         drows = DataLib.query_return_dict_in_one(query)
         if drows:
             for r in drows:
-                AppLogger.log_debug(str(r.keys()))
-                m_key = r["nv_key"]
-                m_value = r["nv_value"]
-                d[m_key] = m_value
+                a = AttachmentModel(
+                    r["created_by"],
+                    r["email"],
+                    r["caption"],
+                    r["storage_url"],
+                    r["created_date"],
+                )
+                d.append(a)
 
         return d
+
+    #
+    # Name Value
 
     @staticmethod
     def item_nv_add(
@@ -369,120 +471,36 @@ class ItemManager:
         return isOk
 
     @staticmethod
-    def item_attachment_get(item_id: int) -> list[AttachmentModel]:
-        d: list[AttachmentModel] = []
+    def item_nv_get(item_id: int) -> dict[str, str]:
+        """
+        Get NV items.
+
+        Args:
+            item_id (int): PK
+
+        Raises:
+            ConfigurationException: IOR_SCHEMA
+
+        Returns:
+            dict[str, str]: NV Items never None
+        """
+        d: dict[str, str] = {}
         IOR_SCHEMA = os.getenv("IOR_SCHEMA", "")  # noqa: F821
         if not IOR_SCHEMA:  # pragma: no cover
             raise ConfigurationException("missing", "IOR_SCHEMA")
-        # created_by bigint,
-        # email text,
-        # caption text,
-        # storage_url text,
-        # created_date timestamp with time zone
-        # query = f"SELECT {IOR_SCHEMA}.item_attachment_get({item_id})"
-        query = f" SELECT ia.created_by, ur.email, ia.caption, ia.storage_url, ia.created_date FROM {IOR_SCHEMA}.item_attachment ia left join {IOR_SCHEMA}.user ur on ia.created_by = ur.user_id WHERE ia.item_id = {item_id} ORDER BY ia.created_date DESC ;"
+        query = f" SELECT it.nv_key ,it.nv_value FROM {IOR_SCHEMA}.item_nv it WHERE it.item_id = {item_id} ORDER BY it.nv_key ASC ;"
         drows = DataLib.query_return_dict_in_one(query)
         if drows:
             for r in drows:
-                a = AttachmentModel(
-                    r["created_by"],
-                    r["email"],
-                    r["caption"],
-                    r["storage_url"],
-                    r["created_date"],
-                )
-                d.append(a)
+                AppLogger.log_debug(str(r.keys()))
+                m_key = r["nv_key"]
+                m_value = r["nv_value"]
+                d[m_key] = m_value
 
         return d
 
-    @staticmethod
-    def item_attachment_add(
-        item_id: int,
-        user_id: int,
-        caption: str,
-        storage_url: str,
-    ) -> bool:
-        isOk = True
-        IOR_SCHEMA = os.getenv("IOR_SCHEMA", "")  # noqa: F821
-        if not IOR_SCHEMA:  # pragma: no cover
-            raise ConfigurationException("missing", "IOR_SCHEMA")
-
-        if item_id < 0:
-            raise ValidationException("bad value", nameof(item_id), item_id)
-        if not user_id:
-            user_id = 0  # system
-        if not caption:
-            raise ValidationException("must not be empty", nameof(caption), "")
-        if not storage_url:
-            raise ValidationException("must not be empty", nameof(storage_url), "")
-
-        procedure_name = "item_attachment_set"
-        args = (item_id, user_id, caption, storage_url)
-
-        result = DataLib.stored_procedure_execute_all_in_one(
-            procedure_name,
-            args,
-            IOR_SCHEMA,
-        )
-        if not result:  # pragma: no cover
-            isOk = False
-            raise DatabaseException(
-                f"Failed to add item history for item_id: {item_id} with: {caption} by: {storage_url}",
-                procedure_name,
-            )
-
-        return isOk
-
-    @staticmethod
-    def item_attachment_remove(
-        item_id: int,
-        storage_url: str,
-    ) -> bool:
-        isOk = True
-        IOR_SCHEMA = os.getenv("IOR_SCHEMA", "")  # noqa: F821
-        if not IOR_SCHEMA:  # pragma: no cover
-            raise ConfigurationException("missing", "IOR_SCHEMA")
-
-        if item_id < 0:
-            raise ValidationException("bad value", nameof(item_id), item_id)
-        if not storage_url:
-            raise ValidationException("must not be empty", nameof(storage_url), "")
-
-        procedure_name = "item_attachment_del"
-        args = (
-            item_id,
-            storage_url,
-        )
-
-        result = DataLib.stored_procedure_execute_all_in_one(
-            procedure_name,
-            args,
-            IOR_SCHEMA,
-        )
-        if not result:  # pragma: no cover
-            isOk = False
-            raise DatabaseException(
-                f"Failed to add item history for item_id: {item_id} by: {storage_url}",
-                procedure_name,
-            )
-
-        return isOk
-
-    @staticmethod
-    def item_relation_get(item_id: int) -> list[RelationModel]:
-        d: list[RelationModel] = []
-        IOR_SCHEMA = os.getenv("IOR_SCHEMA", "")  # noqa: F821
-        if not IOR_SCHEMA:  # pragma: no cover
-            raise ConfigurationException("missing", "IOR_SCHEMA")
-
-        query = f"SELECT {IOR_SCHEMA}.item_attachment_get({item_id})"
-        drows = DataLib.query_return_dict_in_one(query)
-        if drows:
-            for r in drows:
-                a = RelationModel(r["to_id"], r["to_title"], r["re_id"], r["re_text"])
-                d.append(a)
-
-        return d
+    #
+    # Relation
 
     @staticmethod
     def item_relation_add(
@@ -558,3 +576,39 @@ class ItemManager:
             )
 
         return isOk
+
+    @staticmethod
+    def item_relation_get(item_id: int) -> list[RelationModel]:
+        d: list[RelationModel] = []
+        IOR_SCHEMA = os.getenv("IOR_SCHEMA", "")  # noqa: F821
+        if not IOR_SCHEMA:  # pragma: no cover
+            raise ConfigurationException("missing", "IOR_SCHEMA")
+
+        # query = f"SELECT {IOR_SCHEMA}.item_attachment_get({item_id})"
+        query = ""
+        drows = DataLib.query_return_dict_in_one(query)
+        if drows:
+            for r in drows:
+                a = RelationModel(r["to_id"], r["to_title"], r["re_id"], r["re_text"])
+                d.append(a)
+
+        return d
+
+    #
+    # Tags
+    def item_tag_add(
+        item_id: int,
+        tag: str,
+    ) -> bool:
+        pass
+
+    def item_tag_remove(
+        item_id: int,
+        tag: str,
+    ) -> bool:
+        pass
+
+    def item_tag_get(item_id: int) -> list[str]:
+        d: list[str] = []
+
+        return d
