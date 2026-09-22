@@ -30,10 +30,10 @@ BEGIN
     END IF;
 
     -- set new relation and its reciprocal
-    INSERT INTO {schema}.relationship(from_item_id, to_item_id, relationship_id)
+    INSERT INTO {schema}.item_relation(from_item_id, to_item_id, relationship_id)
     VALUES (in_from_id, in_to_id, in_relationship_id);
 
-    INSERT INTO {schema}.relationship(from_item_id, to_item_id, relationship_id)
+    INSERT INTO {schema}.item_relation(from_item_id, to_item_id, relationship_id)
     VALUES ( in_to_id, in_from_id, rec_rel_id);
 
 END; 

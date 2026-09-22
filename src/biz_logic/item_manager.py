@@ -214,7 +214,7 @@ class ItemManager:
         if not result:  # pragma: no cover
             isOk = False
             raise DatabaseException(
-                f"Failed to add item history for item_id: {item_id} with note: {history_note} by: {history_by}",
+                f"Failed to add item history by mail for item_id: {item_id} with note: {history_note} by: {history_by}",
                 procedure_name,
             )
 
@@ -253,7 +253,7 @@ class ItemManager:
         if not result:  # pragma: no cover
             isOk = False
             raise DatabaseException(
-                f"Failed to add item history for item_id: {item_id} with note: {history_note} by: {history_by}",
+                f"Failed to add item history by id for item_id: {item_id} with note: {history_note} by: {history_by}",
                 procedure_name,
             )
 
@@ -317,7 +317,7 @@ class ItemManager:
         if not result:  # pragma: no cover
             isOk = False
             raise DatabaseException(
-                f"Failed to add item history for item_id: {item_id} with: {caption} by: {storage_url}",
+                f"Failed to add item attachment for item_id: {item_id} with: {caption} by: {storage_url}",
                 procedure_name,
             )
 
@@ -352,7 +352,7 @@ class ItemManager:
         if not result:  # pragma: no cover
             isOk = False
             raise DatabaseException(
-                f"Failed to add item history for item_id: {item_id} by: {storage_url}",
+                f"Failed to remove item history for item_id: {item_id} by: {storage_url}",
                 procedure_name,
             )
 
@@ -524,7 +524,7 @@ class ItemManager:
                 "invalid", nameof(relationship_id), str(relationship_id)
             )
 
-        procedure_name = "item_attachment_set"
+        procedure_name = "item_relation_set"
         args = (
             from_id,
             to_id,
@@ -539,7 +539,7 @@ class ItemManager:
         if not result:  # pragma: no cover
             isOk = False
             raise DatabaseException(
-                f"Failed to add item history for item_id: {from_id} to: {to_id} as: {relationship_id}",
+                f"Failed to add item relation for item_id: {from_id} to: {to_id} as: {relationship_id}",
                 procedure_name,
             )
 
@@ -571,7 +571,7 @@ class ItemManager:
         if not result:  # pragma: no cover
             isOk = False
             raise DatabaseException(
-                f"Failed to add item history for item_id: {from_id} to: {to_id} as: {relationship_id}",
+                f"Failed to remomve item relation for item_id: {from_id} to: {to_id}",
                 procedure_name,
             )
 
@@ -625,7 +625,7 @@ class ItemManager:
         if not result:  # pragma: no cover
             isOk = False
             raise DatabaseException(
-                f"Failed to add item history for item_id: {item_id} as: {tag}",
+                f"Failed to add item tag for item_id: {item_id} as: {tag}",
                 procedure_name,
             )
 
@@ -655,7 +655,7 @@ class ItemManager:
         if not result:  # pragma: no cover
             isOk = False
             raise DatabaseException(
-                f"Failed to add item history for item_id: {item_id} as: {tag}",
+                f"Failed to remove item tag for item_id: {item_id} as: {tag}",
                 procedure_name,
             )
 
