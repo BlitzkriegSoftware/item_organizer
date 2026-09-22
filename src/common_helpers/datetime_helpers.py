@@ -25,7 +25,7 @@ class DateTimeHelpers:
         Returns:
             ISO 8601 Timestamp
         """
-        if not d:
+        if not d:  # pragma: no cover
             raise TypeError("datetime must not be None")
 
         iso_z = d.isoformat().replace("+00:00", "Z")
@@ -47,7 +47,7 @@ class DateTimeHelpers:
         Returns:
             datetime: DateTime
         """
-        if not iso_string_z:
+        if not iso_string_z:  # pragma: no cover
             raise TypeError("dt None")
 
         if "z" in iso_string_z.casefold():

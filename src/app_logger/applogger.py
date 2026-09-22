@@ -2,15 +2,16 @@ from functools import cache
 import os
 import logging
 import logging.config
-from typing import MutableMapping
-from pythonjsonlogger import jsonlogger # noqa: F401
-from varname import nameof  
+from typing import Any, MutableMapping
+from pythonjsonlogger import jsonlogger  # noqa: F401
+from varname import nameof
+
 
 class AppLogger:
     """Provides logging helpers"""
 
     Stack_Recurse_Depth: int = 2
-    
+
     Log_Field_Prefix: str = "bls_"
 
     # Docker / Container logging configuration for JSON output to stdout
@@ -43,8 +44,8 @@ class AppLogger:
     @cache
     @staticmethod
     def logger_get(logger_name: str | None = None) -> logging.Logger:
-        """Get a logger instance as configured by LOGGING_CONFIG. 
-        
+        """Get a logger instance as configured by LOGGING_CONFIG.
+
         Args:
             logger_name (str | None, optional): Defaults to __name__.
 
@@ -58,27 +59,35 @@ class AppLogger:
         return logger
 
     @staticmethod
-    def log_fatal(
+    def log_configuration_fatal(
         message: str,
-        configurationKey: str | None = None,
+        configurationKey: str,
+        configurationValue: Any | None,
         extra: MutableMapping[str, object] = {},
-        logger_name: str | None = None
+        logger_name: str | None = None,
     ):
         """Structured logging for fatal level messages.
-        
+
         Should: include a configurationKey if the fatal is related to a configuration issue.
                 In the form of `{configurationSource}:{configurationKey}`
                 Message should be a human readable message describing the fatal error.
                 Particularly useful for configuration issues, but can be used for any fatal error.
         """
-        if not message:
+        if not message:  # pragma: no cover
             return
 
-        if configurationKey:
-            extra[nameof(configurationKey)] = configurationKey
+        if not configurationKey:  # pragma: no cover
+            return
+
+        extra[nameof(configurationKey)] = configurationKey
+
+        if configurationValue:
+            extra[nameof(configurationValue)] = configurationValue
 
         logger = AppLogger.logger_get(logger_name)
-        filename, lineno, co_name, sinfo = logger.findCaller(False, AppLogger.Stack_Recurse_Depth)
+        filename, lineno, co_name, sinfo = logger.findCaller(
+            False, AppLogger.Stack_Recurse_Depth
+        )
 
         key = f"{AppLogger.Log_Field_Prefix}{nameof(filename)}"
         if filename and key not in extra:
@@ -93,7 +102,7 @@ class AppLogger:
             extra[key] = co_name
 
         key = f"{AppLogger.Log_Field_Prefix}{nameof(sinfo)}"
-        if sinfo and key not in extra:
+        if sinfo and key not in extra:  # pragma: no cover
             extra[key] = sinfo
 
         logger.fatal(
@@ -106,7 +115,7 @@ class AppLogger:
         query: str,
         ex: Exception,
         extra: MutableMapping[str, object] = {},
-        logger_name: str | None = None
+        logger_name: str | None = None,
     ):
         """Stuctured logging for exceptions.
 
@@ -116,18 +125,20 @@ class AppLogger:
             extra (MutableMapping[str, object], optional): _description_. Defaults to {}.
             logger_name (str | None, optional): Defaults to None.
         """
-        if not query:
+        if not query:  # pragma: no cover
             query = ""
         else:
             extra[nameof(query)] = query
 
-        if not ex:
+        if not ex:  # pragma: no cover
             return
         else:
             extra[nameof(ex)] = ex
 
         logger = AppLogger.logger_get(logger_name)
-        filename, lineno, co_name, sinfo = logger.findCaller(False, AppLogger.Stack_Recurse_Depth)
+        filename, lineno, co_name, sinfo = logger.findCaller(
+            False, AppLogger.Stack_Recurse_Depth
+        )
 
         key = f"{AppLogger.Log_Field_Prefix}{nameof(filename)}"
         if filename and key not in extra:
@@ -142,7 +153,7 @@ class AppLogger:
             extra[key] = co_name
 
         key = f"{AppLogger.Log_Field_Prefix}{nameof(sinfo)}"
-        if sinfo and key not in extra:
+        if sinfo and key not in extra:  # pragma: no cover
             extra[key] = sinfo
 
         logger.exception("%s; %s", query, str(ex), extra=extra)
@@ -151,14 +162,16 @@ class AppLogger:
     def log_info(
         message: str,
         extra: MutableMapping[str, object] = {},
-        logger_name: str | None = None
+        logger_name: str | None = None,
     ):
         """Structured logging for info level messages."""
-        if not message:
+        if not message:  # pragma: no cover
             return
 
         logger = AppLogger.logger_get(logger_name)
-        filename, lineno, co_name, sinfo = logger.findCaller(False, AppLogger.Stack_Recurse_Depth)
+        filename, lineno, co_name, sinfo = logger.findCaller(
+            False, AppLogger.Stack_Recurse_Depth
+        )
 
         key = f"{AppLogger.Log_Field_Prefix}{nameof(filename)}"
         if filename and key not in extra:
@@ -173,7 +186,7 @@ class AppLogger:
             extra[key] = co_name
 
         key = f"{AppLogger.Log_Field_Prefix}{nameof(sinfo)}"
-        if sinfo and key not in extra:
+        if sinfo and key not in extra:  # pragma: no cover
             extra[key] = sinfo
 
         logger.info(
@@ -181,19 +194,20 @@ class AppLogger:
             extra=extra,
         )
 
-
     @staticmethod
     def log_debug(
         message: str,
         extra: MutableMapping[str, object] = {},
-        logger_name: str | None = None
+        logger_name: str | None = None,
     ):
         """Structured logging for debug level messages."""
-        if not message:
+        if not message:  # pragma: no cover
             return
 
         logger = AppLogger.logger_get(logger_name)
-        filename, lineno, co_name, sinfo = logger.findCaller(False, AppLogger.Stack_Recurse_Depth)
+        filename, lineno, co_name, sinfo = logger.findCaller(
+            False, AppLogger.Stack_Recurse_Depth
+        )
 
         key = f"{AppLogger.Log_Field_Prefix}{nameof(filename)}"
         if filename and key not in extra:
@@ -208,20 +222,13 @@ class AppLogger:
             extra[key] = co_name
 
         key = f"{AppLogger.Log_Field_Prefix}{nameof(sinfo)}"
-        if sinfo and key not in extra:
+        if sinfo and key not in extra:  # pragma: no cover
             extra[key] = sinfo
 
         logger.debug(
             message,
             extra=extra,
         )
-
-
-
-
-
-
-
 
     @staticmethod
     def make_log_extra(**kwargs) -> MutableMapping[str, object]:

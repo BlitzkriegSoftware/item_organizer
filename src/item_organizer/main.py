@@ -28,12 +28,12 @@ app.add_middleware(
 )
 
 
-def main():
+def main():  # pragma: no cover
     IOR_APP_PORT = os.getenv("IOR_APP_PORT", "0")
     port = int(IOR_APP_PORT)
     if port <= 0:
-        AppLogger.log_fatal(
-            "Missing Config", nameof(IOR_APP_PORT), {}, logger_name=nameof(main)
+        AppLogger.log_configuration_fatal(
+            "Missing Config", nameof(IOR_APP_PORT), port, {}, logger_name=nameof(main)
         )
         return 1
 

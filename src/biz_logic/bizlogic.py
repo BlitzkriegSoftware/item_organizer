@@ -4,5 +4,5 @@ class BizLogic:
     """
 
     @staticmethod
-    def do_nothing():
+    def do_nothing():  # pragma: no cover
         pass

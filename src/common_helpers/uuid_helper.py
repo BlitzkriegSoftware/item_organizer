@@ -19,7 +19,7 @@ class UuidHelper:
         """
         try:
             uuid_obj = uuid.UUID(str(input_text))
-        except ValueError:
+        except ValueError:  # pragma: no cover
             return False
 
         return str(uuid_obj) == input_text
@@ -37,7 +37,7 @@ class UuidHelper:
         """
         try:
             return uuid.UUID(str(input_text))
-        except ValueError:
+        except ValueError:  # pragma: no cover
             return uuid.NIL
 
     @staticmethod

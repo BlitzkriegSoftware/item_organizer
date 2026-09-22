@@ -73,6 +73,10 @@ def test_is_a_user():
     except Exception as ex:
         pytest.fail(str(ex))
 
+    user_id = UserManager.email_to_user_id(email)
+    if not user_id:
+        pytest.fail("no user_id fetched")
+
 
 def test_not_a_user():
     IOR_SCHEMA = os.getenv("IOR_SCHEMA", "")
