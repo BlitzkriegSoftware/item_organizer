@@ -17,7 +17,7 @@ INSERT INTO {schema}.item_kind(item_kind_id,  kind_title, notes) VALUES
 INSERT INTO {schema}.item_kind(item_kind_id,  kind_title, notes) VALUES 
 (500,'Bug','Defect, Problem, etc.');
 INSERT INTO {schema}.item_kind(item_kind_id,  kind_title, notes) VALUES 
-(510,'Request', 'Feature, TODO, Task, etc.');
+(510,'Story', 'Story, Feature, TODO, Task, etc.');
 INSERT INTO {schema}.item_kind(item_kind_id,  kind_title, notes) VALUES 
 (520,'Activity', 'QA, DevOps, InfoSec, etc.');
 INSERT INTO {schema}.item_kind(item_kind_id,  kind_title, notes) VALUES 
