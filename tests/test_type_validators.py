@@ -1,5 +1,5 @@
 import pytest
-
+import string
 from common_helpers.type_validators import TypeValidators
 
 
@@ -51,4 +51,22 @@ def test_is_email(email: str, expected: bool):
 )
 def test_is_url(url: str, expected: bool):
     actual = TypeValidators.is_url(url)
+    assert actual == expected
+
+
+@pytest.mark.parametrize(
+    "inText, valid, expected",
+    [
+        ("123", string.digits, True),
+        ("123saa", string.digits, False),
+        ("123", string.ascii_letters, False),
+        ("Cows", string.ascii_letters, True),
+        ("Cows are Fun", string.whitespace + string.ascii_letters, True),
+        ("\t\t", string.printable, True),
+        ("\t\t", string.ascii_letters, False),
+        ("123 Hampstead Ave, Courtny, Middles, UK", string.printable, True),
+    ],
+)
+def test_has_only(inText: str, valid: str, expected: bool):
+    actual = TypeValidators.has_only(inText, valid)
     assert actual == expected

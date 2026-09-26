@@ -6,7 +6,8 @@ CREATE TABLE IF NOT EXISTS {schema}."user"
     email text COLLATE pg_catalog."default" NOT NULL,
     user_display_name text COLLATE pg_catalog."default" NULL,
     user_icon_uri text COLLATE pg_catalog."default" NULL,
-    password_hash text COLLATE pg_catalog."default" NOT NULL
+    password_hash text COLLATE pg_catalog."default" NOT NULL,
+    updated_date timestamp with time zone DEFAULT now()
 )
 
 TABLESPACE pg_default;

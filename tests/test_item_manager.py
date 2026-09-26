@@ -10,8 +10,8 @@ import pytest
 from biz_logic.item_manager import ItemManager
 from biz_logic.model_user import UserModel
 from common_helpers.convert_helpers import ConvertHelpers
+from common_helpers.random_helpers import RandomHelper
 from data_lib.datalib import DataLib
-from test_helpers.test_helper import TestHelper
 from biz_logic.model_attachment import AttachmentModel
 
 
@@ -89,8 +89,8 @@ def test_item_round_trip():
         pytest.fail("IOR_SCHEMA missing")
 
     user = get_user(IOR_SCHEMA)
-    title = TestHelper.random_string(10)
-    body = TestHelper.random_string(25)
+    title = RandomHelper.random_string(10)
+    body = RandomHelper.random_string(25)
     org_id = 0
 
     relations = ItemManager.item_relationship_list_get()
@@ -192,8 +192,8 @@ def test_item_round_trip():
 
     # Relations
 
-    title = TestHelper.random_string(12)
-    body = TestHelper.random_string(35)
+    title = RandomHelper.random_string(12)
+    body = RandomHelper.random_string(35)
     org_id = 0
 
     item_id_2 = make_item(1, user, org_id, title, body)
@@ -205,8 +205,8 @@ def test_item_round_trip():
     if not result:
         pytest.fail("Unable to add relation")
 
-    title = TestHelper.random_string(12)
-    body = TestHelper.random_string(35)
+    title = RandomHelper.random_string(12)
+    body = RandomHelper.random_string(35)
     item_id_3 = make_item(3, user, org_id, title, body)
 
     result = ItemManager.item_relation_add(item_id_1, item_id_3, ri2)
