@@ -12,6 +12,15 @@ from fastapi.middleware.cors import CORSMiddleware
 from functools import cache
 import uvicorn
 
+from item_organizer.routers.dialog_router import DialogRouter
+from item_organizer.routers.item_router import ItemRouter
+from item_organizer.routers.list_router import ListRouter
+from item_organizer.routers.login_router import LoginRouter
+from item_organizer.routers.org_router import OrgRouter
+from item_organizer.routers.page_router import PageRouter
+from item_organizer.routers.reporting_router import ReportingRouter
+from item_organizer.routers.token_router import TokenRouter
+from item_organizer.routers.user_router import UserRouter
 
 """
 Must set a CORS policy, this one is not suitable for production!
@@ -26,6 +35,17 @@ app.add_middleware(
     allow_headers=["*"],
     expose_headers=["hx-trigger"],
 )
+
+
+app.include_router(DialogRouter)
+app.include_router(ItemRouter)
+app.include_router(ListRouter)
+app.include_router(LoginRouter)
+app.include_router(OrgRouter)
+app.include_router(PageRouter)
+app.include_router(ReportingRouter)
+app.include_router(TokenRouter)
+app.include_router(UserRouter)
 
 
 def main():  # pragma: no cover

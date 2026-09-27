@@ -15,7 +15,9 @@ from app_exceptions.validation_exception import ValidationException
 
 class JWTHelper:
     """
-    Static Method Helper
+    Static Method Helper for JWTs
+
+    See: https://fastapi.tiangolo.com/tutorial/security/oauth2-jwt/#update-the-dependencies
     """
 
     ALGORITHM = "HS256"
