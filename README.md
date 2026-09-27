@@ -15,6 +15,8 @@ An open source easy to run item organizer for backlog management
     - [Clean output folder](#clean-output-folder)
     - [Generating Documentation](#generating-documentation)
     - [Live HTML documentation](#live-html-documentation)
+    - [You will need openssl to generate keys](#you-will-need-openssl-to-generate-keys)
+- [32 bit ssl key for JWTs](#32-bit-ssl-key-for-jwts)
 
 ## See also
 
@@ -91,4 +93,17 @@ uv run sphinx-build -M markdown docs/source docs/build
 
 ```powershell
 uv run sphinx-autobuild docs/source docs/build/html
+```
+
+### You will need openssl to generate keys
+
+```powershell
+# I use chocolaty use what you like
+choco upgrade openssl
+```
+
+
+`powershell
+# 32 bit ssl key for JWTs
+openssl rand -hex 32
 ```

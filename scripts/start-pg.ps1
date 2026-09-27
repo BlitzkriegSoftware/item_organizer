@@ -207,6 +207,11 @@ if ( [string]::IsNullOrEmpty("${IOR_SALT}") ) {
 	$IOR_SALT = "JDJiJDEyJGU1QTV0Zzk1VGxxVmpBLjdsRERmRnU="
 }
 
+$IOR_JWT_KEY = $env:IOR_JWT_KEY
+if ( [string]::IsNullOrEmpty("${IOR_JWT_KEY}")) {
+	$IOR_JWT_KEY = "fbc8a4bb3574e70c5306ae99fd6e8c23cf9b93b414d288ceb3d886f908d8511c"
+}
+
 $IOR_FERMAT = $env:IOR_FERMAT
 if ( [string]::IsNullOrEmpty("${IOR_FERMAT}") ) {
 	$IOR_FERMAT = 'dENwNS1GVGdKZUhzdFdCcC1VMGtmNl9ZVTBpZWpWLWlhcHd1dUY1M0R2MD0='
@@ -223,6 +228,7 @@ docker run -d `
 	-e PGDATA='/var/lib/postgresql/data/pgdata' `
 	-e "IOR_SALT=${IOR_SALT}" `
 	-e "IOR_FERMAT=${IOR_FERMAT}" `
+	-e "IOR_JWK_KEY=${IOR_JWT_KEY}" `
 	-e "IOR_IOR_APP_PORT=${IOR_APP_PORT}" `
 	-e "IOR_DB_PORT=${DB_PORT}" `
 	-e "IOR_SCHEMA=${IOR_SCHEMA}" `

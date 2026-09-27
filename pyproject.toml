@@ -13,6 +13,7 @@ dependencies = [
     "psycopg2>=2.9.12",
     "psycopg2-binary>=2.9.12",
     "pydantic>=2.13.5",
+    "pyjwt>=2.15.0",
     "python-json-logger>=4.2.0",
     "python-multipart>=0.0.32",
     "sqlalchemy>=2.0.52",
