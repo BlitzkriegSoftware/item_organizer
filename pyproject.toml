@@ -45,6 +45,7 @@ packages = [
     "src/common_helpers",
     "src/data_lib", 
     "src/item_organizer", 
+    "src/jwt_lib",
     "src/link_helpers",
     "src/security_lib",
     "src/test_helpers",
