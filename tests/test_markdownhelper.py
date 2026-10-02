@@ -13,3 +13,15 @@ def test_markdown_to_html_1():
     html = MarkdownHelper.to_markdown_html(md)
     print(html)
     assert html is not None
+
+
+def test_markdown_to_html_2():
+    md = """
+    # Intro
+    Some *intro* text
+    [Google It](https://google.com)
+    """
+    html = MarkdownHelper.to_markdown_html(md)
+    print(html)
+    assert html is not None
+    assert "_blank" in html

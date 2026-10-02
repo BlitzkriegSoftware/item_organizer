@@ -10,6 +10,7 @@ dependencies = [
     "cryptography-fernet>=0.1.0",
     "encryption>=0.0.1",
     "fastapi[standard]>=0.141.1",
+    "justhtml>=3.13.0",
     "markdown>=3.11",
     "psycopg2>=2.9.12",
     "psycopg2-binary>=2.9.12",

@@ -790,6 +790,7 @@ dependencies = [
     { name = "cryptography-fernet" },
     { name = "encryption" },
     { name = "fastapi", extra = ["standard"] },
+    { name = "justhtml" },
     { name = "markdown" },
     { name = "psycopg2" },
     { name = "psycopg2-binary" },
@@ -822,6 +823,7 @@ requires-dist = [
     { name = "cryptography-fernet", specifier = ">=0.1.0" },
     { name = "encryption", specifier = ">=0.0.1" },
     { name = "fastapi", extras = ["standard"], specifier = ">=0.141.1" },
+    { name = "justhtml", specifier = ">=3.13.0" },
     { name = "markdown", specifier = ">=3.11" },
     { name = "psycopg2", specifier = ">=2.9.12" },
     { name = "psycopg2-binary", specifier = ">=2.9.12" },
@@ -857,6 +859,15 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/df/bf/f7da0350254c0ed7c72f3e33cef02e048281fec7ecec5f032d4aac52226b/jinja2-3.1.6.tar.gz", hash = "sha256:0137fb05990d35f1275a587e9aee6d56da821fc83491a0fb838183be43f66d6d", size = 245115, upload-time = "2025-03-05T20:05:02.478Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/62/a1/3d680cbfd5f4b8f15abc1d571870c5fc3e594bb582bc3b64ea099db13e56/jinja2-3.1.6-py3-none-any.whl", hash = "sha256:85ece4451f492d0c13c5dd7c13a64681a86afae63a5f347908daf103ce6d2f67", size = 134899, upload-time = "2025-03-05T20:05:00.369Z" },
+]
+
+[[package]]
+name = "justhtml"
+version = "3.13.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/a2/8d/bc5deda2b18314f3fdf25f7f2b19864ac2e407fd0c417f00e80950102135/justhtml-3.13.0.tar.gz", hash = "sha256:a86c674b5d055d4d48efaa0435f8d026505b14a115988f61d043bf52b366d5a4", size = 957237, upload-time = "2026-09-30T18:18:08.813Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/fd/23/9da34b355a1b3f26dab62e54570866b75b19faf133eb2a55752c577639da/justhtml-3.13.0-py3-none-any.whl", hash = "sha256:b1628903f7888cd814520c5a569acdf1713717d2a2cb8a3f7874e6e002f93f48", size = 172055, upload-time = "2026-09-30T18:18:07.246Z" },
 ]
 
 [[package]]
