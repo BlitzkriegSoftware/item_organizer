@@ -107,3 +107,17 @@ choco upgrade openssl
 # 32 bit ssl key for JWTs
 openssl rand -hex 32
 ```
+
+
+### Markdown and highlights
+
+`pygments` and `markdown` are installed via `uv`. 
+
+Styles were generated as the default using
+
+```powershell
+# in www/assets/css
+pygmentize -S default -f html -a .codehilite > code_styles.css
+```
+
+See: https://python-markdown.github.io/extensions/code_hilite/ to change.
