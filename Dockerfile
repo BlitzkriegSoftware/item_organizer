@@ -64,4 +64,4 @@ COPY $README_FILE_PATH .
 
 RUN uv sync
 # Run the application
-# CMD [ "uv", "run", "/app/main.py" ]
+# CMD [ "uv", "run", "/app/src/item_organizer/main.py" ]
