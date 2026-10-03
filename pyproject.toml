@@ -12,7 +12,6 @@ dependencies = [
     "fastapi[standard]>=0.141.1",
     "justhtml>=3.13.0",
     "markdown>=3.11",
-    "psycopg2>=2.9.12",
     "psycopg2-binary>=2.9.12",
     "pydantic>=2.13.5",
     "pygments>=2.21.0",

@@ -13,6 +13,7 @@ from functools import cache
 import uvicorn
 
 from item_organizer.routers.dialog_router import DialogRouter
+from item_organizer.routers.home_router import HomeRouter
 from item_organizer.routers.item_router import ItemRouter
 from item_organizer.routers.list_router import ListRouter
 from item_organizer.routers.login_router import LoginRouter
@@ -38,6 +39,7 @@ app.add_middleware(
 
 
 app.include_router(DialogRouter)
+app.include_router(HomeRouter)
 app.include_router(ItemRouter)
 app.include_router(ListRouter)
 app.include_router(LoginRouter)

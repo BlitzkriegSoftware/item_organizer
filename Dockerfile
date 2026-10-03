@@ -3,6 +3,7 @@ FROM postgres:16.9-trixie
 # Install packages
 RUN apt update -y
 RUN apt upgrade -y
+RUN apt-get update && apt-get install -y build-essential
 RUN apt install curl ca-certificates cron -y
 RUN apt install postgresql-16-cron -y
 RUN apt install postgresql-16-pldebugger -y
@@ -13,8 +14,9 @@ RUN apt-get install -y python-is-python3
 RUN apt install -y python3-pip python3-venv
 RUN apt-get clean 
 # UV
-COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
+ENV UV_COMPILE_BYTECODE=0
 ENV UV_NO_DEV=1
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 # .pgpass
 RUN mkdir -p /var/lib/postgresql/data
 COPY ./data/.pgpass /var/lib/postgresql/data/.pgpass
@@ -60,6 +62,6 @@ COPY ./uv.lock .
 COPY ./LICENSE/ .
 COPY $README_FILE_PATH .
 
-# RUN uv sync
+RUN uv sync
 # Run the application
-# RUN uv run main.py
+# CMD [ "uv", "run", "/app/main.py" ]
