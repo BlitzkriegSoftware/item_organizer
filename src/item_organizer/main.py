@@ -28,6 +28,7 @@ Must set a CORS policy, this one is not suitable for production!
 expose_headers must include the list of 'hx-' headers you plan to use!
 """
 app = FastAPI()
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -36,7 +37,6 @@ app.add_middleware(
     allow_headers=["*"],
     expose_headers=["hx-trigger"],
 )
-
 
 app.include_router(DialogRouter)
 app.include_router(HomeRouter)
@@ -61,7 +61,7 @@ def main():  # pragma: no cover
 
     message: str = f"item-organizer start up on port: {port}"
     AppLogger.log_info(message, {}, logger_name=nameof(main))
-    uvicorn.run("main:app", host="0.0.0.0", port=port)
+    uvicorn.run("item_organizer.main:app", host="0.0.0.0", port=port)
 
 
 if __name__ == "__main__":  # pragma: no cover

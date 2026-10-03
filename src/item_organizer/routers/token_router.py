@@ -2,5 +2,7 @@ from pathlib import Path
 
 from fastapi import APIRouter
 
-TokenRouter = APIRouter(prefix="/v1/token", tags=["token"])
+from item_organizer.middleware.logging_route import LoggingRoute
+
+TokenRouter = APIRouter(prefix="/v1/token", tags=["token"], route_class=LoggingRoute)
 PROJECT_ROOT = Path(__file__).resolve().parents[3]
