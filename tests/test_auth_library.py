@@ -13,9 +13,9 @@ def test_salt_round_trip():
 
 def test_hash_password():
     fromenv: bool = False
-    salthash = os.getenv("IOR_SALT")
+    salthash = AuthLibrary.ior_salt_get()
     if salthash:
-        salt1 = Base64Helper.from_base64(salthash)
+        salt1 = AuthLibrary.salt_str_to_bytes(salthash)
         fromenv = True
     else:
         salt1 = AuthLibrary.Make_Salt()

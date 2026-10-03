@@ -1,7 +1,3 @@
-import os
-
-import pytest
-
 from common_helpers.base64_helpers import Base64Helper
 from security_lib.fermet_helper import FermetHelper
 
@@ -10,7 +6,8 @@ def test_fermet_round_trip():
     expected = "the quick brown fox jumped over the lazy dog."
 
     from_env: bool = False
-    IOR_FERMAT = os.getenv("IOR_FERMAT", "")
+    IOR_FERMAT = FermetHelper.ior_fermat_key_get()
+
     key: bytes = b""
     if IOR_FERMAT:
         from_env = True
@@ -27,7 +24,7 @@ def test_fermet_round_trip():
     expected_bytes = expected.encode("utf-8")
 
     cyphered = FermetHelper.encrypt_bytes(expected_bytes, key)
-    
+
     actual_bytes = FermetHelper.decrypt_bytes(cyphered, key)
     actual = actual_bytes.decode("utf-8")
     assert expected == actual

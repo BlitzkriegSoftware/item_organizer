@@ -1,3 +1,4 @@
+from functools import cache
 import os
 
 from cryptography.fernet import Fernet
@@ -23,6 +24,14 @@ class FermetHelper:
         key = FermetHelper.generate_key()
         return Base64Helper.to_base64(key)
 
+    @cache
+    @staticmethod
+    def ior_fermat_key_get() -> str:
+        IOR_FERMAT = os.getenv("IOR_FERMAT", "")
+        if not IOR_FERMAT:  # pragma: no cover
+            raise ConfigurationException("Cypther key must be set", "IOR_FERMET")
+        return IOR_FERMAT
+
     @staticmethod
     def encrypt_message(message: str) -> str:
         """Encrypt text
@@ -38,12 +47,10 @@ class FermetHelper:
         Returns:
             str: base64 encoded encrypted text
         """
-        if not message: # pragma: no cover
-            raise ValueError("message required")
+        IOR_FERMAT = FermetHelper.ior_fermat_key_get()
 
-        IOR_FERMAT = os.getenv("IOR_FERMAT", "")
-        if not IOR_FERMAT:  # pragma: no cover
-            raise ConfigurationException("Cypther key must be set", "IOR_FERMET")
+        if not message:  # pragma: no cover
+            raise ValueError("message required")
 
         if Base64Helper.is_base64(IOR_FERMAT):
             key = Base64Helper.from_base64(IOR_FERMAT)
@@ -74,18 +81,16 @@ class FermetHelper:
         if not cypher_b64:  # pragma: no cover
             raise ValueError("cypher text required")
 
-        IOR_FERMAT = os.getenv("IOR_FERMAT", "")
-        if not IOR_FERMAT:  # pragma: no cover
-            raise ConfigurationException("Cypther key must be set", "IOR_FERMET")
+        IOR_FERMAT = FermetHelper.ior_fermat_key_get()
 
         if Base64Helper.is_base64(IOR_FERMAT):
             key = Base64Helper.from_base64(IOR_FERMAT)
-        else: # pragma: no cover
+        else:  # pragma: no cover
             raise ValidationException("Expected b64", nameof(IOR_FERMAT), IOR_FERMAT)
 
         if Base64Helper.is_base64(cypher_b64):
             cypher_bytes = Base64Helper.from_base64(cypher_b64)
-        else: # pragma: no cover
+        else:  # pragma: no cover
             cypher_bytes = cypher_b64.encode("utf-8")
 
         decrypted_bytes = FermetHelper.decrypt_bytes(cypher_bytes, key)

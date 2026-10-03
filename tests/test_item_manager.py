@@ -84,9 +84,7 @@ def make_item(
 
 
 def test_item_round_trip():
-    IOR_SCHEMA = os.getenv("IOR_SCHEMA", "")
-    if not IOR_SCHEMA:
-        pytest.fail("IOR_SCHEMA missing")
+    IOR_SCHEMA = DataLib.schema_get()
 
     user = get_user(IOR_SCHEMA)
     title = RandomHelper.random_string(10)

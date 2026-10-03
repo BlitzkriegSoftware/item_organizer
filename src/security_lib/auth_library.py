@@ -1,8 +1,42 @@
+from functools import cache
+import os
+
 import bcrypt
+
+from app_exceptions.configuration_exception import ConfigurationException
+from common_helpers.base64_helpers import Base64Helper
 
 
 class AuthLibrary:
     """Manages secure database operations and password hashing."""
+
+    @cache
+    @staticmethod
+    def ior_salt_get() -> str:
+        """
+        Gets Authentication SALT
+
+        Raises:
+            ConfigurationException: if not found
+
+        Returns:
+            str: encoded salt
+        """
+        IOR_SALT = os.getenv("IOR_SALT")
+        if not IOR_SALT:
+            raise ConfigurationException("Authentication SALT must be set", "IOR_SALT")
+
+        return IOR_SALT
+
+    @cache
+    @staticmethod
+    def salt_str_to_bytes(salthash: str) -> bytes:
+        if salthash:
+            salt1 = Base64Helper.from_base64(salthash)
+        else:
+            salt1 = b""
+
+        return salt1
 
     @staticmethod
     def Make_Salt() -> bytes:

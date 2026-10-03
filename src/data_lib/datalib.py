@@ -5,6 +5,7 @@ from typing import Any
 from psycopg2.extras import RealDictCursor, RealDictRow
 from varname import nameof
 
+from app_exceptions.configuration_exception import ConfigurationException
 from app_exceptions.db_exception import DatabaseException
 from src.app_logger.applogger import AppLogger
 
@@ -47,6 +48,14 @@ class DataLib:
         config = DataLib.connection_config()
         cs = f"postgresql://{config[DataLib.ENV_VAR_USER]}:{config[DataLib.ENV_VAR_PASSWORD]}@{config[DataLib.ENV_VAR_HOST]}:{config[DataLib.ENV_VAR_PORT]}/{config[DataLib.ENV_VAR_DB]}?connect_timeout={connection_timeout}"
         return cs
+
+    @cache
+    @staticmethod
+    def schema_get() -> str:
+        IOR_SCHEMA = os.getenv("IOR_SCHEMA", "")  # noqa: F821
+        if not IOR_SCHEMA:  # pragma: no cover
+            raise ConfigurationException("missing", "IOR_SCHEMA")
+        return IOR_SCHEMA
 
     @staticmethod
     def connection_make(

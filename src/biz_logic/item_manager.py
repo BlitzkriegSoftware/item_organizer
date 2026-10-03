@@ -23,10 +23,7 @@ class ItemManager:
     @staticmethod
     def priority_list_get() -> dict[int, str]:
         priority_list: dict[int, str] = {}
-        IOR_SCHEMA = os.getenv("IOR_SCHEMA", "")  # noqa: F821
-        if not IOR_SCHEMA:  # pragma: no cover
-            raise ConfigurationException("missing", "IOR_SCHEMA")
-
+        IOR_SCHEMA = DataLib.schema_get()
         query = f"select priority_id, priority_title from {IOR_SCHEMA}.priority order by priority_id;"
         result = DataLib.query_return_dict_in_one(query)
         if not result:  # pragma: no cover
@@ -45,9 +42,7 @@ class ItemManager:
         org_id: int,
     ) -> dict[int, str]:
         item_state_list: dict[int, str] = {}
-        IOR_SCHEMA = os.getenv("IOR_SCHEMA", "")  # noqa: F821
-        if not IOR_SCHEMA:  # pragma: no cover
-            raise ConfigurationException("missing", "IOR_SCHEMA")
+        IOR_SCHEMA = DataLib.schema_get()
 
         query = f"select item_state_id, state_title from {IOR_SCHEMA}.item_state where org_id = {org_id} order by item_state_id;"
         result = DataLib.query_return_dict_in_one(query)
@@ -65,9 +60,7 @@ class ItemManager:
     @staticmethod
     def item_kind_list_get() -> dict[int, str]:
         item_kind_list: dict[int, str] = {}
-        IOR_SCHEMA = os.getenv("IOR_SCHEMA", "")  # noqa: F821
-        if not IOR_SCHEMA:  # pragma: no cover
-            raise ConfigurationException("missing", "IOR_SCHEMA")
+        IOR_SCHEMA = DataLib.schema_get()
 
         query = f"select item_kind_id, kind_title from {IOR_SCHEMA}.item_kind order by item_kind_id;"
         result = DataLib.query_return_dict_in_one(query)
@@ -85,9 +78,7 @@ class ItemManager:
     @staticmethod
     def item_relationship_list_get() -> dict[int, str]:
         item_relationship_list: dict[int, str] = {}
-        IOR_SCHEMA = os.getenv("IOR_SCHEMA", "")  # noqa: F821
-        if not IOR_SCHEMA:  # pragma: no cover
-            raise ConfigurationException("missing", "IOR_SCHEMA")
+        IOR_SCHEMA = DataLib.schema_get()
 
         query = f"select relationship_id, relationship_title from {IOR_SCHEMA}.relationship  order by relationship_id;"
         result = DataLib.query_return_dict_in_one(query)
@@ -118,9 +109,7 @@ class ItemManager:
     ) -> int:
         item_id: int = -1
 
-        IOR_SCHEMA = os.getenv("IOR_SCHEMA", "")  # noqa: F821
-        if not IOR_SCHEMA:  # pragma: no cover
-            raise ConfigurationException("missing", "IOR_SCHEMA")
+        IOR_SCHEMA = DataLib.schema_get()
 
         if not title:  # pragma: no cover
             raise ValidationException("required", nameof(title), title)
@@ -161,9 +150,7 @@ class ItemManager:
         item_id: int,
     ) -> bool:
         isOk = True
-        IOR_SCHEMA = os.getenv("IOR_SCHEMA", "")  # noqa: F821
-        if not IOR_SCHEMA:  # pragma: no cover
-            raise ConfigurationException("missing", "IOR_SCHEMA")
+        IOR_SCHEMA = DataLib.schema_get()
 
         procedure_name = "item_remove"
         args = (item_id,)
@@ -188,9 +175,7 @@ class ItemManager:
         history_by: str = "(system)",
     ) -> bool:
         isOk = True
-        IOR_SCHEMA = os.getenv("IOR_SCHEMA", "")  # noqa: F821
-        if not IOR_SCHEMA:  # pragma: no cover
-            raise ConfigurationException("missing", "IOR_SCHEMA")
+        IOR_SCHEMA = DataLib.schema_get()
 
         if item_id < 0:  # pragma: no cover
             raise ValidationException("bad value", nameof(item_id), item_id)
@@ -225,9 +210,7 @@ class ItemManager:
         history_by: int = -1,
     ) -> bool:
         isOk = True
-        IOR_SCHEMA = os.getenv("IOR_SCHEMA", "")  # noqa: F821
-        if not IOR_SCHEMA:  # pragma: no cover
-            raise ConfigurationException("missing", "IOR_SCHEMA")
+        IOR_SCHEMA = DataLib.schema_get()
 
         if item_id < 0:  # pragma: no cover
             raise ValidationException("bad value", nameof(item_id), item_id)
@@ -266,9 +249,7 @@ class ItemManager:
         max_rows: int,
     ) -> list[HistoryModel]:
         d: list[HistoryModel] = []
-        IOR_SCHEMA = os.getenv("IOR_SCHEMA", "")  # noqa: F821
-        if not IOR_SCHEMA:  # pragma: no cover
-            raise ConfigurationException("missing", "IOR_SCHEMA")
+        IOR_SCHEMA = DataLib.schema_get()
 
         query = f"SELECT ih.created_date ,coalesce(ih.created_by, '(system)') as created_by ,ih.note FROM {IOR_SCHEMA}.item_history as ih left join {IOR_SCHEMA}.user us on ih.created_by = us.email WHERE ih.item_id = {item_id} ORDER BY created_date DESC LIMIT ({max_rows}) OFFSET ({skip_offset});"
         drows = DataLib.query_return_dict_in_one(query)
@@ -291,9 +272,7 @@ class ItemManager:
         storage_url: str,
     ) -> bool:
         isOk = True
-        IOR_SCHEMA = os.getenv("IOR_SCHEMA", "")  # noqa: F821
-        if not IOR_SCHEMA:  # pragma: no cover
-            raise ConfigurationException("missing", "IOR_SCHEMA")
+        IOR_SCHEMA = DataLib.schema_get()
 
         if item_id < 0:  # pragma: no cover
             raise ValidationException("bad value", nameof(item_id), item_id)
@@ -327,9 +306,7 @@ class ItemManager:
         storage_url: str,
     ) -> bool:
         isOk = True
-        IOR_SCHEMA = os.getenv("IOR_SCHEMA", "")  # noqa: F821
-        if not IOR_SCHEMA:  # pragma: no cover
-            raise ConfigurationException("missing", "IOR_SCHEMA")
+        IOR_SCHEMA = DataLib.schema_get()
 
         if item_id < 0:  # pragma: no cover
             raise ValidationException("bad value", nameof(item_id), item_id)
@@ -359,15 +336,7 @@ class ItemManager:
     @staticmethod
     def item_attachment_get(item_id: int) -> list[AttachmentModel]:
         d: list[AttachmentModel] = []
-        IOR_SCHEMA = os.getenv("IOR_SCHEMA", "")  # noqa: F821
-        if not IOR_SCHEMA:  # pragma: no cover
-            raise ConfigurationException("missing", "IOR_SCHEMA")
-        # created_by bigint,
-        # email text,
-        # caption text,
-        # storage_url text,
-        # created_date timestamp with time zone
-        # query = f"SELECT {IOR_SCHEMA}.item_attachment_get({item_id})"
+        IOR_SCHEMA = DataLib.schema_get()
         query = f" SELECT ia.created_by, ur.email, ia.caption, ia.storage_url, ia.created_date FROM {IOR_SCHEMA}.item_attachment ia left join {IOR_SCHEMA}.user ur on ia.created_by = ur.user_id WHERE ia.item_id = {item_id} ORDER BY ia.created_date DESC ;"
         drows = DataLib.query_return_dict_in_one(query)
         if drows:
@@ -413,9 +382,7 @@ class ItemManager:
         """
         isOk = True
 
-        IOR_SCHEMA = os.getenv("IOR_SCHEMA", "")  # noqa: F821
-        if not IOR_SCHEMA:  # pragma: no cover
-            raise ConfigurationException("missing", "IOR_SCHEMA")
+        IOR_SCHEMA = DataLib.schema_get()
 
         if not nv_key:  # pragma: no cover
             raise ValidationException("required", nameof(nv_key))
@@ -446,9 +413,7 @@ class ItemManager:
     ) -> bool:
         isOk = True
 
-        IOR_SCHEMA = os.getenv("IOR_SCHEMA", "")  # noqa: F821
-        if not IOR_SCHEMA:  # pragma: no cover
-            raise ConfigurationException("missing", "IOR_SCHEMA")
+        IOR_SCHEMA = DataLib.schema_get()
 
         if not nv_key:  # pragma: no cover
             raise ValidationException("required", nameof(nv_key))
@@ -483,9 +448,7 @@ class ItemManager:
             dict[str, str]: NV Items never None
         """
         d: dict[str, str] = {}
-        IOR_SCHEMA = os.getenv("IOR_SCHEMA", "")  # noqa: F821
-        if not IOR_SCHEMA:  # pragma: no cover
-            raise ConfigurationException("missing", "IOR_SCHEMA")
+        IOR_SCHEMA = DataLib.schema_get()
         query = f" SELECT it.nv_key ,it.nv_value FROM {IOR_SCHEMA}.item_nv it WHERE it.item_id = {item_id} ORDER BY it.nv_key ASC ;"
         drows = DataLib.query_return_dict_in_one(query)
         if drows:
@@ -507,10 +470,7 @@ class ItemManager:
         relationship_id: int,
     ) -> bool:
         isOk = True
-        IOR_SCHEMA = os.getenv("IOR_SCHEMA", "")  # noqa: F821
-        if not IOR_SCHEMA:  # pragma: no cover
-            raise ConfigurationException("missing", "IOR_SCHEMA")
-
+        IOR_SCHEMA = DataLib.schema_get()
         relation_list = ItemManager.item_relationship_list_get()
 
         if from_id < 0:  # pragma: no cover
@@ -546,9 +506,7 @@ class ItemManager:
     @staticmethod
     def item_relation_remove(from_id: int, to_id: int) -> bool:
         isOk = True
-        IOR_SCHEMA = os.getenv("IOR_SCHEMA", "")  # noqa: F821
-        if not IOR_SCHEMA:  # pragma: no cover
-            raise ConfigurationException("missing", "IOR_SCHEMA")
+        IOR_SCHEMA = DataLib.schema_get()
 
         if from_id < 0:  # pragma: no cover
             raise ValidationException("bad value", nameof(from_id), from_id)
@@ -578,10 +536,7 @@ class ItemManager:
     @staticmethod
     def item_relation_get(item_id: int) -> list[RelationModel]:
         d: list[RelationModel] = []
-        IOR_SCHEMA = os.getenv("IOR_SCHEMA", "")  # noqa: F821
-        if not IOR_SCHEMA:  # pragma: no cover
-            raise ConfigurationException("missing", "IOR_SCHEMA")
-
+        IOR_SCHEMA = DataLib.schema_get()
         query = f"SELECT ir.to_item_id, it.title, ir.relationship_id, re.relationship_title FROM {IOR_SCHEMA}.item_relation ir LEFT JOIN {IOR_SCHEMA}.relationship re ON ir.relationship_id = re.relationship_id LEFT JOIN {IOR_SCHEMA}.Item it ON ir.to_item_id = it.item_id WHERE ir.from_item_id = {item_id} ORDER BY re.relationship_id DESC;"
 
         drows = DataLib.query_return_dict_in_one(query)
@@ -605,10 +560,7 @@ class ItemManager:
         tag: str,
     ) -> bool:
         isOk = True
-        IOR_SCHEMA = os.getenv("IOR_SCHEMA", "")  # noqa: F821
-        if not IOR_SCHEMA:  # pragma: no cover
-            raise ConfigurationException("missing", "IOR_SCHEMA")
-
+        IOR_SCHEMA = DataLib.schema_get()
         procedure_name = "item_tag_set"
         args = (
             item_id,
@@ -635,10 +587,7 @@ class ItemManager:
         tag: str,
     ) -> bool:
         isOk = True
-        IOR_SCHEMA = os.getenv("IOR_SCHEMA", "")  # noqa: F821
-        if not IOR_SCHEMA:  # pragma: no cover
-            raise ConfigurationException("missing", "IOR_SCHEMA")
-
+        IOR_SCHEMA = DataLib.schema_get()
         procedure_name = "item_tag_del"
         args = (
             item_id,
@@ -662,9 +611,7 @@ class ItemManager:
     @staticmethod
     def item_tag_get(item_id: int) -> list[str]:
         d: list[str] = []
-        IOR_SCHEMA = os.getenv("IOR_SCHEMA", "")  # noqa: F821
-        if not IOR_SCHEMA:  # pragma: no cover
-            raise ConfigurationException("missing", "IOR_SCHEMA")
+        IOR_SCHEMA = DataLib.schema_get()
         query = f"SELECT it.tag FROM {IOR_SCHEMA}.item_tag it WHERE it.item_id = {item_id} ORDER BY it.tag ASC;"
         drows = DataLib.query_return_dict_in_one(query)
         if drows:

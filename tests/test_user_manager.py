@@ -7,9 +7,7 @@ from data_lib.datalib import DataLib
 
 
 def test_login():
-    IOR_SCHEMA = os.getenv("IOR_SCHEMA", "")
-    if not IOR_SCHEMA:
-        pytest.fail("IOR_SCHEMA missing")
+    IOR_SCHEMA = DataLib.schema_get()
 
     email = "admin"
     password = "password123-"
@@ -21,10 +19,7 @@ def test_login():
 
 
 def test_make_user():
-    IOR_SCHEMA = os.getenv("IOR_SCHEMA", "")
-    if not IOR_SCHEMA:
-        pytest.fail("IOR_SCHEMA missing")
-
+    IOR_SCHEMA = DataLib.schema_get()
     email = "test-123@test.tst"
     fullname = "test 123"
     iconurl = ""
@@ -58,10 +53,7 @@ def test_password_hash_bad():
 
 
 def test_is_a_user():
-    IOR_SCHEMA = os.getenv("IOR_SCHEMA", "")
-    if not IOR_SCHEMA:
-        pytest.fail("IOR_SCHEMA missing")
-
+    IOR_SCHEMA = DataLib.schema_get()
     email = DataLib.query_return_single_value_in_one(
         f"select email from {IOR_SCHEMA}.user order by user_id DESC limit 1;"
     )
@@ -79,10 +71,7 @@ def test_is_a_user():
 
 
 def test_not_a_user():
-    IOR_SCHEMA = os.getenv("IOR_SCHEMA", "")
-    if not IOR_SCHEMA:
-        pytest.fail("IOR_SCHEMA missing")
-
+    IOR_SCHEMA = DataLib.schema_get()
     email = "gotrder@not-auser.boz"
     UserManager.user_remove_last_resort(email)
 
@@ -95,10 +84,7 @@ def test_not_a_user():
 
 
 def test_make_disable_user():
-    IOR_SCHEMA = os.getenv("IOR_SCHEMA", "")
-    if not IOR_SCHEMA:
-        pytest.fail("IOR_SCHEMA missing")
-
+    IOR_SCHEMA = DataLib.schema_get()
     email = "test-de3@test.tst"
     fullname = "test 123"
     iconurl = ""
@@ -136,10 +122,7 @@ def test_make_disable_user():
 
 
 def test_user_org_role_get():
-    IOR_SCHEMA = os.getenv("IOR_SCHEMA", "")
-    if not IOR_SCHEMA:
-        pytest.fail("IOR_SCHEMA missing")
-
+    IOR_SCHEMA = DataLib.schema_get()
     email = DataLib.query_return_single_value_in_one(
         f"select email from {IOR_SCHEMA}.user order by user_id DESC limit 1;"
     )
@@ -158,9 +141,7 @@ def test_user_org_role_get():
 
 
 def test_user_org_role_get_bad():
-    IOR_SCHEMA = os.getenv("IOR_SCHEMA", "")
-    if not IOR_SCHEMA:
-        pytest.fail("IOR_SCHEMA missing")
+    IOR_SCHEMA = DataLib.schema_get()
 
     email = DataLib.query_return_single_value_in_one(
         f"select email from {IOR_SCHEMA}.user order by user_id DESC limit 1;"

@@ -153,7 +153,7 @@ class TestDataLib:
 
             query = f"SELECT email FROM {TestDataLib.schema}.{TestDataLib.table};"
             drows = DataLib.query_return_dict(conn, query)
-            assert drows is not None 
+            assert drows is not None
             if drows and DataLib.has_rows(drows):
                 for r in drows:
                     AppLogger.log_debug(query, {"email": r["email"]}, "testing")
@@ -178,10 +178,7 @@ class TestDataLib:
             pytest.skip(TestDataLib.NO_TEST)
             return
 
-        IOR_SCHEMA = os.getenv("IOR_SCHEMA", "")
-        if not IOR_SCHEMA:
-            pytest.fail("IOR_SCHEMA missing")
-
+        IOR_SCHEMA = DataLib.schema_get()
         conn = DataLib.connection_make()
         assert conn is not None
 

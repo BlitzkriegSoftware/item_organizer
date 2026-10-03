@@ -41,13 +41,7 @@ class UserManager:
             SecurityException: user not found
             SecurityException: bad login
         """
-        IOR_SALT = os.getenv("IOR_SALT", "")
-        if not IOR_SALT:  # pragma: no cover
-            raise ConfigurationException("Salt Required", "IOR_SALT", "env")
-
-        IOR_SCHEMA = os.getenv("IOR_SCHEMA", "")
-        if not IOR_SCHEMA:  # pragma: no cover
-            raise ConfigurationException("Schema Required", "IOR_SCHEMA", "env")
+        IOR_SCHEMA = DataLib.schema_get()
 
         query = f"select password_hash from {IOR_SCHEMA}.user where email='{email}';"
 
@@ -81,10 +75,7 @@ class UserManager:
             ValidationException: icon_url malformed
             SecurityException: unable to add user
         """
-        IOR_SCHEMA = os.getenv("IOR_SCHEMA", "")
-        if not IOR_SCHEMA:  # pragma: no cover
-            raise ConfigurationException("Schema Required", "IOR_SCHEMA", "env")
-
+        IOR_SCHEMA = DataLib.schema_get()
         if not email:  # pragma: no cover
             raise ValidationException("must not be empty", "email")
 
@@ -127,9 +118,7 @@ class UserManager:
             ValidationException: email malformed
             SecurityException: unable to disable
         """
-        IOR_SCHEMA = os.getenv("IOR_SCHEMA", "")
-        if not IOR_SCHEMA:  # pragma: no cover
-            raise ConfigurationException("Schema Required", "IOR_SCHEMA", "env")
+        IOR_SCHEMA = DataLib.schema_get()
 
         if not email:  # pragma: no cover
             raise ValidationException("must not be empty", "email")
@@ -161,10 +150,6 @@ class UserManager:
         Returns:
             _type_: b64 embeddable secret
         """
-        IOR_FERMAT = os.getenv("IOR_FERMAT", "")
-        if not IOR_FERMAT:  # pragma: no cover
-            raise ConfigurationException("CryptoKey Required", "IOR_FERMAT", "env")
-
         if not email:  # pragma: no cover
             raise ValidationException("Empty", "email")
 
@@ -196,10 +181,6 @@ class UserManager:
             ValidationException: hash corrupt (2)
             ValidationException: hash expired (3)
         """
-        IOR_FERMAT = os.getenv("IOR_FERMAT", "")
-        if not IOR_FERMAT:  # pragma: no cover
-            raise ConfigurationException("CryptoKey Required", "IOR_FERMAT", "env")
-
         if not email:  # pragma: no cover
             raise ValidationException("Empty", "email")
 
@@ -244,9 +225,7 @@ class UserManager:
         Returns:
             UserStatus: Enum
         """
-        IOR_SCHEMA = os.getenv("IOR_SCHEMA", "")
-        if not IOR_SCHEMA:  # pragma: no cover
-            raise ConfigurationException("Schema Required", "IOR_SCHEMA", "env")
+        IOR_SCHEMA = DataLib.schema_get()
 
         query = f"select password_hash from {IOR_SCHEMA}.user where email = '{email}';"
         result = DataLib.query_return_single_value_in_one(query)
@@ -276,9 +255,7 @@ class UserManager:
             ValidationException: email missing
             DatabaseException: execution failure
         """
-        IOR_SCHEMA = os.getenv("IOR_SCHEMA", "")
-        if not IOR_SCHEMA:  # pragma: no cover
-            raise ConfigurationException("Schema Required", "IOR_SCHEMA", "env")
+        IOR_SCHEMA = DataLib.schema_get()
 
         if not email:  # pragma: no cover
             raise ValidationException("Empty", "email")
@@ -310,10 +287,7 @@ class UserManager:
             SecurityException: user not found
             SecurityException: invalid org role id
         """
-        IOR_SCHEMA = os.getenv("IOR_SCHEMA", "")
-        if not IOR_SCHEMA:  # pragma: no cover
-            raise ConfigurationException("Schema Required", "IOR_SCHEMA", "env")
-
+        IOR_SCHEMA = DataLib.schema_get()
         if not email:  # pragma: no cover
             raise ValueError("email required")
 
@@ -347,10 +321,7 @@ class UserManager:
             SecurityException:  unable(0)
             SecurityException:  unable(1)
         """
-        IOR_SCHEMA = os.getenv("IOR_SCHEMA", "")
-        if not IOR_SCHEMA:  # pragma: no cover
-            raise ConfigurationException("Schema Required", "IOR_SCHEMA", "env")
-
+        IOR_SCHEMA = DataLib.schema_get()
         if org_role_id not in UserManager.VALID_USER_ORG_ROLE_IDS:
             raise ValueError(
                 f"org role id must be in {UserManager.VALID_USER_ORG_ROLE_IDS} (1)"
@@ -383,10 +354,7 @@ class UserManager:
             ValueError: bad email
             SecurityException: (unable)
         """
-        IOR_SCHEMA = os.getenv("IOR_SCHEMA", "")
-        if not IOR_SCHEMA:  # pragma: no cover
-            raise ConfigurationException("Schema Required", "IOR_SCHEMA", "env")
-
+        IOR_SCHEMA = DataLib.schema_get()
         if not email:  # pragma: no cover
             raise ValueError("email required")
 
@@ -413,10 +381,7 @@ class UserManager:
             ConfigurationException: IOR_SCHEMA
             SecurityException: (unable)
         """
-        IOR_SCHEMA = os.getenv("IOR_SCHEMA", "")
-        if not IOR_SCHEMA:  # pragma: no cover
-            raise ConfigurationException("Schema Required", "IOR_SCHEMA", "env")
-
+        IOR_SCHEMA = DataLib.schema_get()
         query = f"delete from {IOR_SCHEMA}.user_org where user_id = {user_id} and org_id = {org_id};"
         result = DataLib.query_execute_in_one(query)
         if not result:  # pragma: no cover
@@ -441,10 +406,7 @@ class UserManager:
         Returns:
             int: Org_Role_Id
         """
-        IOR_SCHEMA = os.getenv("IOR_SCHEMA", "")
-        if not IOR_SCHEMA:  # pragma: no cover
-            raise ConfigurationException("Schema Required", "IOR_SCHEMA", "env")
-
+        IOR_SCHEMA = DataLib.schema_get()
         query = f"select user_id from {IOR_SCHEMA}.user where email='{email}';"
         user_id = DataLib.query_return_single_value_in_one(query)
         if not user_id:  # pragma: no cover
@@ -472,10 +434,7 @@ class UserManager:
         Returns:
             int: Org_Role_Id
         """
-        IOR_SCHEMA = os.getenv("IOR_SCHEMA", "")
-        if not IOR_SCHEMA:  # pragma: no cover
-            raise ConfigurationException("Schema Required", "IOR_SCHEMA", "env")
-
+        IOR_SCHEMA = DataLib.schema_get()
         query = f"select {IOR_SCHEMA}.user_org_role_get({user_id}, {org_id});"
         result = DataLib.query_return_single_value_in_one(query)
         if not result:  # pragma: no cover
@@ -502,10 +461,7 @@ class UserManager:
         Returns:
             int: user_id (-1 if not found)
         """
-        IOR_SCHEMA = os.getenv("IOR_SCHEMA", "")
-        if not IOR_SCHEMA:  # pragma: no cover
-            raise ConfigurationException("Schema Required", "IOR_SCHEMA", "env")
-
+        IOR_SCHEMA = DataLib.schema_get()
         query = f"select user_id from {IOR_SCHEMA}.user where email='{email}';"
         user_id = DataLib.query_return_single_value_in_one(query)
         if not user_id:  # pragma: no cover

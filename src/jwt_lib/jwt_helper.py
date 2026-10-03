@@ -9,6 +9,7 @@ from fastapi.security import OAuth2PasswordBearer
 from jwt.exceptions import InvalidTokenError
 from varname import nameof
 
+from app_exceptions.configuration_exception import ConfigurationException
 from app_exceptions.credentials_exception import CredentialsException
 from app_exceptions.validation_exception import ValidationException
 
@@ -26,8 +27,20 @@ class JWTHelper:
 
     @cache
     @staticmethod
-    def jwt_key_get():
-        return os.getenv("IOR_JWT_KEY", "")
+    def jwt_key_get() -> str:
+        """
+        Gets previously generated key (openssl rand -hex 32)
+
+        Raises:
+            ConfigurationException: if not found
+
+        Returns:
+            _type_: 32 hex digits as string
+        """
+        IOR_JWT_KEY = os.getenv("IOR_JWT_KEY", "")
+        if not IOR_JWT_KEY:
+            raise ConfigurationException("", "IOR_JWT_KEY")
+        return IOR_JWT_KEY
 
     @staticmethod
     def seconds_from_now(in_seconds: int) -> timedelta:
