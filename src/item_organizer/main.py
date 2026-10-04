@@ -1,3 +1,4 @@
+from fastapi.staticfiles import StaticFiles
 from varname import nameof
 
 from app_logger.applogger import AppLogger
@@ -22,6 +23,11 @@ from item_organizer.routers.page_router import PageRouter
 from item_organizer.routers.reporting_router import ReportingRouter
 from item_organizer.routers.token_router import TokenRouter
 from item_organizer.routers.user_router import UserRouter
+
+great_grand_parent = Path(__file__).resolve().parents[1]
+great_grand_parent = os.path.abspath(great_grand_parent)
+BASE_DIR = os.path.dirname(great_grand_parent)
+AppLogger.log_info(f"BASE_DIR: {BASE_DIR}")
 
 """
 Must set a CORS policy, this one is not suitable for production!
@@ -48,6 +54,11 @@ app.include_router(PageRouter)
 app.include_router(ReportingRouter)
 app.include_router(TokenRouter)
 app.include_router(UserRouter)
+
+STATIC_DIR = os.path.join(BASE_DIR, "www")
+AppLogger.log_info(f"STATIC_DIR: {STATIC_DIR}")
+
+app.mount("/www", StaticFiles(directory=STATIC_DIR), name="www")
 
 
 def main():  # pragma: no cover

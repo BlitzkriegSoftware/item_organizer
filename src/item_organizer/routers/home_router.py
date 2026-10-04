@@ -2,7 +2,7 @@ import os
 from pathlib import Path
 
 from fastapi import APIRouter, HTTPException
-from fastapi.responses import HTMLResponse
+from fastapi.responses import FileResponse, HTMLResponse
 
 from item_organizer.middleware.logging_route import LoggingRoute
 
@@ -21,3 +21,8 @@ async def home_page():
         html_content = f.read()
 
     return HTMLResponse(content=html_content)
+
+
+@HomeRouter.get("/favicon.ico", include_in_schema=False)
+async def favicon():
+    return FileResponse("www/assets/images/favicon.ico")

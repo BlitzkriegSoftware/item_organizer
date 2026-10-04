@@ -55,6 +55,7 @@ RUN mkdir -p /app/www
 WORKDIR /app/src
 COPY ./src .
 WORKDIR /app/www
+RUN chmod -R 755 /app/www
 COPY ./www .
 WORKDIR /app
 COPY ./pyproject.toml .
@@ -64,4 +65,4 @@ COPY $README_FILE_PATH .
 
 RUN uv sync
 # Run the application
-CMD [ "uv", "run", "fastapi", "dev", "--port 8087", ".\src\item_organizer\main.py" ]
+#CMD [ "uv", "run", "fastapi", "dev", "--port ", IOR_APP_PORT, ".\src\item_organizer\main.py" ]

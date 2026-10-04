@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <!-- if you change the port change this -->
-    <base href="http://localhost:8084" />
+    <!-- <base href="http://localhost:8089" /> -->
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link
@@ -32,49 +32,139 @@
       href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
     />
     <!-- My in page styles -->
-    <style>
-      body {
-        font-family: "Roboto", sans-serif;
-        font-optical-sizing: auto;
-        font-weight: 400;
-        font-style: normal;
-        font-variation-settings: "wdth" 100;
-      }
-      .bump-down-5 {
-        margin-top: 10px;
-      }
-      .actionbutton {
-        margin: 8px 0 8px 0;
-      }
-      .text-end {
-        vertical-align: middle;
-      }
-      .debugtext {
-        font-weight: lighter;
-      }
-    </style>
+    <link rel="stylesheet" href="/www/asset/css/page_styles.css" />
   </head>
   <body>
+    <!-- Sticky Header Container -->
+    <header class="sticky-top bg-light border-bottom shadow-sm">
+      <div class="container-fluid">
+        <div class="d-flex justify-content-between align-items-center">
+          <h1 class="h4 mb-0">Item organizer</h1>
+          <nav></nav>
+        </div>
+      </div>
+    </header>
     <!-- Main Container -->
     <div class="container-fluid">
-      <form>
-          <button
-            id="newitem"
-            class="btn btn-primary actionbutton"
-          >
-            <i class="bi bi-file-plus"></i> New Item
-          </button>
-        </div>
-        <div class="btn-group" role="group"><i class="bi bi-filter-square"></i></div>
-        <div class="btn-group" role="group"><i class="bi bi-sort-up"></i></div>
-        <div class="btn-group" role="group"><i class="bi bi-bookmark-heart"></i></div>
-      </form>
+      <div class="iformwhole">
+        <form>
+          <div class="row">
+            <div class="col-auto text-end">
+              <img
+                src="/www/asset/images/i_email.png"
+                class="form-label iformlabel"
+                data-bs-toggle="tooltip"
+                data-bs-placement="top"
+                data-bs-title="Fill in email"
+              />
+            </div>
+            <div class="col-8">
+              <input
+                type="text"
+                id="iEmail"
+                name="iEmail"
+                class="form-control border border-2"
+              />
+            </div>
+            <div class="col-auto"></div>
+          </div>
+          <div class="row">
+            <div class="col-auto text-end">
+              <img
+                src="/www/asset/images/i_password.png"
+                class="form-label iformlabel"
+                data-bs-toggle="tooltip"
+                data-bs-placement="top"
+                data-bs-title="Fill in Password"
+              />
+            </div>
+            <div class="col-8">
+              <input
+                type="password"
+                id="iPassword"
+                name="iPassword"
+                class="form-control border border-2"
+                placeholder="Password..."
+              />
+            </div>
+            <div class="col-auto">
+              <button
+                class="btn btn-outline-secondary"
+                type="button"
+                data-bs-toggle="tooltip"
+                data-bs-placement="top"
+                data-bs-title="Show/Hide Password"
+              >
+                <i
+                  class="bi bi-eye"
+                  id="toggleIcon"
+                  onclick="togglePasswordClick()"
+                ></i>
+              </button>
+            </div>
+          </div>
+          <div><div class="col-auto iformspacer"></div></div>
+          <div class="row">
+            <div class="col-auto">
+              <button
+                class="btn btn-warning"
+                data-bs-toggle="tooltip"
+                data-bs-placement="top"
+                data-bs-title="Fill in email, and press to reset password!"
+              >
+                <img
+                  src="/www/asset/images/i_reset_password.png"
+                  class="iformbutton"
+                />
+              </button>
+            </div>
+            <div class="col-8"></div>
+            <div class="col-auto">
+              <button
+                class="btn btn-primary"
+                id="doLogin"
+                data-bs-toggle="tooltip"
+                data-bs-placement="top"
+                data-bs-title="Login"
+              >
+                <img src="/www/asset/images/i_login.png" class="iformbutton" />
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
       <div id="debug" class="debugtext"></div>
       <div id="result"></div>
       <div id="vars"></div>
     </div>
-
     <script>
+      // Functions
+      function togglePasswordClick() {
+        const passwordInput = document.getElementById("iPassword");
+        const togglePassword = document.getElementById("toggleIcon");
+        if (passwordInput.type === "password") {
+          passwordInput.type = "text";
+        } else {
+          passwordInput.type = "password";
+        }
+        toggleIcon.classList.toggle("bi-eye");
+        toggleIcon.classList.toggle("bi-eye-slash");
+      }
+    </script>
+    <script>
+      //  On LOAD() Event
+      document.addEventListener("DOMContentLoaded", () => {
+        // TOOLTIPS: Bootstrap 5 Initialization
+        const tooltipTriggerList = document.querySelectorAll(
+          '[data-bs-toggle="tooltip"]',
+        );
+        const tooltipList = [...tooltipTriggerList].map(
+          (tooltipTriggerEl) => new bootstrap.Tooltip(tooltipTriggerEl),
+        );
+      });
+    </script>
+    <script>
+      // HTMX Events
       const doDebug = false;
       document.addEventListener("htmx:afterRequest", function (event) {
         json = event.detail.xhr.getResponseHeader("HX-Trigger");
