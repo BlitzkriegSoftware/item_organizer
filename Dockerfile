@@ -64,4 +64,4 @@ COPY $README_FILE_PATH .
 
 RUN uv sync
 # Run the application
-# CMD [ "uv", "run", "/app/src/item_organizer/main.py" ]
+CMD [ "uv", "run", "fastapi", "dev", "--port 8087", ".\src\item_organizer\main.py" ]
